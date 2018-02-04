@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_menu_schedule"
+            android:title="日程备忘" />
+        <item
+            android:id="@+id/nav_diary"
+            android:icon="@drawable/ic_menu_diary"
+            android:title="我的日记" />
+        <item
+            android:id="@+id/nav_anniversary"
+            android:icon="@drawable/ic_menu_anniversary"
+            android:title="周年纪念" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_menu_account"
+            android:title="我的账本" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_weather"
+                android:icon="@drawable/ic_menu_weather"
+                android:title="查看天气" />
+            <item
+                android:id="@+id/nav_task"
+                android:icon="@drawable/ic_menu_task"
+                android:title="任务打卡" />
+        </menu>
+    </item>
+
+</menu>
