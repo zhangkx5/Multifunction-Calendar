@@ -21,6 +21,10 @@
         </activity>
         <activity android:name=".AccountActivity"/>
         <activity android:name=".AnniversaryActivity"/>
+        <activity android:name=".AnniversaryEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AnniversaryDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ScheduleActivity"/>
         <activity android:name=".TaskActivity"/>
         <activity android:name=".DiaryActivity"/>
