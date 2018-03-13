@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "myCalendar_database";
+
+    //周年纪念
     public static final String ANNIVERSARY_TABLE_NAME = "anniversary_table";
     public static final String ANNIVERSARY_TABLE_CREATE = "create table " + ANNIVERSARY_TABLE_NAME
             + " (id interger primary key,"
@@ -24,6 +26,21 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String ANNIVERSARY_TABLE_SELECT = "select * from " + ANNIVERSARY_TABLE_NAME;
     public static final String ANNIVERSARY_TABLE_DELETE = "delete from " + ANNIVERSARY_TABLE_NAME + " where adid = ?";
 
+    //日记
+    public static final String DIARY_TABLE_NAME = "diary_table";
+    public static final String DIARY_TABLE_CREATE = "create table " + DIARY_TABLE_NAME
+            + " (id interger primary key,"
+            + " dyid TEXT,"
+            + " date TEXT,"
+            + " address TEXT,"
+            + " weather TEXT,"
+            + " content TEXT)";
+    public static final String DIARY_TABLE_DROP = "drop table if exists " + DIARY_TABLE_NAME;
+    public static final String DIARY_TABLE_INSERT = "insert into " + DIARY_TABLE_NAME
+            + "(dyid, date, address, weather, content) values (?, ?, ?, ?, ?)";
+    public static final String DIARY_TABLE_SELECT = "select * from " + DIARY_TABLE_NAME;
+    public static final String DIARY_TABLE_DELETE = "delete from " + DIARY_TABLE_NAME + " where dyid = ?";
+    //账本
     public static final String ACCOUNT_TABLE_NAME = "account_table";
     public static final String ACCOUNT_TABLE_CREAT = "create table " + ACCOUNT_TABLE_NAME
             + "( id interger primary key,"
@@ -40,18 +57,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String ACCOUNT_TABLE_DELECT = "delete from " + ACCOUNT_TABLE_NAME + " where acid = ?";
 
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 4);
+        super(context, DATABASE_NAME, null, 6);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_CREATE);
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_CREAT);
+        sqLiteDatabase.execSQL(DIARY_TABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int newVersion, int oldVersion) {
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_DROP);
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_DROP);
+        sqLiteDatabase.execSQL(DIARY_TABLE_DROP);
         onCreate(sqLiteDatabase);
     }
 }

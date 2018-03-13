@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
  * Created by kaixin on 2018/2/5.
  */
 
-public class AnniversaryEditActivity  extends AppCompatActivity {
+public class AnniversaryEditActivity extends AppCompatActivity {
 
     private ImageButton ib_back;
     private ImageButton ib_save;
