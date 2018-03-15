@@ -130,7 +130,7 @@ public class AccountBillFragment extends Fragment {
                 getActivity(), getAllKey(map), lists);
         expandableListView = (ExpandableListView)view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(expandableListViewAdapter);
-        expandableListView.expandGroup(0);
+        //expandableListView.expandGroup(0);
 
         return view;
     }
@@ -162,7 +162,7 @@ public class AccountBillFragment extends Fragment {
     }
     public void deleteInDB(String id) {
         SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
-        dbDelete.execSQL(MyDatabaseHelper.ACCOUNT_TABLE_DELECT, new Object[]{id});
+        dbDelete.execSQL(MyDatabaseHelper.ACCOUNT_TABLE_DELETE, new Object[]{id});
         dbDelete.close();
     }
 

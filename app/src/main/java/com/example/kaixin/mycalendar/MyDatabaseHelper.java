@@ -12,13 +12,30 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "myCalendar_database";
 
+    //日程备忘
+    public static final String SCHEDULE_TABLE_NAME = "schedule_table";
+    public static final String SCHEDULE_TABLE_CREATE = "create table " + SCHEDULE_TABLE_NAME
+            + " (id interger primary key,"
+            + " scid TEXT,"
+            + " title TEXT,"
+            + " address TEXT,"
+            + " start TEXT,"
+            + " end TEXT,"
+            + " call TEXT,"
+            + " notes TEXT)";
+    public static final String SCHEDULE_TABLE_DROP = "drop table if exists " + SCHEDULE_TABLE_NAME;
+    public static final String SCHEDULE_TABLE_INSERT = "insert into " + SCHEDULE_TABLE_NAME
+            + " (scid, title, address, start, end, call, notes) values (?, ?, ?, ?, ?, ?, ?)";
+    public static final String SCHEDULE_TABLE_SELECT = "select * from " + SCHEDULE_TABLE_NAME;
+    public static final String SCHEDULE_TABLE_DELETE = "delete from " + SCHEDULE_TABLE_NAME + " where scid = ?";
+
     //周年纪念
     public static final String ANNIVERSARY_TABLE_NAME = "anniversary_table";
     public static final String ANNIVERSARY_TABLE_CREATE = "create table " + ANNIVERSARY_TABLE_NAME
             + " (id interger primary key,"
             + " adid TEXT,"
-            + " name TEXT, "
-            + " date TEXT, "
+            + " name TEXT,"
+            + " date TEXT,"
             + " notes TEXT)";
     public static final String ANNIVERSARY_TABLE_DROP = "drop table if exists " + ANNIVERSARY_TABLE_NAME;
     public static final String ANNIVERSARY_TABLE_INSERT = "insert into " + ANNIVERSARY_TABLE_NAME
@@ -42,8 +59,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String DIARY_TABLE_DELETE = "delete from " + DIARY_TABLE_NAME + " where dyid = ?";
     //账本
     public static final String ACCOUNT_TABLE_NAME = "account_table";
-    public static final String ACCOUNT_TABLE_CREAT = "create table " + ACCOUNT_TABLE_NAME
-            + "( id interger primary key,"
+    public static final String ACCOUNT_TABLE_CREATE = "create table " + ACCOUNT_TABLE_NAME
+            + "(id interger primary key,"
             + " acid TEXT,"
             + " type interger,"
             + " label interger,"
@@ -54,20 +71,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String ACCOUNT_TABLE_INSERT = "insert into " + ACCOUNT_TABLE_NAME
             + " (acid, type, label, date, money, notes) values (?, ?, ?, ?, ?, ?)";
     public static final String ACCOUNT_TABLE_SELECT = "select * from " + ACCOUNT_TABLE_NAME;
-    public static final String ACCOUNT_TABLE_DELECT = "delete from " + ACCOUNT_TABLE_NAME + " where acid = ?";
+    public static final String ACCOUNT_TABLE_DELETE = "delete from " + ACCOUNT_TABLE_NAME + " where acid = ?";
 
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 6);
+        super(context, DATABASE_NAME, null, 1);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(SCHEDULE_TABLE_CREATE);
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_CREATE);
-        sqLiteDatabase.execSQL(ACCOUNT_TABLE_CREAT);
+        sqLiteDatabase.execSQL(ACCOUNT_TABLE_CREATE);
         sqLiteDatabase.execSQL(DIARY_TABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int newVersion, int oldVersion) {
+        sqLiteDatabase.execSQL(SCHEDULE_TABLE_DROP);
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_DROP);
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_DROP);
         sqLiteDatabase.execSQL(DIARY_TABLE_DROP);
