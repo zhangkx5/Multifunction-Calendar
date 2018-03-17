@@ -73,8 +73,36 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String ACCOUNT_TABLE_SELECT = "select * from " + ACCOUNT_TABLE_NAME;
     public static final String ACCOUNT_TABLE_DELETE = "delete from " + ACCOUNT_TABLE_NAME + " where acid = ?";
 
+    //任务
+    public static final String TASK_TABLE_NAME = "task_table";
+    public static final String TASK_TABLE_CREATE = "create table " + TASK_TABLE_NAME
+            + " (id interger primary key,"
+            + " tsid TEXT,"
+            + " date TEXT,"
+            + " name TEXT,"
+            + " notes TEXT)";
+    public static final String TASK_TABLE_DROP = "drop table if exists " + TASK_TABLE_NAME;
+    public static final String TASK_TABLE_INSERT = "insert into " + TASK_TABLE_NAME
+            + "(tsid, date, name, notes) values (?, ?, ?, ?)";
+    public static final String TASK_TABLE_SELECT = "select * from " + TASK_TABLE_NAME;
+    public static final String TASK_TABLE_DELETE = "delete from " + TASK_TABLE_NAME + " where tsid = ?";
+
+    //打卡
+    public static final String CHECK_TABLE_NAME = "check_table";
+    public static final String CHECK_TABLE_CREATE = "create table " + CHECK_TABLE_NAME
+            + " (id interger primary key,"
+            + " chid TEXT,"
+            + " date TEXT,"
+            + " task TEXT,"
+            + " notes TEXT)";
+    public static final String CHECK_TABLE_DROP = "drop table if exists " + CHECK_TABLE_NAME;
+    public static final String CHECK_TABLE_INSERT = "insert into " + CHECK_TABLE_NAME
+            + "(chid, date, task, notes) values (?, ?, ?, ?)";
+    public static final String CHECK_TABLE_SELECT = "select * from " + CHECK_TABLE_NAME + " where task = ?";
+    public static final String CHECK_TABLE_DELETE = "delete from " + CHECK_TABLE_NAME + " where chid = ?";
+
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 3);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -82,6 +110,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_CREATE);
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_CREATE);
         sqLiteDatabase.execSQL(DIARY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(TASK_TABLE_CREATE);
+        sqLiteDatabase.execSQL(CHECK_TABLE_CREATE);
     }
 
     @Override
@@ -90,6 +120,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ANNIVERSARY_TABLE_DROP);
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_DROP);
         sqLiteDatabase.execSQL(DIARY_TABLE_DROP);
+        sqLiteDatabase.execSQL(TASK_TABLE_DROP);
+        sqLiteDatabase.execSQL(CHECK_TABLE_DROP);
         onCreate(sqLiteDatabase);
     }
 }

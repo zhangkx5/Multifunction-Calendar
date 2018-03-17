@@ -38,6 +38,10 @@
         <activity android:name=".ScheduleEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TaskActivity"/>
+        <activity android:name=".TaskEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".TaskCheckActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".DiaryActivity"/>
         <activity android:name=".DiaryEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

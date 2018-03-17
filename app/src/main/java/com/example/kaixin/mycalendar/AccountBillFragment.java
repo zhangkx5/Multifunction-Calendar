@@ -58,7 +58,7 @@ public class AccountBillFragment extends Fragment {
         expandableListViewAdapter = new MyExpandableListViewAdapter(
                 getActivity(), getAllKey(map), lists);
         expandableListView.setAdapter(expandableListViewAdapter);
-        expandableListView.expandGroup(0);
+        //expandableListView.expandGroup(0);
     }
 
     @Override

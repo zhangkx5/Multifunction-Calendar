@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F0F0F0">
+    android:layout_height="match_parent">
 
-    <com.example.kaixin.mycalendar.PinnedHeaderExpandableListView
-        android:id="@+id/explistview"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="0.0dip"
-        android:cacheColorHint="#00000000"
-        android:choiceMode="singleChoice"
-        android:drawSelectorOnTop="false"
-        android:fastScrollEnabled="false"
-        android:footerDividersEnabled="true"
-        android:groupIndicator="@null"
-        android:scrollbars="vertical"
-        android:scrollingCache="true"/>
-
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/ic_add" />
+</android.support.design.widget.CoordinatorLayout>
