@@ -19,6 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+
 /**
  * Created by kaixin on 2018/3/9.
  */
@@ -98,7 +102,29 @@ public class DiaryEditActivity extends AppCompatActivity {
                     strAdd = getAddress();
                     strWea = getWeather();
                     strContent = getContent();
-                    addInDB(strDate, strAdd, strWea, strContent);
+                    String dy_id = String.valueOf(System.currentTimeMillis());
+                    addInDB(dy_id, strDate, strAdd, strWea, strContent);
+
+                    BmobUser bmobUser = BmobUser.getCurrentUser();
+                    if (bmobUser != null) {
+                        String userId = bmobUser.getObjectId();
+                        BmobDiary bmobDiary = new BmobDiary();
+                        bmobDiary.setUserId(userId);
+                        bmobDiary.setAddress(strAdd);
+                        bmobDiary.setDate(strDate);
+                        bmobDiary.setWeather(strWea);
+                        bmobDiary.setContent(strContent);
+                        bmobDiary.save(new SaveListener<String>() {
+                            @Override
+                            public void done(String s, BmobException e) {
+                                if (e == null) {
+                                    Toast.makeText(DiaryEditActivity.this, "创建数据成功："+s, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(DiaryEditActivity.this, "失败", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
                     DiaryEditActivity.this.finish();
                 }
             }
@@ -117,8 +143,7 @@ public class DiaryEditActivity extends AppCompatActivity {
         });
     }
 
-    public void addInDB(String date, String address, String weather, String content) {
-        String dy_id = String.valueOf(System.currentTimeMillis());
+    public void addInDB(String dy_id, String date, String address, String weather, String content) {
         SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
         dbWrite.execSQL(MyDatabaseHelper.DIARY_TABLE_INSERT, new Object[]{dy_id, date, address, weather, content});
         dbWrite.close();

@@ -1,32 +1,26 @@
 package com.example.kaixin.mycalendar;
 
-import java.io.Serializable;
-
 import cn.bmob.v3.BmobObject;
 
 /**
- * Created by kaixin on 2018/3/13.
+ * Created by kaixin on 2018/3/20.
  */
 
-public class Diary extends BmobObject implements Serializable {
-    private String id;
+public class BmobDiary extends BmobObject {
+
+    private String userId;
     private String date;
     private String address;
     private String weather;
     private String content;
 
-    public Diary(String id, String date, String address, String weather, String content) {
-        this.id = id;
-        this.address = address;
-        this.weather = weather;
-        this.date = date;
-        this.content = content;
-    }
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
-
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
     public String getDate() {
         return date;
     }
