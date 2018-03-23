@@ -54,7 +54,7 @@
         <activity android:name=".ScheduleActivity"/>
         <activity android:name=".ScheduleEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".TaskActivity"/>
+        <!--<activity android:name=".TaskFragment"/>-->
         <activity android:name=".TaskEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TaskCheckActivity"

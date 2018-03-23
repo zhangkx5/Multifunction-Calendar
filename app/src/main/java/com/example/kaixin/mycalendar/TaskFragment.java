@@ -5,14 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +20,7 @@ import java.util.List;
  * Created by kaixin on 2018/2/4.
  */
 
-public class TaskActivity extends AppCompatActivity {
+public class TaskFragment extends Fragment {
 
     private ListView listView;
     private TaskAdapter taskAdapter;
@@ -30,15 +28,45 @@ public class TaskActivity extends AppCompatActivity {
     private MyDatabaseHelper myDatabaseHelper;
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         list = readDB();
-        taskAdapter = new TaskAdapter(TaskActivity.this, list);
+        //taskAdapter = new TaskAdapter(TaskFragment.this, list);
+        taskAdapter = new TaskAdapter(getActivity(), list);
         listView.setAdapter(taskAdapter);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_task, container, false);
+        myDatabaseHelper = new MyDatabaseHelper(getActivity());
+
+        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), TaskEditActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listView = (ListView)view.findViewById(R.id.listView);
+        list = readDB();
+        taskAdapter = new TaskAdapter(getActivity(), list);
+        listView.setAdapter(taskAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), TaskCheckActivity.class);
+                Task task = taskAdapter.getItem(i);
+                intent.putExtra("task", task);
+                startActivity(intent);
+            }
+        });
+        return view;
+    }
+
+    /*@Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         getSupportActionBar().setTitle("任务打卡");
@@ -48,25 +76,25 @@ public class TaskActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TaskActivity.this, TaskEditActivity.class);
+                Intent intent = new Intent(TaskFragment.this, TaskEditActivity.class);
                 startActivity(intent);
             }
         });
 
         listView = (ListView)findViewById(R.id.listView);
         list = readDB();
-        taskAdapter = new TaskAdapter(TaskActivity.this, list);
+        taskAdapter = new TaskAdapter(TaskFragment.this, list);
         listView.setAdapter(taskAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(TaskActivity.this, TaskCheckActivity.class);
+                Intent intent = new Intent(TaskFragment.this, TaskCheckActivity.class);
                 Task task = taskAdapter.getItem(i);
                 intent.putExtra("task", task);
                 startActivity(intent);
             }
         });
-    }
+    }*/
 
     public List<Task> readDB() {
         List<Task> result = new ArrayList<>();
