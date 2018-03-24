@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ import java.text.SimpleDateFormat;
 
 public class AnniversaryEditActivity extends AppCompatActivity {
 
+    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
     private ImageButton ib_back;
     private ImageButton ib_save;
     private EditText an_name;
@@ -88,8 +90,10 @@ public class AnniversaryEditActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 monthOfYear = monthOfYear+1;
-                String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
-                String day = (dayOfMonth < 10) ? ("0" + dayOfMonth) :("" + dayOfMonth);
+                //String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
+                //String day = (dayOfMonth < 10) ? ("0" + dayOfMonth) :("" + dayOfMonth);
+                String month = monthOfYear+"";
+                String day = dayOfMonth+"";
                 an_date.setText(year+"年"+month+"月"+day+"日");
             }
         },
@@ -99,9 +103,10 @@ public class AnniversaryEditActivity extends AppCompatActivity {
     }
 
     public void setDate() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-        Date ymd = new Date(System.currentTimeMillis());
-        an_date.setText(simpleDateFormat.format(ymd));
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        //Date ymd = new Date(System.currentTimeMillis());
+        //an_date.setText(simpleDateFormat.format(ymd));
+        an_date.setText(FORMATTER.format(System.currentTimeMillis()));
     }
 
     public void addInDB(String name, String date, String notes) {
@@ -116,7 +121,7 @@ public class AnniversaryEditActivity extends AppCompatActivity {
         String ad_id = anniversaryDay.getId();
         SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("name", name);;
+        values.put("name", name);
         values.put("date", date);
         values.put("notes", notes);
         dbUpdate.update(MyDatabaseHelper.ANNIVERSARY_TABLE_NAME, values,

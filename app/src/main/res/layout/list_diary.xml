@@ -1,51 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_margin="10dp"
-    android:padding="10dp"
+    android:layout_margin="5dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/diary_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:text="diary_content"
-        android:textSize="20sp"
-        android:maxHeight="30dp"
-        android:lineSpacingMultiplier="5"
-        android:textColor="#000000"/>
-
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardPreventCornerOverlap="true">
 
-        <TextView
-            android:id="@+id/diary_date"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="diary_time:2017.03.29"
-            android:textColor="#000000"
-            android:maxWidth="115dp"
-            android:maxHeight="20dp"
-            android:lineSpacingMultiplier="5"
-            android:layout_marginRight="5dp"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/diary_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:textColor="#000000"
-            android:text="city"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/diary_weather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:text="weather"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/diary_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2017-03-29"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorPrimary"/>
 
+                <TextView
+                    android:id="@+id/diary_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:textSize="20sp"
+                    android:text="city"/>
+
+                <TextView
+                    android:id="@+id/diary_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:text="weather"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#cdcdcd"/>
+            <TextView
+                android:id="@+id/diary_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="diary_content"
+                android:maxLines="3"
+                android:textSize="18sp"
+                android:textColor="#000000"/>
+         </LinearLayout>
+    </android.support.v7.widget.CardView>
 </LinearLayout>

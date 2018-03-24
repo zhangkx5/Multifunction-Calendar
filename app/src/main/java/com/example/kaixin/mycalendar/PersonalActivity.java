@@ -26,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -80,8 +82,7 @@ public class PersonalActivity extends AppCompatActivity {
                 email.setText("");
                 notes.setText("");
                 photo.setImageResource(R.mipmap.ic_user);
-                BmobUser.logOut();
-                BmobUser currentUser = BmobUser.getCurrentUser();
+                UserUtils.LogOut();
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {
@@ -120,18 +121,7 @@ public class PersonalActivity extends AppCompatActivity {
                         } */else {
                             final String oldpwd = oldPassword.getText().toString();
                             final String newpwd = newPassword.getText().toString();
-
-                            bmobUser = BmobUser.getCurrentUser(MyUser.class);
-                            BmobUser.updateCurrentUserPassword(oldpwd, newpwd, new UpdateListener() {
-                                @Override
-                                public void done(BmobException e) {
-                                    if (e == null) {
-                                        Toast.makeText(PersonalActivity.this, "密码修改成功", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(PersonalActivity.this, oldpwd+"\n"+newpwd+"\n"+"密码修改失败："+e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+                            UserUtils.ResetPassword(PersonalActivity.this, oldpwd, newpwd);
                         }
                         dialog.dismiss();
                     }
@@ -369,18 +359,7 @@ public class PersonalActivity extends AppCompatActivity {
             @Override
             public void done(BmobException e) {
                 if (e == null) {
-                    MyUser newUser = new MyUser();
-                    newUser.setUrlPic(bmobFile.getFileUrl());
-                    newUser.update(bmobUser.getObjectId(), new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if (e == null) {
-                                Toast.makeText(PersonalActivity.this, "更新信息成功", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(PersonalActivity.this, "更新信息失败", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    UserUtils.UpdateUserUriPic(PersonalActivity.this, bmobFile.getFileUrl());
                 } else {
                     Toast.makeText(PersonalActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
                 }
@@ -395,18 +374,7 @@ public class PersonalActivity extends AppCompatActivity {
         builder.setSingleChoiceItems(sex_list, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                MyUser newUser = new MyUser();
-                newUser.setSex(sex_list[i]);
-                newUser.update(bmobUser.getObjectId(), new UpdateListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e == null) {
-                            Toast.makeText(PersonalActivity.this, "更新信息成功", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(PersonalActivity.this, "更新信息失败", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                UserUtils.UpdateUserSex(PersonalActivity.this, sex_list[i]);
                 sex.setText(sex_list[i]);
                 dialogInterface.dismiss();
             }
@@ -424,18 +392,7 @@ public class PersonalActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MyUser newUser = new MyUser();
-                newUser.setNotes(et_notes.getText().toString());
-                newUser.update(bmobUser.getObjectId(), new UpdateListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e == null) {
-                            Toast.makeText(PersonalActivity.this, "更新信息成功", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(PersonalActivity.this, "更新信息失败", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                UserUtils.UpdateUserNotes(PersonalActivity.this, et_notes.getText().toString());
                 notes.setText(et_notes.getText().toString());
                 dialog.dismiss();
             }
@@ -454,18 +411,7 @@ public class PersonalActivity extends AppCompatActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MyUser newUser = new MyUser();
-                newUser.setNotes(et_name.getText().toString());
-                newUser.update(bmobUser.getObjectId(), new UpdateListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e == null) {
-                            Toast.makeText(PersonalActivity.this, "更新信息成功", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(PersonalActivity.this, "更新信息失败", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                UserUtils.UpdateUserName(PersonalActivity.this, et_name.getText().toString());
                 name.setText(et_name.getText().toString());
                 dialog.dismiss();
             }

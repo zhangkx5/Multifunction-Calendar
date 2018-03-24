@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -48,7 +50,8 @@ public class SignUpFragment extends Fragment{
                     //注册失败
 
                     //注册成功
-                    MyUser bmobUser = new MyUser();
+                    UserUtils.SignUpUser(getContext(), username.getText().toString(),password.getText().toString(),email.getText().toString());
+                    /*MyUser bmobUser = new MyUser();
                     bmobUser.setUsername(username.getText().toString());
                     bmobUser.setPassword(password.getText().toString());
                     bmobUser.setEmail(email.getText().toString());
@@ -62,7 +65,7 @@ public class SignUpFragment extends Fragment{
                                 Toast.makeText(getActivity(), "注册失败", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
+                    });*/
                 }
             }
         });

@@ -1,5 +1,6 @@
 package com.example.kaixin.mycalendar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -26,8 +27,8 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import cn.bmob.v3.Bmob;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity/*
+        implements NavigationView.OnNavigationItemSelectedListener */{
 
     //by kaixin
     MaterialCalendarView materialCalendarView;
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    /*@SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
+    }*/
 
     //by kaixin
     boolean flag = false;
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity
         //setTabs(mTabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         myViewPager.setAdapter(myViewPagerAdapter);
-        myViewPager.setCanSlide(false);
+        //myViewPager.setCanSlide(false);
         //myViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         //mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(myViewPager));
 
@@ -265,4 +266,5 @@ public class MainActivity extends AppCompatActivity
             return COUNT;
         }
     }
+
 }

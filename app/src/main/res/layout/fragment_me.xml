@@ -5,38 +5,76 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/personal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#FFFFFFFF"
         android:layout_margin="10dp"
-        android:padding="10dp"
-        android:text="个人中心"
-        android:textColor="#000000"
-        android:textSize="15sp" />
+        android:layout_marginTop="1dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_user"/>
 
-    <TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:text="个人中心"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
         android:id="@+id/synchronize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#FFFFFFFF"
         android:layout_margin="10dp"
-        android:padding="10dp"
-        android:text="同步"
-        android:textColor="#000000"
-        android:textSize="15sp"/>
+        android:layout_marginTop="1dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_synchronize"/>
 
-    <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:text="同步"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="#FFFFFFFF"
         android:layout_margin="10dp"
-        android:padding="10dp"
-        android:text="设置"
-        android:textColor="#000000"
-        android:textSize="15sp"/>
+        android:layout_marginTop="1dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_setting"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:text="设置"
+            android:textSize="20sp"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/switch_account"

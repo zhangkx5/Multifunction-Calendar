@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -14,13 +15,14 @@ import android.widget.TextView;
 
 public class MeFragment extends Fragment {
 
-    private TextView personal, synchronize, setting, switch_account, logout;
+    private LinearLayout personal, synchronize, setting;
+    private TextView switch_account, logout;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_me, container, false);
-        personal = (TextView) view.findViewById(R.id.personal);
-        synchronize = (TextView) view.findViewById(R.id.synchronize);
-        setting = (TextView) view.findViewById(R.id.setting);
+        personal = (LinearLayout) view.findViewById(R.id.personal);
+        synchronize = (LinearLayout) view.findViewById(R.id.synchronize);
+        setting = (LinearLayout) view.findViewById(R.id.setting);
         switch_account = (TextView) view.findViewById(R.id.switch_account);
         logout = (TextView) view.findViewById(R.id.logout);
 

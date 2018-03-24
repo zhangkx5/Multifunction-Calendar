@@ -39,6 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity"
+            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".PersonalActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.LogInListener;
@@ -44,7 +46,7 @@ public class LoginFragment extends Fragment{
                     //判断网络
 
                     //登录成功
-                    BmobUser.loginByAccount(email.getText().toString(), password.getText().toString(), new LogInListener<MyUser>() {
+                    /*BmobUser.loginByAccount(email.getText().toString(), password.getText().toString(), new LogInListener<MyUser>() {
                         @Override
                         public void done(MyUser user, BmobException e) {
                             if (user != null) {
@@ -55,7 +57,8 @@ public class LoginFragment extends Fragment{
                                 startActivity(intent);
                             }
                         }
-                    });
+                    });*/
+                    UserUtils.Login(getContext(), email.getText().toString(), password.getText().toString());
                 }
             }
         });
@@ -65,7 +68,7 @@ public class LoginFragment extends Fragment{
                 if (TextUtils.isEmpty(email.getText().toString())) {
                     Toast.makeText(getActivity(), "请输入邮箱账号", Toast.LENGTH_SHORT).show();
                 } else {
-                    BmobUser.resetPasswordByEmail(email.getText().toString(), new UpdateListener() {
+                    /*BmobUser.resetPasswordByEmail(email.getText().toString(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
@@ -74,7 +77,8 @@ public class LoginFragment extends Fragment{
                                 Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
+                    });*/
+                    UserUtils.LostPassword(getContext(), email.getText().toString());
                 }
             }
         });
