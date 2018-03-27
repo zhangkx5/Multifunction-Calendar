@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.kaixin.mycalendar.Bean.Task;
+import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,10 +33,10 @@ public class TaskFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        list = readDB();
+        //list = readDB();
         //taskAdapter = new TaskAdapter(TaskFragment.this, list);
-        taskAdapter = new TaskAdapter(getActivity(), list);
-        listView.setAdapter(taskAdapter);
+        //taskAdapter = new TaskAdapter(getActivity(), list);
+        //listView.setAdapter(taskAdapter);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,9 +53,9 @@ public class TaskFragment extends Fragment {
         });
 
         listView = (ListView)view.findViewById(R.id.listView);
-        list = readDB();
-        taskAdapter = new TaskAdapter(getActivity(), list);
-        listView.setAdapter(taskAdapter);
+        //list = readDB();
+        //taskAdapter = new TaskAdapter(getActivity(), list);
+        //listView.setAdapter(taskAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -101,12 +104,12 @@ public class TaskFragment extends Fragment {
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
         Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.TASK_TABLE_SELECT, null);
         while (cursor.moveToNext()) {
-            String tsid = cursor.getString(cursor.getColumnIndex("tsid"));
+            /*String tsid = cursor.getString(cursor.getColumnIndex("tsid"));
             String date = cursor.getString(cursor.getColumnIndex("date"));
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            Task task = new Task(tsid, date, name, notes);
-            result.add(task);
+            Task task = new Task(tsid, date, name, notes, "");
+            result.add(task);*/
         }
         Collections.reverse(result);
         return result;

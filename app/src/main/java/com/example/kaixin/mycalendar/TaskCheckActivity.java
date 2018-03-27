@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -14,13 +13,14 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Bean.Task;
+import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by kaixin on 2018/3/16.
@@ -54,7 +54,7 @@ public class TaskCheckActivity extends AppCompatActivity{
         Intent intent = getIntent();
         if (intent != null) {
             task = (Task)intent.getSerializableExtra("task");
-            title.setText(task.getName());
+            title.setText(task.getTaskName());
         } else {
             TaskCheckActivity.this.finish();
         }
@@ -68,7 +68,7 @@ public class TaskCheckActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 if (check.getText().toString() != "今日已打卡") {
-                    addInDB(task.getName());
+                    addInDB(task.getTaskName());
                     check.setText("今日已打卡");
                     Toast.makeText(TaskCheckActivity.this, "打卡成功", Toast.LENGTH_SHORT).show();
                 }
@@ -83,7 +83,7 @@ public class TaskCheckActivity extends AppCompatActivity{
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date(System.currentTimeMillis());
         String date = simpleDateFormat.format(today);
-        String[] selectionArgs = new String[]{task.getName(), date};
+        String[] selectionArgs = new String[]{task.getTaskName(), date};
         Cursor cursor = dbRead.query(table, null, selection, selectionArgs, null, null, null);
         if (cursor.getCount() != 0) {
             check.setText("今日已打卡");
@@ -107,7 +107,7 @@ public class TaskCheckActivity extends AppCompatActivity{
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
         String table = MyDatabaseHelper.CHECK_TABLE_NAME;
         String selection = "task = ?";
-        String[] selectionArgs = new String[]{task.getName()};
+        String[] selectionArgs = new String[]{task.getTaskName()};
         Cursor cursor = dbRead.query(table, null, selection, selectionArgs, null, null, null);
         Toast.makeText(TaskCheckActivity.this, "搜索", Toast.LENGTH_SHORT).show();
         while (cursor.moveToNext()) {

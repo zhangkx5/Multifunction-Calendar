@@ -7,19 +7,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Bean.BmobDiary;
+
 import java.util.List;
 
 /**
  * Created by kaixin on 2018/3/13.
  */
 
-public class DiaryAdapter extends ArrayAdapter<Diary> {
+public class DiaryAdapter extends ArrayAdapter<BmobDiary> {
 
     private int resourceId = R.layout.list_diary;
-    private List<Diary> list;
+    private List<BmobDiary> list;
     private Context context;
 
-    public DiaryAdapter(Context context, List<Diary> diaryList) {
+    public DiaryAdapter(Context context, List<BmobDiary> diaryList) {
         super(context, R.layout.list_diary, diaryList);
         this.context = context;
         this.list = diaryList;
@@ -34,7 +36,7 @@ public class DiaryAdapter extends ArrayAdapter<Diary> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Diary diary = getItem(position);
+        BmobDiary diary = getItem(position);
         ViewHolder viewHolder = null;
         if (convertView == null) {
             viewHolder = new ViewHolder();
@@ -47,15 +49,15 @@ public class DiaryAdapter extends ArrayAdapter<Diary> {
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.diary_content.setText(diary.getContent());
-        viewHolder.diary_address.setText(diary.getAddress());
-        viewHolder.diary_weather.setText(diary.getWeather());
-        viewHolder.diary_date.setText(diary.getDate());
+        viewHolder.diary_content.setText(diary.getDiaryContent());
+        viewHolder.diary_address.setText(diary.getDiaryAddress());
+        viewHolder.diary_weather.setText(diary.getDiaryWeather());
+        viewHolder.diary_date.setText(diary.getDiaryDate());
         return convertView;
     }
 
     @Override
-    public Diary getItem(int position) {
+    public BmobDiary getItem(int position) {
         return list.get(position);
     }
 

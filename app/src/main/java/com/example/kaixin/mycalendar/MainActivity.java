@@ -1,13 +1,17 @@
 package com.example.kaixin.mycalendar;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -53,86 +57,32 @@ public class MainActivity extends AppCompatActivity/*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setPermissions();
         Bmob.initialize(this, "9b0b1ad0d1c9c081739ab99a3e05fe98");
-        //by kaixin
         initViews();
 
-
-        /*widget.setShowOtherDates(MaterialCalendarView.SHOW_ALL);
-        widget.setArrowColor(getResources().getColor(R.color.sample_primary));
-        widget.setLeftArrowMask(getResources().getDrawable(R.drawable.ic_navigation_arrow_back));
-        widget.setRightArrowMask(getResources().getDrawable(R.drawable.ic_navigation_arrow_forward));
-        widget.setSelectionColor(getResources().getColor(R.color.sample_primary));
-        widget.setHeaderTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-        widget.setWeekDayTextAppearance(R.style.TextAppearance_AppCompat_Medium);
-        widget.setDateTextAppearance(R.style.CustomDayTextAppearance);
-        widget.setTitleFormatter(new MonthArrayTitleFormatter(getResources().getTextArray(R.array.custom_months)));
-        widget.setWeekDayFormatter(new ArrayWeekDayFormatter(getResources().getTextArray(R.array.custom_weekdays)));
-        widget.setTileSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics()));*/
-
-        /*ImageView imageView = (ImageView)findViewById(R.id.imageView);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });*/
-
-
-        //20180323
-        /*final TextView textView = (TextView) findViewById(R.id.textView);
-        materialCalendarView = (MaterialCalendarView) findViewById(R.id.calendarView);
-        materialCalendarView.setWeekDayFormatter(new ArrayWeekDayFormatter(getResources().getTextArray(R.array.weekdaysTitle)));
-        materialCalendarView.state().edit()
-                .setMinimumDate(CalendarDay.from(2018, 0, 1))
-                .setMaximumDate(CalendarDay.from(2018, 4, 1))
-                .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setCalendarDisplayMode(CalendarMode.MONTHS)
-                .commit();
-        materialCalendarView.addDecorators(
-                new HighlightWeekendsDecorator(),
-                new TodayDecorator(),
-                new EventDecorator()
-        );
-        CalendarDay today = CalendarDay.today();
-        int tMonth = today.getMonth()+1;
-        getSupportActionBar().setTitle(today.getYear()+"年"+tMonth+"月"+today.getDay()+"日");
-        materialCalendarView.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                selectedDate = date;
-                Calendar lunar = date.getCalendar();
-                LunarCalendar lunarCalendar = new LunarCalendar(lunar);
-                textView.setText(""+date.getDay() + " " + lunarCalendar.toString());
-                int dMonth = date.getMonth()+1;
-                getSupportActionBar().setTitle(date.getYear()+"年"+dMonth+"月"+date.getDay()+"日");
-            }
-        });
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                // by kaixin
-                getTime();
-            }
-        });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);*/
     }
 
+    final String[] PERMISSION = new String[] {
+            Manifest.permission.READ_EXTERNAL_STORAGE,  //写入权限
+            Manifest.permission.CAMERA,// 相机权限
+            Manifest.permission.ACCESS_COARSE_LOCATION,// 定位权限
+
+    };
+    private void setPermissions() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSION, 0);
+        }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSION, 1);
+        }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSION, 2);
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -167,55 +117,7 @@ public class MainActivity extends AppCompatActivity/*
             startActivity(intent);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    /*@SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_schedule) {
-            Intent intent = new Intent(this, ScheduleActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_diary) {
-            Intent intent = new Intent(this, DiaryActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_anniversary) {
-            Intent intent = new Intent(this, AnniversaryActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_account) {
-            Intent intent = new Intent(this, AccountActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_weather) {
-            Intent intent = new Intent(this, WeatherActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_task) {
-            Intent intent = new Intent(this, TaskFragment.class);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }*/
-
-    //by kaixin
-    boolean flag = false;
-    public void getTime() {
-        if (flag == false) {
-            materialCalendarView.state().edit()
-                    .setCalendarDisplayMode(CalendarMode.WEEKS)
-                    .commit();
-            flag = true;
-        } else {
-            materialCalendarView.state().edit()
-                    .setCalendarDisplayMode(CalendarMode.MONTHS)
-                    .commit();
-            flag = false;
-        }
     }
 
     private void initViews() {

@@ -1,4 +1,4 @@
-package com.example.kaixin.mycalendar;
+package com.example.kaixin.mycalendar.Bean;
 
 /**
  * Created by kaixin on 2018/3/9.

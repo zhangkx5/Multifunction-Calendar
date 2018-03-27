@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Bean.Task;
+
 import java.util.List;
 
 /**
@@ -40,7 +42,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.task_name.setText(task.getName());
+        viewHolder.task_name.setText(task.getTaskName());
         return convertView;
     }
 

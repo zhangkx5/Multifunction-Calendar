@@ -1,8 +1,8 @@
 package com.example.kaixin.mycalendar;
 
-import android.content.ContentValues;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,6 +11,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.kaixin.mycalendar.Bean.Schedule;
+import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,14 +31,84 @@ public class ScheduleEditActivity extends AppCompatActivity{
     private EditText schedule_title, schedule_address, schedule_notes;
     private TextView schedule_start, schedule_end, schedule_call;
     private DateTimePicker dateTimePicker1, dateTimePicker2, dateTimePicker3;
-    private MyDatabaseHelper myDatabaseHelper;
     private Schedule schedule = null;
 
+    ProgressDialog progressDialog;
+    public void createSchedule() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(ScheduleEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ScheduleEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                ScheduleUtils.createBmobSchedule(ScheduleEditActivity.this, getSchedultTitle(),
+                        getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+    public void updateSchedule() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(ScheduleEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ScheduleEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                ScheduleUtils.updateLocalSchedule(ScheduleEditActivity.this,
+                        schedule.getObjectId(), getSchedultTitle(), getAddress(),
+                        getStartTime(), getEndTime(), getCallTime(), getNotes());
+                ScheduleUtils.upadteBmobSchedule(schedule.getObjectId(), getSchedultTitle(),
+                        getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
     @Override
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_schedule_edit);
-        myDatabaseHelper = new MyDatabaseHelper(this);
 
         ib_back = (ImageButton)findViewById(R.id.ib_back);
         ib_save = (ImageButton)findViewById(R.id.ib_save);
@@ -56,11 +131,25 @@ public class ScheduleEditActivity extends AppCompatActivity{
                 if (TextUtils.isEmpty(schedule_title.getText().toString())) {
                     Toast.makeText(ScheduleEditActivity.this, "请输入标题", Toast.LENGTH_SHORT).show();
                 } else if (schedule != null){
-                    updateInDB(schedule);
-                    ScheduleEditActivity.this.finish();
+                    updateSchedule();
+                    /*ScheduleUtils.upadteBmobSchedule(schedule.getObjectId(), getSchedultTitle(), getAddress(),
+                            getStartTime(), getEndTime(), getCallTime(), getNotes());*/
+                    /*ScheduleUtils.updateLocalSchedule(ScheduleEditActivity.this,
+                            schedule.getObjectId(), getSchedultTitle(), getAddress(),
+                            getStartTime(), getEndTime(), getCallTime(), getNotes());
+                    ScheduleEditActivity.this.finish();*/
                 } else {
-                    addInDB(getSchedultTitle(), getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
-                    ScheduleEditActivity.this.finish();
+                    createSchedule();
+                    /*String id = String.valueOf(System.currentTimeMillis());
+                    String user_id = UserUtils.getUserId(ScheduleEditActivity.this);
+                    Schedule sc = ScheduleUtils.createBmobSchedule(getSchedultTitle(), getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                    if (sc != null) {
+                        id = sc.getObjectId();
+                        user_id = sc.getUserId();
+                    }
+                    ScheduleUtils.createLocalSchedule(ScheduleEditActivity.this, id, user_id,
+                            getSchedultTitle(), getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                    ScheduleEditActivity.this.finish();*/
                 }
             }
         });
@@ -88,36 +177,15 @@ public class ScheduleEditActivity extends AppCompatActivity{
         Intent intent = getIntent();
         schedule = (Schedule)intent.getSerializableExtra("schedule");
         if (schedule != null) {
-            schedule_title.setText(schedule.getTitle());
-            schedule_address.setText(schedule.getAddress());
-            schedule_start.setText(schedule.getStart());
-            schedule_end.setText(schedule.getEnd());
-            schedule_call.setText(schedule.getCall());
-            schedule_notes.setText(schedule.getNotes());
+            schedule_title.setText(schedule.getScheduleTitle());
+            schedule_address.setText(schedule.getScheduleAddress());
+            schedule_start.setText(schedule.getScheduleStart());
+            schedule_end.setText(schedule.getScheduleEnd());
+            schedule_call.setText(schedule.getScheduleCall());
+            schedule_notes.setText(schedule.getScheduleNotes());
         }
     }
 
-    public void addInDB(String title, String address, String start, String end, String call, String notes) {
-        String sc_id = String.valueOf(System.currentTimeMillis());
-        SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
-        dbWrite.execSQL(MyDatabaseHelper.SCHEDULE_TABLE_INSERT, new Object[]{sc_id, title, address, start, end, call, notes});
-        dbWrite.close();
-        Toast.makeText(ScheduleEditActivity.this, sc_id + title + "?", Toast.LENGTH_SHORT).show();
-    }
-
-    public void updateInDB(Schedule schedule) {
-        String sc_id = schedule.getId();
-        SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("title", getSchedultTitle());
-        values.put("address", getAddress());
-        values.put("start", getStartTime());
-        values.put("end", getEndTime());
-        values.put("call", getCallTime());
-        values.put("notes", getNotes());
-        dbUpdate.update(MyDatabaseHelper.SCHEDULE_TABLE_NAME, values,
-                "scid = ?", new String[]{sc_id});
-    }
     private void initDateTimePicker() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
         String now = sdf.format(new Date());

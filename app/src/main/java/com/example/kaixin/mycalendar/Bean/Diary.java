@@ -1,4 +1,4 @@
-package com.example.kaixin.mycalendar;
+package com.example.kaixin.mycalendar.Bean;
 
 import java.io.Serializable;
 

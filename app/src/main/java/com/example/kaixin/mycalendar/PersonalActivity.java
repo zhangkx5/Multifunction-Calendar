@@ -82,7 +82,7 @@ public class PersonalActivity extends AppCompatActivity {
                 email.setText("");
                 notes.setText("");
                 photo.setImageResource(R.mipmap.ic_user);
-                UserUtils.LogOut();
+                UserUtils.LogOut(PersonalActivity.this);
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {
@@ -136,32 +136,24 @@ public class PersonalActivity extends AppCompatActivity {
             sex.setText(bmobUser.getSex());
             notes.setText(bmobUser.getNotes());
             userId = bmobUser.getObjectId();
-            String phtotUrl = Environment.getExternalStorageDirectory().getPath() + "/mycalendar/" + userId + ".jpg";
-            File userPhoto = new File(phtotUrl);
-            if (!userPhoto.exists()) {
-                if (bmobUser.getUrlPic() != "") {
-                    new ImageAsyncTack(photo).execute(phtotUrl);
-                    /*PhotoAsyncTask photoAsyncTack = new PhotoAsyncTask();
-                    photoAsyncTack.execute(phtotUrl);
-                    /*BmobFile bmobFile = new BmobFile(userId + ".jpg", "", bmobUser.getUrlPic());
-                    downloadImage(bmobFile);
+            if (!("".equals(bmobUser.getUrlPic()) && bmobUser.getUrlPic() == null)) {
+                String phtotUrl = Environment.getExternalStorageDirectory().getPath() + "/mycalendar/" + userId + ".jpg";
+                File userPhoto = new File(phtotUrl);
+                if (!userPhoto.exists()) {
+                    try {
+                        new ImageAsyncTack(photo).execute(phtotUrl);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     try {
                         FileInputStream fileInputStream = new FileInputStream(phtotUrl);
                         Bitmap bm = BitmapFactory.decodeStream(fileInputStream);
                         photo.setImageBitmap(bm);
-                        Toast.makeText(PersonalActivity.this, "这是下载的图片", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PersonalActivity.this, "这是本地图片", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }*/
-                }
-            } else {
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(phtotUrl);
-                    Bitmap bm = BitmapFactory.decodeStream(fileInputStream);
-                    photo.setImageBitmap(bm);
-                    Toast.makeText(PersonalActivity.this, "这是本地图片", Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    }
                 }
             }
         } else {

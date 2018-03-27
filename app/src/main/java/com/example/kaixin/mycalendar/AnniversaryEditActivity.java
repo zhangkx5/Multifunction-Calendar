@@ -1,9 +1,9 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.DatePickerDialog;
-import android.content.ContentValues;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,9 +14,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
+import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 
 /**
@@ -31,13 +34,12 @@ public class AnniversaryEditActivity extends AppCompatActivity {
     private EditText an_name;
     private EditText an_notes;
     private TextView an_date;
-    private MyDatabaseHelper myDatabaseHelper;
     private AnniversaryDay anniversaryDay = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anniversary_edit);
-        myDatabaseHelper = new MyDatabaseHelper(this);
 
         ib_back = (ImageButton)findViewById(R.id.ib_back);
         ib_save = (ImageButton)findViewById(R.id.ib_save);
@@ -58,13 +60,10 @@ public class AnniversaryEditActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(getName())) {
                     Toast.makeText(AnniversaryEditActivity.this, "请输入标题", Toast.LENGTH_SHORT).show();
                 } else if (anniversaryDay != null){
-                    updateInBD(anniversaryDay, getName(), getDate(), getNotes());
-                    AnniversaryEditActivity.this.finish();
+                    updateAnniversary();
                 } else {
-                    addInDB(getName(), getDate(), getNotes());
-                    AnniversaryEditActivity.this.finish();
+                    createAnniversary();
                 }
-
             }
         });
 
@@ -78,12 +77,81 @@ public class AnniversaryEditActivity extends AppCompatActivity {
         Intent intent = getIntent();
         anniversaryDay = (AnniversaryDay)intent.getSerializableExtra("anniversaryDay");
         if (anniversaryDay != null) {
-            an_name.setText(anniversaryDay.getName());
-            an_date.setText(anniversaryDay.getDate());
-            an_notes.setText(anniversaryDay.getNotes());
+            an_name.setText(anniversaryDay.getAnniversaryName());
+            an_date.setText(anniversaryDay.getAnniversaryDate());
+            an_notes.setText(anniversaryDay.getAnniversaryNotes());
         }
     }
 
+    ProgressDialog progressDialog;
+    public void createAnniversary() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(AnniversaryEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                AnniversaryEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                AnniversaryUtils.createBmobAnniversary(AnniversaryEditActivity.this, getName(), getDate(), getNotes());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+    public void updateAnniversary() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(AnniversaryEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                AnniversaryEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                AnniversaryUtils.updateLocalAnniversary(AnniversaryEditActivity.this,
+                        anniversaryDay.getObjectId(), getName(), getDate(), getNotes());
+                AnniversaryUtils.upadteBmobAnniversaryDay(anniversaryDay.getObjectId(), getName(), getDate(), getNotes());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
     public void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -109,24 +177,6 @@ public class AnniversaryEditActivity extends AppCompatActivity {
         an_date.setText(FORMATTER.format(System.currentTimeMillis()));
     }
 
-    public void addInDB(String name, String date, String notes) {
-        String ad_id = String.valueOf(System.currentTimeMillis());
-        SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
-        dbWrite.execSQL(MyDatabaseHelper.ANNIVERSARY_TABLE_INSERT, new Object[]{ad_id, name, date, notes});
-        dbWrite.close();
-        Toast.makeText(AnniversaryEditActivity.this, ad_id + getName() + getDate() + getNotes(), Toast.LENGTH_SHORT).show();
-    }
-
-    public void updateInBD(AnniversaryDay anniversaryDay, String name, String date, String notes) {
-        String ad_id = anniversaryDay.getId();
-        SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("date", date);
-        values.put("notes", notes);
-        dbUpdate.update(MyDatabaseHelper.ANNIVERSARY_TABLE_NAME, values,
-                "adid = ?", new String[] {ad_id});
-    }
     public String getName() {
         return an_name.getText().toString();
     }

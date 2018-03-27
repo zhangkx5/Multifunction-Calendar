@@ -2,8 +2,6 @@ package com.example.kaixin.mycalendar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -12,8 +10,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import com.example.kaixin.mycalendar.Bean.Schedule;
+import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import java.util.List;
 
 /**
@@ -30,7 +31,11 @@ public class ScheduleActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        list = readDB();
+        list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        if (list.size() == 0) {
+            ScheduleUtils.queryAllBmobSchedule(this);
+            list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        }
         scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
         listView.setAdapter(scheduleAdapter);
     }
@@ -51,7 +56,12 @@ public class ScheduleActivity extends AppCompatActivity {
         });
 
         listView = (ListView)findViewById(R.id.listView);
-        list = readDB();
+
+        list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        if (list.size() == 0) {
+            ScheduleUtils.queryAllBmobSchedule(this);
+            list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        }
         scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
         listView.setAdapter(scheduleAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,7 +89,8 @@ public class ScheduleActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Schedule schedule = scheduleAdapter.getItem(pos);
-                        deleteInDB(schedule.getId());
+                        ScheduleUtils.deleteBmobSchedule(schedule.getObjectId());
+                        ScheduleUtils.deleteLocalSchedule(ScheduleActivity.this, schedule.getObjectId());
                         list.remove(pos);
                         scheduleAdapter.notifyDataSetChanged();
                         dialogInterface.dismiss();
@@ -89,31 +100,5 @@ public class ScheduleActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    public List<Schedule> readDB() {
-        List<Schedule> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.SCHEDULE_TABLE_SELECT, null);
-        while (cursor.moveToNext()) {
-            String scid = cursor.getString(cursor.getColumnIndex("scid"));
-            String title = cursor.getString(cursor.getColumnIndex("title"));
-            String address = cursor.getString(cursor.getColumnIndex("address"));
-            String start = cursor.getString(cursor.getColumnIndex("start"));
-            String end = cursor.getString(cursor.getColumnIndex("end"));
-            String call = cursor.getString(cursor.getColumnIndex("call"));
-            String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            Schedule schedule = new Schedule(scid, title, address, start, end, call, notes);
-            result.add(schedule);
-        }
-        Collections.reverse(result);
-        cursor.close();
-        dbRead.close();
-        return result;
-    }
-    public void deleteInDB(String id) {
-        SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
-        dbDelete.execSQL(MyDatabaseHelper.SCHEDULE_TABLE_DELETE, new Object[]{id});
-        dbDelete.close();
     }
 }

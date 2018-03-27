@@ -2,6 +2,7 @@ package com.example.kaixin.mycalendar.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ public class UserUtils {
                 if (user != null) {
                     Toast.makeText(mContext, "登录成功", Toast.LENGTH_SHORT).show();
                     Log.i("smile", "用户登录成功");
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
+                    editor.putString("user_id", user.getObjectId());
                     Intent intent = new Intent(mContext, PersonalActivity.class);
                     mContext.startActivity(intent);
                 }
@@ -56,8 +59,8 @@ public class UserUtils {
         });
     }
 
-    //is user online
-    public static MyUser IsOnLine() {
+    //get current user
+    public static MyUser getCurrentUser() {
         return BmobUser.getCurrentUser(MyUser.class);
     }
 
@@ -165,8 +168,19 @@ public class UserUtils {
     }
 
     // logout
-    public static void LogOut() {
+    public static void LogOut(Context mContext) {
         BmobUser.logOut();
         MyUser bmobUser = BmobUser.getCurrentUser(MyUser.class);
+        SharedPreferences.Editor editor = mContext.getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
+        editor.putString("user_id", "unknown");
+    }
+
+    public static String getUserId(Context context) {
+        MyUser bmobUser = BmobUser.getCurrentUser(MyUser.class);
+        if (bmobUser != null) {
+            return bmobUser.getObjectId();
+        }
+        SharedPreferences pref = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        return pref.getString("user_id", "unknown");
     }
 }

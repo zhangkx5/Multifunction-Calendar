@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,10 +48,10 @@ public class AnniversaryAdapter extends ArrayAdapter<AnniversaryDay>{
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.an_name.setText(anniversaryDay.getName());
+        viewHolder.an_name.setText(anniversaryDay.getAnniversaryName());
         String from = "";
         try {
-            from = "" + fromThatDay(anniversaryDay.getDate());
+            from = "" + fromThatDay(anniversaryDay.getAnniversaryDate());
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Bean.Schedule;
+
 import java.util.List;
 
 /**
@@ -40,9 +42,9 @@ public class ScheduleAdapter extends ArrayAdapter<Schedule>{
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.schedule_title.setText(schedule.getTitle());
-        viewHolder.schedule_start.setText(schedule.getStart());
-        viewHolder.schedule_end.setText(schedule.getEnd());
+        viewHolder.schedule_title.setText(schedule.getScheduleTitle());
+        viewHolder.schedule_start.setText(schedule.getScheduleStart());
+        viewHolder.schedule_end.setText(schedule.getScheduleEnd());
         return convertView;
     }
 

@@ -2,7 +2,6 @@ package com.example.kaixin.mycalendar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
+import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 
 import java.text.ParseException;
 
@@ -19,7 +21,6 @@ import java.text.ParseException;
 
 public class AnniversaryDetailsActivity  extends AppCompatActivity {
 
-    private MyDatabaseHelper myDatabaseHelper;
     private TextView an_name, an_date, an_notes, an_from, an_next;
     private ImageButton ib_back, ib_delete;
     private Button btn_edit;
@@ -28,7 +29,6 @@ public class AnniversaryDetailsActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anniversary_details);
 
-        myDatabaseHelper = new MyDatabaseHelper(this);
         ib_back = (ImageButton) findViewById(R.id.ib_back);
         ib_delete = (ImageButton) findViewById(R.id.ib_delete);
         an_name = (TextView)findViewById(R.id.name);
@@ -40,15 +40,15 @@ public class AnniversaryDetailsActivity  extends AppCompatActivity {
 
         Intent intent = getIntent();
         final AnniversaryDay anniversaryDay = (AnniversaryDay)intent.getSerializableExtra("anniversaryDay");
-        an_name.setText(anniversaryDay.getName());
-        an_date.setText("起始日期：" + anniversaryDay.getDate());
-        an_notes.setText(anniversaryDay.getNotes());
-        an_next.setText(anniversaryDay.getId());
+        an_name.setText(anniversaryDay.getAnniversaryName());
+        an_date.setText("起始日期：" + anniversaryDay.getAnniversaryDate());
+        an_notes.setText(anniversaryDay.getAnniversaryNotes());
+        an_next.setText(anniversaryDay.getObjectId());
         an_from.setText("--");
         try {
-            String from = AnniversaryAdapter.fromThatDay(anniversaryDay.getDate());
+            String from = AnniversaryAdapter.fromThatDay(anniversaryDay.getAnniversaryDate());
             an_from.setText(from);
-            String next = AnniversaryAdapter.toNextDay(anniversaryDay.getDate());
+            String next = AnniversaryAdapter.toNextDay(anniversaryDay.getAnniversaryDate());
             an_next.setText(next);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class AnniversaryDetailsActivity  extends AppCompatActivity {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteInDB(anniversaryDay.getId());
+                        AnniversaryUtils.deleteLocalAnniversary(AnniversaryDetailsActivity.this, anniversaryDay.getObjectId());
                         dialogInterface.dismiss();
                         AnniversaryDetailsActivity.this.finish();
                     }
@@ -93,10 +93,5 @@ public class AnniversaryDetailsActivity  extends AppCompatActivity {
             }
         });
 
-    }
-    public void deleteInDB(String id) {
-        SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
-        dbDelete.execSQL(MyDatabaseHelper.ANNIVERSARY_TABLE_DELETE, new Object[]{id});
-        dbDelete.close();
     }
 }

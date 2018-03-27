@@ -2,8 +2,6 @@ package com.example.kaixin.mycalendar;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -12,8 +10,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
+import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
+
 import java.util.List;
 
 /**
@@ -22,7 +22,6 @@ import java.util.List;
 
 public class AnniversaryActivity extends AppCompatActivity {
 
-    private MyDatabaseHelper myDatabaseHelper;
     private AnniversaryAdapter anniversaryAdapter;
     private ListView listView;
     private List<AnniversaryDay> list;
@@ -30,7 +29,11 @@ public class AnniversaryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        list = readDB();
+        list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+        if (list.size() == 0) {
+            AnniversaryUtils.queryAllBmobAnniversaryDay(this);
+            list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+        }
         anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
         listView.setAdapter(anniversaryAdapter);
     }
@@ -40,7 +43,6 @@ public class AnniversaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anniversary);
         getSupportActionBar().setTitle("纪念日");
-        myDatabaseHelper = new MyDatabaseHelper(this);
 
         listView = (ListView) findViewById(R.id.listView);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -52,7 +54,11 @@ public class AnniversaryActivity extends AppCompatActivity {
             }
         });
 
-        list = readDB();
+        list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+        if (list.size() == 0) {
+            AnniversaryUtils.queryAllBmobAnniversaryDay(this);
+            list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+        }
         anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
         listView.setAdapter(anniversaryAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,7 +86,8 @@ public class AnniversaryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         AnniversaryDay anniversaryDay = anniversaryAdapter.getItem(pos);
-                        deleteInDB(anniversaryDay.getId());
+                        AnniversaryUtils.deleteBmobAnniversaryDay(anniversaryDay.getObjectId());
+                        AnniversaryUtils.deleteLocalAnniversary(AnniversaryActivity.this, anniversaryDay.getObjectId());
                         list.remove(pos);
                         anniversaryAdapter.notifyDataSetChanged();
                         dialogInterface.dismiss();
@@ -90,27 +97,5 @@ public class AnniversaryActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    public List<AnniversaryDay> readDB() {
-        List<AnniversaryDay> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.ANNIVERSARY_TABLE_SELECT, null);
-        while (cursor.moveToNext()) {
-            String adid = cursor.getString(cursor.getColumnIndex("adid"));
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            String days = cursor.getString(cursor.getColumnIndex("date"));
-            String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            AnniversaryDay anniversaryDay = new AnniversaryDay(adid, name, days, notes);
-            result.add(anniversaryDay);
-        }
-        Collections.reverse(result);
-        return result;
-    }
-
-    public void deleteInDB(String id) {
-        SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
-        dbDelete.execSQL(MyDatabaseHelper.ANNIVERSARY_TABLE_DELETE, new Object[]{id});
-        dbDelete.close();
     }
 }
