@@ -15,7 +15,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     //日程备忘
     public static final String SCHEDULE_TABLE_NAME = "schedule_table";
     public static final String SCHEDULE_TABLE_CREATE = "create table " + SCHEDULE_TABLE_NAME
-            + " (id TEXT primary key,"
+            + " (id TEXT primary key unique,"
             + " user_id TEXT,"
             + " schedule_title TEXT,"
             + " schedule_address TEXT,"
@@ -69,28 +69,22 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             + " user_id TEXT,"
             + " task_name TEXT,"
             + " task_notes TEXT,"
-            + " task_img TEXT)";
+            + " task_img TEXT,"
+            + " img_name TEXT)";
     public static final String TASK_TABLE_DROP = "drop table if exists " + TASK_TABLE_NAME;
-    public static final String TASK_TABLE_INSERT = "insert into " + TASK_TABLE_NAME
-            + "(id, user_id, task_name, task_notes, task_img) values (?, ?, ?, ?, ?)";
-    public static final String TASK_TABLE_SELECT = "select * from " + TASK_TABLE_NAME;
 
     //打卡
-    public static final String CHECK_TABLE_NAME = "check_table";
-    public static final String CHECK_TABLE_CREATE = "create table " + CHECK_TABLE_NAME
-            + " (id interger primary key,"
-            + " chid TEXT,"
-            + " date TEXT,"
-            + " task TEXT,"
-            + " notes TEXT)";
-    public static final String CHECK_TABLE_DROP = "drop table if exists " + CHECK_TABLE_NAME;
-    public static final String CHECK_TABLE_INSERT = "insert into " + CHECK_TABLE_NAME
-            + "(chid, date, task, notes) values (?, ?, ?, ?)";
-    public static final String CHECK_TABLE_SELECT = "select * from " + CHECK_TABLE_NAME + " where task = ?";
-    public static final String CHECK_TABLE_DELETE = "delete from " + CHECK_TABLE_NAME + " where chid = ?";
+
+    public static final String CLOCKINGIN_TABLE_NAME = "clocking_in_table";
+    public static final String CLOCKINGIN_TABLE_CREATE = "create table " + CLOCKINGIN_TABLE_NAME
+            + " (id TEXT primary key,"
+            + " user_id TEXT,"
+            + " task_id TEXT,"
+            + " date TEXT)";
+    public static final String CLOCKINGIN_TABLE_DROP = "drop table if exists " + CLOCKINGIN_TABLE_NAME;
 
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 1);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -99,7 +93,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_CREATE);
         sqLiteDatabase.execSQL(DIARY_TABLE_CREATE);
         sqLiteDatabase.execSQL(TASK_TABLE_CREATE);
-        sqLiteDatabase.execSQL(CHECK_TABLE_CREATE);
+        sqLiteDatabase.execSQL(CLOCKINGIN_TABLE_CREATE);
     }
 
     @Override
@@ -109,7 +103,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ACCOUNT_TABLE_DROP);
         sqLiteDatabase.execSQL(DIARY_TABLE_DROP);
         sqLiteDatabase.execSQL(TASK_TABLE_DROP);
-        sqLiteDatabase.execSQL(CHECK_TABLE_DROP);
+        sqLiteDatabase.execSQL(CLOCKINGIN_TABLE_DROP);
         onCreate(sqLiteDatabase);
     }
 }

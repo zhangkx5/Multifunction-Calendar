@@ -35,14 +35,12 @@ public class MainActivity extends AppCompatActivity/*
         implements NavigationView.OnNavigationItemSelectedListener */{
 
     //by kaixin
-    MaterialCalendarView materialCalendarView;
-    CalendarDay selectedDate;
 
     //viewpager
     private TabLayout mTabLayout;
-    private final int[] TAB_TITLES = new int[]{R.string.home, R.string.task, R.string.more, R.string.me};
-    private final int[] TAB_IMGS = new int[]{R.drawable.selector_tab_weixin, R.drawable.selector_tab_contacts, R.drawable.selector_tab_find, R.drawable.selector_tab_me};
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new HomeFragment(), new TaskFragment(), new MoreFragment(), new MeFragment()};
+    private final int[] TAB_TITLES = new int[]{R.string.home, R.string.task,  R.string.me};
+    private final int[] TAB_IMGS = new int[]{R.drawable.selector_tab_weixin, R.drawable.selector_tab_contacts, R.drawable.selector_tab_me};
+    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new HomeFragment(), new TaskFragment(), new MeFragment()};
     private final int COUNT = TAB_TITLES.length;
     private MyViewPager myViewPager;
     private MyViewPagerAdapter myViewPagerAdapter;

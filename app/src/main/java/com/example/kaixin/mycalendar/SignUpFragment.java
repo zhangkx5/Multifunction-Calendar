@@ -1,8 +1,11 @@
 package com.example.kaixin.mycalendar;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +54,11 @@ public class SignUpFragment extends Fragment{
 
                     //注册成功
                     UserUtils.SignUpUser(getContext(), username.getText().toString(),password.getText().toString(),email.getText().toString());
+                    LoginActivity loginActivity = (LoginActivity) getActivity();
+                    loginActivity.goToLogin();
+                    /*FragmentManager fm = getActivity().getSupportFragmentManager();
+                    Fragment login_fragment = new LoginFragment();
+                    fm.beginTransaction().replace(R.id.content, login_fragment).commit();*/
                     /*MyUser bmobUser = new MyUser();
                     bmobUser.setUsername(username.getText().toString());
                     bmobUser.setPassword(password.getText().toString());

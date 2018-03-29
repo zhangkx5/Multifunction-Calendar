@@ -20,19 +20,21 @@
                 android:id="@+id/ib_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
                 android:background="#00000000"
-                android:src="@mipmap/ic_back"
-                android:layout_alignParentLeft="true"/>
+                android:src="@drawable/ib_back" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_toRightOf="@id/ib_back"
                 android:layout_centerVertical="true"
-                android:text="新建日程"
-                android:textSize="20sp"
-                android:textColor="#FFFFFFFF"/>
+                android:layout_marginRight="16dp"
+                android:text="新建日程管理"
+                android:textColor="#FFFFFFFF"
+                android:textSize="20sp" />
             <ImageButton
                 android:id="@+id/ib_save"
                 android:layout_width="wrap_content"

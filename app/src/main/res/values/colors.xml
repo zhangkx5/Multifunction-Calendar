@@ -8,7 +8,7 @@
     <color name="colorAccent">#45c01a</color>
     <!--<color name="colorAccent">#FF4081</color>-->
     <color name="red">#FF0011</color>
-
+    <color name="colorTitle">#FFFFFF</color>
 
     <color name="background">#FFFFFF</color>
     <color name="split_line">#11112233</color>

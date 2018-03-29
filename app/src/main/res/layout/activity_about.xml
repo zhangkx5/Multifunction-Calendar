@@ -3,7 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -12,9 +11,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp">
+            android:layout_height="wrap_content">
 
             <ImageButton
                 android:id="@+id/ib_back"
@@ -32,43 +29,35 @@
                 android:layout_toRightOf="@id/ib_back"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:text="任务详情"
+                android:text="关于"
                 android:textColor="#FFFFFFFF"
                 android:textSize="20sp" />
-            <ImageButton
-                android:id="@+id/ib_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00000000"
-                android:src="@mipmap/ic_save"
-                android:layout_alignParentRight="true"/>
-
-            <ImageButton
-                android:id="@+id/ib_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00000000"
-                android:src="@mipmap/ic_write"
-                android:layout_alignParentRight="true"
-                android:visibility="gone"/>
         </RelativeLayout>
-
     </android.support.v7.widget.Toolbar>
 
-    <Button
-        android:id="@+id/check"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="打卡"
-        android:textSize="25sp"
-        android:textColor="@color/colorAccent"
-        android:background="@drawable/bg_city"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:layout_gravity="center"/>
-
-    <ListView
-        android:id="@+id/listView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="80dp"
+            android:src="@mipmap/ic_launcher"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="生活日历"
+            android:textSize="15sp"
+            android:textColor="#111111"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="版本：1.0.1.31"
+            android:textSize="15sp"
+            android:textColor="#111111"/>
+
+    </LinearLayout>
 </LinearLayout>

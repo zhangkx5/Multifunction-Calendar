@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Bean.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
 public class TaskAdapter extends ArrayAdapter<Task> {
 
     private int resourceId = R.layout.list_task;
-    private List<Task> list;
+    private List<Task> list = new ArrayList<>();
     private Context context;
     public TaskAdapter(Context context, List<Task> taskList) {
         super(context, R.layout.list_task, taskList);

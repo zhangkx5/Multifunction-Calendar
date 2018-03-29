@@ -1,6 +1,7 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Utils.ImageUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 import java.io.File;
@@ -48,11 +50,11 @@ public class PersonalActivity extends AppCompatActivity {
 
     private ImageView photo;
     private TextView name, email, sex, notes;
-    private Button quit, reset;
     private LinearLayout user_name, user_photo, user_sex, user_notes;
     private static final int CHOOSE_PICTURE = 0;
     private static final int TAKE_PICTURE = 1;
     private File tempFile;
+    private Uri tempUri, saveUri;
     private static final int CROP_SMALL_PICTURE = 2;
     private MyUser bmobUser;
     private String userId;
@@ -61,20 +63,9 @@ public class PersonalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
+        initViews();
 
-        quit = (Button)findViewById(R.id.quit);
-        reset = (Button)findViewById(R.id.reset);
-        user_name = (LinearLayout)findViewById(R.id.user_name);
-        user_photo = (LinearLayout)findViewById(R.id.user_photo);
-        user_sex = (LinearLayout)findViewById(R.id.user_sex);
-        user_notes = (LinearLayout)findViewById(R.id.user_notes);
-        name = (TextView)findViewById(R.id.name);
-        sex = (TextView)findViewById(R.id.sex);
-        notes = (TextView)findViewById(R.id.notes);
-        email = (TextView)findViewById(R.id.email);
-        photo = (ImageView)findViewById(R.id.photo);
-
-        quit.setOnClickListener(new View.OnClickListener() {
+        /*quit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 name.setText("");
@@ -114,11 +105,7 @@ public class PersonalActivity extends AppCompatActivity {
                             Toast.makeText(PersonalActivity.this, "请输入原密码", Toast.LENGTH_SHORT).show();
                         } else if (TextUtils.isEmpty(newPassword.getText().toString())) {
                             Toast.makeText(PersonalActivity.this, "请输入新密码", Toast.LENGTH_SHORT).show();
-                        }/* else if (TextUtils.isEmpty(confirmPassword.getText().toString())) {
-                            Toast.makeText(PersonalActivity.this, "请确认密码", Toast.LENGTH_SHORT).show();
-                        } else if (!(newPassword.getText().toString().equals(confirmPassword.getText().toString()))) {
-                            Toast.makeText(PersonalActivity.this, "密码输入不一致", Toast.LENGTH_SHORT).show();
-                        } */else {
+                        } else {
                             final String oldpwd = oldPassword.getText().toString();
                             final String newpwd = newPassword.getText().toString();
                             UserUtils.ResetPassword(PersonalActivity.this, oldpwd, newpwd);
@@ -128,7 +115,7 @@ public class PersonalActivity extends AppCompatActivity {
                 });
 
             }
-        });
+        });*/
         bmobUser = BmobUser.getCurrentUser(MyUser.class);
         if (bmobUser != null) {
             name.setText(bmobUser.getUsername());
@@ -167,21 +154,18 @@ public class PersonalActivity extends AppCompatActivity {
                 choiceSexDialog();
             }
         });
-
         user_notes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updatePersonalNotes();
             }
         });
-
         user_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updatePersonalName();
             }
         });
-
         user_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,31 +181,75 @@ public class PersonalActivity extends AppCompatActivity {
         });
     }
 
-    public void downloadImage(BmobFile file) {
-        File appDir = new File(Environment.getExternalStorageDirectory().getPath()+"/mycalendar");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        File saveFile = new File(appDir, file.getFilename());
-        file.download(saveFile, new DownloadFileListener() {
-            @Override
-            public void onStart() {
-                Toast.makeText(PersonalActivity.this, "开始下载...", Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void done(String s, BmobException e) {
-                if (e == null) {
-                    Toast.makeText(PersonalActivity.this, "下载成功，保存路径："+s, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PersonalActivity.this, "下载失败："+e.getErrorCode()+","+e.getMessage(), Toast.LENGTH_SHORT).show();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CHOOSE_PICTURE:
+                if (resultCode == RESULT_OK) {
+                    tempUri = data.getData();
+                    cutImage(tempUri);
                 }
-            }
+                break;
+            case TAKE_PICTURE:
+                if (resultCode == RESULT_OK) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Uri contentUri = FileProvider.getUriForFile(PersonalActivity.this,"com.example.kaixin.mycalendar.provider", tempFile);
+                        tempUri = contentUri;
+                        cutImage(tempUri);
+                    } else {
+                        tempUri = Uri.fromFile(tempFile);
+                        cutImage(tempUri);
+                    }
+                }
+                break;
+            case CROP_SMALL_PICTURE:
+                saveUri = ImageUtils.getSaveUri(PersonalActivity.this, UserUtils.getUserId(PersonalActivity.this));
+                if (saveUri != null) {
+                    setImageToView(saveUri);
+                }
+                break;
+        }
+    }
 
-            @Override
-            public void onProgress(Integer integer, long l) {
+    protected void setImageToView(Uri uri) {
+        Bitmap bitmap = ImageUtils.getBitmapFromUri(PersonalActivity.this, uri);
+        if (bitmap != null) {
+            photo.setImageBitmap(bitmap);
+            ImageUtils.uploadImage(PersonalActivity.this, uri.getPath());
+        }
+    }
 
+    class ImageAsyncTack extends AsyncTask<String, Void, Bitmap> {
+
+        private ImageView photo;
+        public ImageAsyncTack(ImageView photo) {
+            this.photo = photo;
+        }
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Bitmap bm = null;
+            BmobFile bmobFile = new BmobFile(userId + ".jpg", "", bmobUser.getUrlPic());
+            ImageUtils.downloadImage(PersonalActivity.this, bmobFile);
+            try {
+                FileInputStream fileInputStream = new FileInputStream(params[0]);
+                bm = BitmapFactory.decodeStream(fileInputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            return bm;
+        }
+        @Override
+        protected void onPostExecute(Bitmap bm) {
+            super.onPostExecute(bm);
+            photo.setImageBitmap(bm);
+            Toast.makeText(PersonalActivity.this, "这是下载的图片", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected void cutImage(Uri uri) {
+        Intent intent = ImageUtils.cutAndSaveImage(PersonalActivity.this, uri);
+        startActivityForResult(intent, CROP_SMALL_PICTURE);
     }
     private void updatePersonalPhote() {
         AlertDialog.Builder builder = new AlertDialog.Builder(PersonalActivity.this);
@@ -240,10 +268,10 @@ public class PersonalActivity extends AppCompatActivity {
                         break;
                     case TAKE_PICTURE:
                         try {
-                            tempFile = new File(Environment.getExternalStorageDirectory().getPath(), System.currentTimeMillis()+".jpg");
+                            tempFile = new File(Environment.getExternalStorageDirectory().getPath(), String.valueOf(System.currentTimeMillis())+".jpg");
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 Uri contentUri = FileProvider.getUriForFile(PersonalActivity.this, "com.example.kaixin.mycalendar.provider", tempFile);
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                             } else {
@@ -255,110 +283,13 @@ public class PersonalActivity extends AppCompatActivity {
                         }
                         dialogInterface.dismiss();
                         break;
+                    default:
+                        break;
                 }
             }
         });
         builder.show();
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case CHOOSE_PICTURE:
-                if (resultCode == RESULT_OK) {
-                    cutImage(data.getData());
-                }
-                break;
-            case TAKE_PICTURE:
-                if (resultCode == RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Uri contentUri = FileProvider.getUriForFile(PersonalActivity.this,"com.example.kaixin.mycalendar.provider", tempFile);
-                        cutImage(contentUri);
-                    } else {
-                        cutImage(Uri.fromFile(tempFile));
-                    }
-                }
-                break;
-            case CROP_SMALL_PICTURE:
-                if (data != null) {
-                    setImageToView(data);
-                }
-                break;
-        }
-    }
-
-    protected void cutImage(Uri uri) {
-        if (uri == null) {
-            Toast.makeText(PersonalActivity.this, "图片路径不存在", Toast.LENGTH_SHORT).show();
-        }
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
-        intent.putExtra("return-data", true);
-        /*intent.putExtra("scale", true);
-        intent.putExtra("return-data", false);
-        mCropImageFile = getmCropImageFile();
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCropImageFile));
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true);*/
-        startActivityForResult(intent, CROP_SMALL_PICTURE);
-    }
-    private File getmCropImageFile(){
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            //File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),"temp.jpg");
-            File file = new File(getExternalCacheDir(), System.currentTimeMillis() + ".jpg");
-            return file;
-        }
-        return null;
-    }
-    protected void setImageToView(Intent data) {
-        Bundle bundle = data.getExtras();
-        if (bundle != null) {
-            Bitmap bitmap = bundle.getParcelable("data");
-            if (bitmap != null) {
-                photo.setImageBitmap(bitmap);
-                String path = saveImage(userId, bitmap);
-                uploadImage(path);
-            }
-        }
-    }
-    public String saveImage(String name, Bitmap bitmap) {
-        File appDir = new File(Environment.getExternalStorageDirectory().getPath()+"/mycalendar");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = name + ".jpg";
-        File file = new File(appDir, fileName);
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file.getPath();
-    }
-    public void uploadImage(String path) {
-        //String picPath = Environment.getExternalStorageDirectory().getPath() + "/mycalendar/head.jpg";
-        final BmobFile bmobFile = new BmobFile(new File(path));
-        bmobFile.uploadblock(new UploadFileListener() {
-            @Override
-            public void done(BmobException e) {
-                if (e == null) {
-                    UserUtils.UpdateUserUriPic(PersonalActivity.this, bmobFile.getFileUrl());
-                } else {
-                    Toast.makeText(PersonalActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
     private void choiceSexDialog() {
         final String[] sex_list = {"男", "女"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -412,31 +343,17 @@ public class PersonalActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    class ImageAsyncTack extends AsyncTask<String, Void, Bitmap> {
-
-        private ImageView photo;
-        public ImageAsyncTack(ImageView photo) {
-            this.photo = photo;
-        }
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            Bitmap bm = null;
-            BmobFile bmobFile = new BmobFile(userId + ".jpg", "", bmobUser.getUrlPic());
-            downloadImage(bmobFile);
-            try {
-                FileInputStream fileInputStream = new FileInputStream(params[0]);
-                bm = BitmapFactory.decodeStream(fileInputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return bm;
-        }
-        @Override
-        protected void onPostExecute(Bitmap bm) {
-            super.onPostExecute(bm);
-            photo.setImageBitmap(bm);
-            Toast.makeText(PersonalActivity.this, "这是下载的图片", Toast.LENGTH_SHORT).show();
-        }
+    private void initViews() {
+        /*quit = (Button)findViewById(R.id.quit);
+        reset = (Button)findViewById(R.id.reset);*/
+        user_name = (LinearLayout)findViewById(R.id.user_name);
+        user_photo = (LinearLayout)findViewById(R.id.user_photo);
+        user_sex = (LinearLayout)findViewById(R.id.user_sex);
+        user_notes = (LinearLayout)findViewById(R.id.user_notes);
+        name = (TextView)findViewById(R.id.name);
+        sex = (TextView)findViewById(R.id.sex);
+        notes = (TextView)findViewById(R.id.notes);
+        email = (TextView)findViewById(R.id.email);
+        photo = (ImageView)findViewById(R.id.photo);
     }
 }

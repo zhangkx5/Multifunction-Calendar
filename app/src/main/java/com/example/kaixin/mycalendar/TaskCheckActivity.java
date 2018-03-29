@@ -1,10 +1,13 @@
 package com.example.kaixin.mycalendar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,7 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.Task;
+import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.TaskUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,67 +64,72 @@ public class TaskCheckActivity extends AppCompatActivity{
             TaskCheckActivity.this.finish();
         }
         listView = (ListView)findViewById(R.id.listView);
-        final SimpleAdapter simpleAdapter = new SimpleAdapter(TaskCheckActivity.this, readDB(), R.layout.list_anniversary,
+        final SimpleAdapter simpleAdapter = new SimpleAdapter(TaskCheckActivity.this,
+                TaskUtils.queryAllLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId()),
+                R.layout.list_anniversary,
                 new String[]{"task", "date"}, new int[]{R.id.name, R.id.days});
         listView.setAdapter(simpleAdapter);
 
-        hasChecked();
+        //hasClockingIn();
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (check.getText().toString() != "今日已打卡") {
-                    addInDB(task.getTaskName());
-                    check.setText("今日已打卡");
-                    Toast.makeText(TaskCheckActivity.this, "打卡成功", Toast.LENGTH_SHORT).show();
-                }
+                createClockingIn();
+                Log.i("CLOCKINGIN", "打卡成功");
+                Toast.makeText(TaskCheckActivity.this, "打卡成功", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-    public void hasChecked() {
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String table = MyDatabaseHelper.CHECK_TABLE_NAME;
-        String selection = "task = ? and date = ?";
+    public void hasClockingIn() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date(System.currentTimeMillis());
         String date = simpleDateFormat.format(today);
-        String[] selectionArgs = new String[]{task.getTaskName(), date};
-        Cursor cursor = dbRead.query(table, null, selection, selectionArgs, null, null, null);
-        if (cursor.getCount() != 0) {
-            check.setText("今日已打卡");
+        boolean flag = false;
+        flag = TaskUtils.queryOneLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId(), date);
+        if (flag == false) {
+            TaskUtils.queryOneBmobClockingIn(TaskCheckActivity.this, task.getObjectId(), date);
+            flag = TaskUtils.queryOneLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId(), date);
+            if (flag == false) {
+
+            }
         }
     }
-
-    public void addInDB(String task) {
-        String ch_id = String.valueOf(System.currentTimeMillis());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date today = new Date(System.currentTimeMillis());
-        String date = simpleDateFormat.format(today);
-        String notes = "";
-        SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
-        dbWrite.execSQL(MyDatabaseHelper.CHECK_TABLE_INSERT, new Object[]{ch_id, date, task, notes});
-        dbWrite.close();
-        Toast.makeText(TaskCheckActivity.this, ch_id + task, Toast.LENGTH_SHORT).show();
-    }
-
-    public ArrayList<Map<String, Object>> readDB() {
-        ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String table = MyDatabaseHelper.CHECK_TABLE_NAME;
-        String selection = "task = ?";
-        String[] selectionArgs = new String[]{task.getTaskName()};
-        Cursor cursor = dbRead.query(table, null, selection, selectionArgs, null, null, null);
-        Toast.makeText(TaskCheckActivity.this, "搜索", Toast.LENGTH_SHORT).show();
-        while (cursor.moveToNext()) {
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String name = cursor.getString(cursor.getColumnIndex("task"));
-            Map<String, Object> hashmap = new HashMap<String, Object>();
-            hashmap.put("task", name);
-            hashmap.put("date", date);
-            list.add(hashmap);
-        }
-        cursor.close();
-        dbRead.close();
-        return list;
+    ProgressDialog progressDialog;
+    public void createClockingIn() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(TaskCheckActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                TaskCheckActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date today = new Date(System.currentTimeMillis());
+                String date = simpleDateFormat.format(today);
+                TaskUtils.createBmobClockingIn(TaskCheckActivity.this, task.getObjectId(), date);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 }

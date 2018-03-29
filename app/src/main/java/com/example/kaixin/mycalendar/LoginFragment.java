@@ -61,6 +61,7 @@ public class LoginFragment extends Fragment{
                         }
                     });*/
                     UserUtils.Login(getContext(), email.getText().toString(), password.getText().toString());
+                    getActivity().finish();
                 }
             }
         });

@@ -58,6 +58,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private FragmentManager fm;
+    public void goToLogin() {
+        fm = getSupportFragmentManager();
+        Fragment login_fragment = new LoginFragment();
+        fm.beginTransaction().replace(R.id.content, login_fragment).commit();
+    }
     public static class mPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> fragments = new ArrayList<>();
         private final List<String> titles = new ArrayList<>();

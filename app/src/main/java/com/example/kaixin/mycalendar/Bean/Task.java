@@ -9,23 +9,13 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class Task extends BmobObject implements Serializable {
-    private String taskId;
     private String userId;
     private String task_name;
     private String task_notes;
     private String task_img;
+    private String img_name;
 
     public Task() {}
-    public Task(String id, String userId, String name, String notes, String img) {
-        this.taskId = id;
-        this.userId = userId;
-        this.task_name = name;
-        this.task_notes = notes;
-        this.task_img = img;
-    }
-    public String getTaskId() {
-        return taskId;
-    }
     public String getUserId() {
         return userId;
     }
@@ -38,8 +28,8 @@ public class Task extends BmobObject implements Serializable {
     public String getTaskImg() {
         return task_img;
     }
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
+    public String getTaskImgName() {
+        return img_name;
     }
     public void setUserId(String userId) {
         this.userId = userId;
@@ -52,5 +42,8 @@ public class Task extends BmobObject implements Serializable {
     }
     public void setTaskImg(String img) {
         this.task_img = img;
+    }
+    public void setTaskImgName(String img_name) {
+        this.img_name = img_name;
     }
 }

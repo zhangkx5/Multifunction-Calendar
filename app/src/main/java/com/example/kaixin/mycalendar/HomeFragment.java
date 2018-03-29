@@ -1,20 +1,25 @@
 package com.example.kaixin.mycalendar;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Bean.Schedule;
+import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -37,9 +42,9 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
     private MaterialCalendarView mcv;
     private TextView textView;
+    private Toolbar toolbar;
     private String selectedDate;
 
-    private MyDatabaseHelper myDatabaseHelper;
     private AnniversaryAdapter anniversaryAdapter;
     private ScheduleAdapter scheduleAdapter;
     private List<Schedule> list_schedule;
@@ -49,7 +54,11 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         mcv = (MaterialCalendarView)view.findViewById(R.id.calendarView);
+        toolbar = (Toolbar)view.findViewById(R.id.toolbar);
+        toolbar.setTitle("生活日历");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorTitle));
         textView = (TextView)view.findViewById(R.id.textView);
 
         mcv.state().edit()
@@ -64,24 +73,126 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
         mcv.setSelectedDate(CalendarDay.today());
         mcv.setOnDateChangedListener(this);
         mcv.setOnMonthChangedListener(this);
+        selectedDate = getSelectedDatesString();
         textView.setText(getSelectedDatesString());
 
-
-        myDatabaseHelper = new MyDatabaseHelper(getActivity());
-        /*lv_anniversary = (ListView)view.findViewById(R.id.lv_anniversary);
-        lv_schedule = (ListView)view.findViewById(R.id.lv_schedule);
-        list_anniversary = readAnniversaryDB();
+        lv_anniversary = (ListView) view.findViewById(R.id.lv_anniversary);
+        lv_schedule = (ListView) view.findViewById(R.id.lv_schedule);
+        list_anniversary = getAnniversaryList(selectedDate);
         anniversaryAdapter = new AnniversaryAdapter(getActivity(), list_anniversary);
         lv_anniversary.setAdapter(anniversaryAdapter);
-        list_schedule = readScheduleDB();
+        list_schedule = getScheduleList(selectedDate);
         scheduleAdapter = new ScheduleAdapter(getActivity(), list_schedule);
-        lv_schedule.setAdapter(scheduleAdapter);*/
+        lv_schedule.setAdapter(scheduleAdapter);
+        setListViewHeightBaseOnChildren(lv_anniversary);
+        setListViewHeightBaseOnChildren(lv_schedule);
+        lv_anniversary.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AnniversaryDay anniversaryDay = anniversaryAdapter.getItem(i);
+                Intent intent = new Intent(getActivity(), AnniversaryDetailsActivity.class);
+                intent.putExtra("anniversaryDay",anniversaryDay);
+                startActivity(intent);
+            }
+        });
+        lv_schedule.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Schedule schedule = scheduleAdapter.getItem(i);
+                Intent intent = new Intent(getActivity(), ScheduleEditActivity.class);
+                intent.putExtra("schedule", schedule);
+                startActivity(intent);
+            }
+        });
         return view;
+    }
+    private MyDatabaseHelper myDatabaseHelper;
+    public List<AnniversaryDay> getAnniversaryList(String date) {
+        myDatabaseHelper = new MyDatabaseHelper(getActivity());
+        List<AnniversaryDay> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "anniversary_date LIKE ?";
+        String[] selectionArgs = new String[]{"%" + date + "%"};
+        Cursor cursor = dbRead.query(AnniversaryUtils.ANNIVERSARY_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String user_id = cursor.getString(cursor.getColumnIndex("user_id"));
+            String anniversary_name = cursor.getString(cursor.getColumnIndex("anniversary_name"));
+            String anniversary_date = cursor.getString(cursor.getColumnIndex("anniversary_date"));
+            String anniversary_notes = cursor.getString(cursor.getColumnIndex("anniversary_notes"));
+            AnniversaryDay anniversaryDay = new AnniversaryDay();
+            anniversaryDay.setObjectId(id);
+            anniversaryDay.setUserId(user_id);
+            anniversaryDay.setAnniversaryName(anniversary_name);
+            anniversaryDay.setAnniversaryDate(anniversary_date);
+            anniversaryDay.setAnniversaryNotes(anniversary_notes);
+            result.add(anniversaryDay);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        return result;
+    }
+    public List<Schedule> getScheduleList(String date) {
+        myDatabaseHelper = new MyDatabaseHelper(getActivity());
+        List<Schedule> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "schedule_start LIKE ?";
+        String[] selectionArgs = new String[]{"%" + date + "%"};
+        Cursor cursor = dbRead.query(ScheduleUtils.SCHEDULE_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String user_id = cursor.getString(cursor.getColumnIndex("user_id"));
+            String title = cursor.getString(cursor.getColumnIndex("schedule_title"));
+            String address = cursor.getString(cursor.getColumnIndex("schedule_address"));
+            String start = cursor.getString(cursor.getColumnIndex("schedule_start"));
+            String end = cursor.getString(cursor.getColumnIndex("schedule_end"));
+            String call = cursor.getString(cursor.getColumnIndex("schedule_call"));
+            String notes = cursor.getString(cursor.getColumnIndex("schedule_notes"));
+            Schedule schedule = new Schedule();
+            schedule.setObjectId(id);
+            schedule.setUserId(user_id);
+            schedule.setScheduleTitle(title);
+            schedule.setScheduleAddress(address);
+            schedule.setScheduleStart(start);
+            schedule.setScheduleEnd(end);
+            schedule.setScheduleCall(call);
+            schedule.setScheduleNotes(notes);
+            result.add(schedule);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        return result;
+    }
+    public void setListViewHeightBaseOnChildren(ListView lv) {
+        ListAdapter listAdapter = lv.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null ,lv);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = lv.getLayoutParams();
+        params.height = totalHeight + (lv.getDividerHeight() * (listAdapter.getCount() - 1));
+        lv.setLayoutParams(params);
     }
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        selectedDate = getSelectedDatesString();
         textView.setText(getSelectedDatesString());
+        list_anniversary.clear();
+        list_anniversary = getAnniversaryList(selectedDate);
+        anniversaryAdapter = new AnniversaryAdapter(getActivity(), list_anniversary);
+        lv_anniversary.setAdapter(anniversaryAdapter);
+        list_schedule.clear();
+        list_schedule = getScheduleList(selectedDate);
+        scheduleAdapter = new ScheduleAdapter(getActivity(), list_schedule);
+        lv_schedule.setAdapter(scheduleAdapter);
     }
 
     @Override
@@ -94,46 +205,9 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
         if (date == null) {
             return "No Selection";
         }
-        return FORMATTER.format(date.getDate());
-    }
-    /*public List<Schedule> readScheduleDB() {
-        List<Schedule> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.SCHEDULE_TABLE_SELECT, null);
-        while (cursor.moveToNext()) {
-            String scid = cursor.getString(cursor.getColumnIndex("scid"));
-            String title = cursor.getString(cursor.getColumnIndex("title"));
-            String address = cursor.getString(cursor.getColumnIndex("address"));
-            String start = cursor.getString(cursor.getColumnIndex("start"));
-            String end = cursor.getString(cursor.getColumnIndex("end"));
-            String call = cursor.getString(cursor.getColumnIndex("call"));
-            String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            *//*Schedule schedule = new Schedule(scid, title, address, start, end, call, notes);
-            result.add(schedule);*//*
-        }
-        Collections.reverse(result);
-        cursor.close();
-        dbRead.close();
-        return result;
-    }*/
-    public List<AnniversaryDay> readAnniversaryDB() {
-        List<AnniversaryDay> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String table = MyDatabaseHelper.ANNIVERSARY_TABLE_NAME;
-        String selection = "date = ?";
-        String[] selectionArgs = new String[]{getSelectedDatesString()};
-        Cursor cursor = dbRead.query(table, null, selection, selectionArgs, null, null, null);
-        Toast.makeText(getActivity(), "搜索", Toast.LENGTH_SHORT).show();
-        //Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.ANNIVERSARY_TABLE_SELECT, null);
-        /*while (cursor.moveToNext()) {
-            String adid = cursor.getString(cursor.getColumnIndex("adid"));
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            String days = cursor.getString(cursor.getColumnIndex("date"));
-            String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            AnniversaryDay anniversaryDay = new AnniversaryDay(adid, name, days, notes);
-            result.add(anniversaryDay);
-        }*/
-        Collections.reverse(result);
-        return result;
+        //SimpleDateFormat sdf = new SimpleDateFormat("M月d日");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date.getDate());
+        //return FORMATTER.format(date.getDate());
     }
 }

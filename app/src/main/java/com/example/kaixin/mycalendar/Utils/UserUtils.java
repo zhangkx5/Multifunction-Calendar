@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.MainActivity;
 import com.example.kaixin.mycalendar.MyUser;
 import com.example.kaixin.mycalendar.PersonalActivity;
 
@@ -42,18 +43,17 @@ public class UserUtils {
     }
 
     //login
-    public static void Login(Context context, String email, String password) {
-        final Context mContext = context;
+    public static void Login(final Context context, String email, String password) {
         BmobUser.loginByAccount(email, password, new LogInListener<MyUser>() {
             @Override
             public void done(MyUser user, BmobException e) {
                 if (user != null) {
-                    Toast.makeText(mContext, "登录成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
                     Log.i("smile", "用户登录成功");
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
+                    SharedPreferences.Editor editor = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
                     editor.putString("user_id", user.getObjectId());
-                    Intent intent = new Intent(mContext, PersonalActivity.class);
-                    mContext.startActivity(intent);
+                    /*Intent intent = new Intent(mContext, MainActivity.class);
+                    mContext.startActivity(intent);*/
                 }
             }
         });

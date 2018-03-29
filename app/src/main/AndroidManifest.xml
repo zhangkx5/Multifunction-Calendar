@@ -43,6 +43,10 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".PersonalActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".SettingActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AccountActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AccountEditActivity"

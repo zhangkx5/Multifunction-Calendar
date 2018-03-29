@@ -6,31 +6,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendarView"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mcv_tileHeight="30dp"
-        app:mcv_showOtherDates="all"
-        app:mcv_selectionColor="#00F"
-        app:mcv_weekDayTextAppearance="@color/mcv_text_date_light" />
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="25"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <include
-        layout="@layout/cardview_weather"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <ListView
-        android:id="@+id/lv_anniversary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <ListView
-        android:id="@+id/lv_schedule"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </ListView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mcv_tileHeight="30dp"
+                app:mcv_showOtherDates="all"
+                app:mcv_selectionColor="#00F"
+                app:mcv_weekDayTextAppearance="@color/mcv_text_date_light" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="25"/>
+
+            <include
+                layout="@layout/cardview_weather"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ListView
+                android:id="@+id/lv_anniversary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ListView
+                android:id="@+id/lv_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>
