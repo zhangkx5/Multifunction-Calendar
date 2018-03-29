@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.PersonalActivity;
@@ -39,11 +40,11 @@ public class ImageUtils {
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, getSaveUri(context, UserUtils.getUserId(context)));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, getSaveUri(UserUtils.getUserId(context)));
         return intent;
     }
 
-    public static Uri getSaveUri(Context context, String img_name) {
+    public static Uri getSaveUri(String img_name) {
         File appDir = new File(Environment.getExternalStorageDirectory().getPath()+"/mycalendar");
         if (!appDir.exists()) {
             appDir.mkdir();
@@ -75,7 +76,7 @@ public class ImageUtils {
         });
     }
 
-    public static void downloadImage(final Context context, BmobFile file) {
+    public static void downloadImage(BmobFile file) {
         File appDir = new File(Environment.getExternalStorageDirectory().getPath()+"/mycalendar");
         if (!appDir.exists()) {
             appDir.mkdir();
@@ -83,21 +84,17 @@ public class ImageUtils {
         File saveFile = new File(appDir, file.getFilename());
         file.download(saveFile, new DownloadFileListener() {
             @Override
-            public void onStart() {
-                Toast.makeText(context, "开始下载...", Toast.LENGTH_SHORT).show();
-            }
+            public void onStart() {}
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
-                    Toast.makeText(context, "下载成功，保存路径："+s, Toast.LENGTH_SHORT).show();
+                    Log.i("下载成功", "保存路径："+s);
                 } else {
-                    Toast.makeText(context, "下载失败："+e.getErrorCode()+","+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.i("下载失败", e.getErrorCode()+","+e.getMessage());
                 }
             }
             @Override
-            public void onProgress(Integer integer, long l) {
-
-            }
+            public void onProgress(Integer integer, long l) {}
         });
     }
 }

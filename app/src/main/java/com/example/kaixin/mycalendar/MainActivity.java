@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity/*
             ActivityCompat.requestPermissions(this, PERMISSION, 2);
         }
     }
-    @Override
+    /*@Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -89,16 +89,16 @@ public class MainActivity extends AppCompatActivity/*
         } else {
             super.onBackPressed();
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity/*
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void initViews() {
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);

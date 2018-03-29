@@ -1,5 +1,6 @@
 package com.example.kaixin.mycalendar;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -7,6 +8,7 @@ import android.text.style.StyleSpan;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import java.util.Date;
  */
 
 public class TodayDecorator implements DayViewDecorator {
+    private int color =  Color.parseColor("#FFFF0011");
     private CalendarDay date;
 
     public TodayDecorator() {
@@ -28,7 +31,8 @@ public class TodayDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.addSpan(new StyleSpan(Typeface.BOLD));
-        view.addSpan(new RelativeSizeSpan(3.0f));
+        view.addSpan(new DotSpan(5, color));
+        /*view.addSpan(new StyleSpan(Typeface.BOLD));
+        view.addSpan(new RelativeSizeSpan(3.0f));*/
     }
 }

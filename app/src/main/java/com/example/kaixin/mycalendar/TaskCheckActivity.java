@@ -1,6 +1,7 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -20,11 +22,15 @@ import com.example.kaixin.mycalendar.Bean.Task;
 import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
 import com.example.kaixin.mycalendar.Utils.TaskUtils;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,21 +39,31 @@ import java.util.Map;
 
 public class TaskCheckActivity extends AppCompatActivity{
 
-    private MyDatabaseHelper myDatabaseHelper;
-    private ImageButton ib_back, ib_save;
+    private ImageButton ib_back, ib_edit;
+    private ImageView task_img;
+    private TextView task_notes;
+    private MaterialCalendarView mcv;
     private Button check;
     private Task task;
-    private ListView listView;
+    private List<String> dateList = new ArrayList<>();
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        dateList = queryAllLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId());
+        mcv.addDecorators(new EventDecorator(dateList));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_check);
-        myDatabaseHelper = new MyDatabaseHelper(this);
 
         TextView title = (TextView)findViewById(R.id.title);
         ib_back = (ImageButton)findViewById(R.id.ib_back);
-        ib_save = (ImageButton)findViewById(R.id.ib_save);
+        ib_edit = (ImageButton)findViewById(R.id.ib_edit);
+        mcv = (MaterialCalendarView)findViewById(R.id.calendarView);
+        task_img = (ImageView)findViewById(R.id.task_img);
+        task_notes = (TextView)findViewById(R.id.task_notes);
         check = (Button)findViewById(R.id.check);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
@@ -63,13 +79,22 @@ public class TaskCheckActivity extends AppCompatActivity{
         } else {
             TaskCheckActivity.this.finish();
         }
-        listView = (ListView)findViewById(R.id.listView);
-        final SimpleAdapter simpleAdapter = new SimpleAdapter(TaskCheckActivity.this,
-                TaskUtils.queryAllLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId()),
-                R.layout.list_anniversary,
-                new String[]{"task", "date"}, new int[]{R.id.name, R.id.days});
-        listView.setAdapter(simpleAdapter);
+        dateList = queryAllLocalClockingIn(TaskCheckActivity.this, task.getUserId(), task.getObjectId());
 
+        mcv.state().edit()
+                .setFirstDayOfWeek(Calendar.SUNDAY)
+                .setCalendarDisplayMode(CalendarMode.MONTHS)
+                .commit();
+        mcv.addDecorators(
+                //new HighlightWeekendsDecorator(),
+                //new TodayDecorator(),
+                new EventDecorator(dateList)
+        );
+        task_notes.setText(task.getTaskNotes());
+        task_img.setTag(task.getTaskImg());
+        if (!"".equals(task.getTaskImgName())) {
+            new TaskAdapter.ImageAsyncTack(task_img).execute(task.getTaskImgName());
+        }
         //hasClockingIn();
         check.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +105,30 @@ public class TaskCheckActivity extends AppCompatActivity{
             }
         });
 
+    }
+    //查找本地数据库中某项任务的所有打卡纪录
+    public static ArrayList<String> queryAllLocalClockingIn(Context context, String user_id, String task_id) {
+        MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(context);
+        ArrayList<String> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "user_id = ? and task_id = ?";
+        String[] selectionArgs = new String[]{user_id, task_id};
+        Cursor cursor = dbRead.query(TaskUtils.CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            //String id = cursor.getString(cursor.getColumnIndex("id"));
+            String date = cursor.getString(cursor.getColumnIndex("date"));
+            /*ClockingIn clockingIn = new ClockingIn();
+            clockingIn.setObjectId(id);
+            clockingIn.setUserId(user_id);
+            clockingIn.setTaskId(task_id);
+            clockingIn.setDate(date);*/
+            result.add(date);
+            //result.add(clockingIn);
+        }
+        //Collections.reverse(result);
+        cursor.close();
+        dbRead.close();
+        return result;
     }
     public void hasClockingIn() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -115,7 +164,6 @@ public class TaskCheckActivity extends AppCompatActivity{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                TaskCheckActivity.this.finish();
             }
             @Override
             protected Void doInBackground(String... params) {

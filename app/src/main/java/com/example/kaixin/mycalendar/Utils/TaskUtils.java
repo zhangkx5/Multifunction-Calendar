@@ -33,7 +33,6 @@ public class TaskUtils {
     public static final String TASK_TABLE_NAME = "task_table";
     public static final String TASK_TABLE_INSERT = "insert into " + TASK_TABLE_NAME
             + "(id, user_id, task_name, task_notes, task_img, img_name) values (?, ?, ?, ?, ?, ?)";
-    public static final String TASK_TABLE_SELECT = "select * from " + TASK_TABLE_NAME;
     public static final String TASK_TABLE_DELETE = "delete from " + TASK_TABLE_NAME + " where id = ?";
     //添加任务到本地数据库
     public static void createLocalTask(Context context, String id, String userid,
@@ -86,6 +85,8 @@ public class TaskUtils {
             task.setTaskImgName(img_name);
             result.add(task);
         }
+        cursor.close();
+        dbRead.close();
         Collections.reverse(result);
         return result;
     }
@@ -201,8 +202,12 @@ public class TaskUtils {
         String[] selectionArgs = new String[]{user_id, task_id, date};
         Cursor cursor = dbRead.query(CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
         if (cursor.getCount() != 0) {
+            cursor.close();
+            dbRead.close();
             return true;
         }
+        cursor.close();
+        dbRead.close();
         return false;
     }
     //查找本地数据库中某项任务的所有打卡纪录

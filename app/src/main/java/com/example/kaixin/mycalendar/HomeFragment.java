@@ -56,6 +56,19 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
     private List<AnniversaryDay> list_anniversary;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mcv.setSelectedDate(CalendarDay.today());
+        list_anniversary = getAnniversaryList(selectedDate);
+        anniversaryAdapter = new AnniversaryAdapter(getActivity(), list_anniversary);
+        lv_anniversary.setAdapter(anniversaryAdapter);
+        list_schedule = getScheduleList(selectedDate);
+        scheduleAdapter = new ScheduleAdapter(getActivity(), list_schedule);
+        lv_schedule.setAdapter(scheduleAdapter);
+        setListViewHeightBaseOnChildren(lv_anniversary);
+        setListViewHeightBaseOnChildren(lv_schedule);
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -78,8 +91,8 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
                 .commit();
         mcv.addDecorators(
                 new HighlightWeekendsDecorator(),
-                //new TodayDecorator(),
-                new EventDecorator()
+                new TodayDecorator()
+                //new EventDecorator()
         );
         mcv.setSelectedDate(CalendarDay.today());
         mcv.setOnDateChangedListener(this);
@@ -89,14 +102,7 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
 
         lv_anniversary = (ListView) view.findViewById(R.id.lv_anniversary);
         lv_schedule = (ListView) view.findViewById(R.id.lv_schedule);
-        list_anniversary = getAnniversaryList(selectedDate);
-        anniversaryAdapter = new AnniversaryAdapter(getActivity(), list_anniversary);
-        lv_anniversary.setAdapter(anniversaryAdapter);
-        list_schedule = getScheduleList(selectedDate);
-        scheduleAdapter = new ScheduleAdapter(getActivity(), list_schedule);
-        lv_schedule.setAdapter(scheduleAdapter);
-        setListViewHeightBaseOnChildren(lv_anniversary);
-        setListViewHeightBaseOnChildren(lv_schedule);
+
         lv_anniversary.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

@@ -133,7 +133,7 @@ public class TaskEditActivity extends AppCompatActivity {
                             if (e == null) {
                                 img = bmobFile.getFileUrl();
                                 Log.i("Task", "图片上传成功");
-                                TaskUtils.createBmobTask(TaskEditActivity.this, name, notes, img, img_name);
+                                TaskUtils.upadteBmobTask(name, notes, img, img_name);
                             } else {
                                 Toast.makeText(TaskEditActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
                             }
@@ -143,7 +143,7 @@ public class TaskEditActivity extends AppCompatActivity {
                     TaskUtils.createBmobTask(TaskEditActivity.this, name, notes, img, img_name);
                 }
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -230,7 +230,7 @@ public class TaskEditActivity extends AppCompatActivity {
         }
         int dp = 500;
         img_name =  String.valueOf(System.currentTimeMillis());
-        saveUri = ImageUtils.getSaveUri(TaskEditActivity.this, img_name);
+        saveUri = ImageUtils.getSaveUri(img_name);
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");

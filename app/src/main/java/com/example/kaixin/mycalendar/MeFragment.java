@@ -149,7 +149,7 @@ public class MeFragment extends Fragment {
         protected Bitmap doInBackground(String... params) {
             Bitmap bm = null;
             BmobFile bmobFile = new BmobFile(userId + ".jpg", "", bmobUser.getUrlPic());
-            ImageUtils.downloadImage(getActivity(), bmobFile);
+            ImageUtils.downloadImage(bmobFile);
             try {
                 FileInputStream fileInputStream = new FileInputStream(params[0]);
                 bm = BitmapFactory.decodeStream(fileInputStream);
@@ -185,7 +185,6 @@ public class MeFragment extends Fragment {
                         FileInputStream fileInputStream = new FileInputStream(phtotUrl);
                         Bitmap bm = BitmapFactory.decodeStream(fileInputStream);
                         user_photo.setImageBitmap(bm);
-                        Toast.makeText(getActivity(), "这是本地图片", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

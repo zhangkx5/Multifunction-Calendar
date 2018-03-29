@@ -65,57 +65,6 @@ public class PersonalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personal);
         initViews();
 
-        /*quit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                name.setText("");
-                sex.setText("");
-                email.setText("");
-                notes.setText("");
-                photo.setImageResource(R.mipmap.ic_user);
-                UserUtils.LogOut(PersonalActivity.this);
-            }
-        });
-        reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = LayoutInflater.from(PersonalActivity.this);
-                final View vi = inflater.inflate(R.layout.dialog_resetpassword, null);
-                final AlertDialog.Builder builder = new AlertDialog.Builder(PersonalActivity.this);
-                builder.setView(vi);
-                final Dialog dialog = builder.create();
-                dialog.show();
-                final EditText oldPassword = (EditText)vi.findViewById(R.id.pas_old);
-                final EditText newPassword = (EditText)vi.findViewById(R.id.pas_new);
-                final EditText confirmPassword = (EditText)vi.findViewById(R.id.pas_confirm);
-                final Button confirm = (Button)vi.findViewById(R.id.confirm);
-                Button clean = (Button)vi.findViewById(R.id.clean);
-                clean.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        oldPassword.setText("");
-                        newPassword.setText("");
-                        confirmPassword.setText("");
-                    }
-                });
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (TextUtils.isEmpty(oldPassword.getText().toString())) {
-                            Toast.makeText(PersonalActivity.this, "请输入原密码", Toast.LENGTH_SHORT).show();
-                        } else if (TextUtils.isEmpty(newPassword.getText().toString())) {
-                            Toast.makeText(PersonalActivity.this, "请输入新密码", Toast.LENGTH_SHORT).show();
-                        } else {
-                            final String oldpwd = oldPassword.getText().toString();
-                            final String newpwd = newPassword.getText().toString();
-                            UserUtils.ResetPassword(PersonalActivity.this, oldpwd, newpwd);
-                        }
-                        dialog.dismiss();
-                    }
-                });
-
-            }
-        });*/
         bmobUser = BmobUser.getCurrentUser(MyUser.class);
         if (bmobUser != null) {
             name.setText(bmobUser.getUsername());
@@ -204,7 +153,7 @@ public class PersonalActivity extends AppCompatActivity {
                 }
                 break;
             case CROP_SMALL_PICTURE:
-                saveUri = ImageUtils.getSaveUri(PersonalActivity.this, UserUtils.getUserId(PersonalActivity.this));
+                saveUri = ImageUtils.getSaveUri(UserUtils.getUserId(PersonalActivity.this));
                 if (saveUri != null) {
                     setImageToView(saveUri);
                 }
@@ -230,7 +179,7 @@ public class PersonalActivity extends AppCompatActivity {
         protected Bitmap doInBackground(String... params) {
             Bitmap bm = null;
             BmobFile bmobFile = new BmobFile(userId + ".jpg", "", bmobUser.getUrlPic());
-            ImageUtils.downloadImage(PersonalActivity.this, bmobFile);
+            ImageUtils.downloadImage(bmobFile);
             try {
                 FileInputStream fileInputStream = new FileInputStream(params[0]);
                 bm = BitmapFactory.decodeStream(fileInputStream);
