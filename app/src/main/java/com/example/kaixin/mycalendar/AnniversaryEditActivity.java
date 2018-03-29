@@ -158,11 +158,11 @@ public class AnniversaryEditActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 monthOfYear = monthOfYear+1;
-                //String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
-                //String day = (dayOfMonth < 10) ? ("0" + dayOfMonth) :("" + dayOfMonth);
-                String month = monthOfYear+"";
-                String day = dayOfMonth+"";
-                an_date.setText(year+"年"+month+"月"+day+"日");
+                String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
+                String day = (dayOfMonth < 10) ? ("0" + dayOfMonth) :("" + dayOfMonth);
+                //String month = monthOfYear+"";
+                //String day = dayOfMonth+"";
+                an_date.setText(year+"-"+month+"-"+day);
             }
         },
         calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -174,7 +174,9 @@ public class AnniversaryEditActivity extends AppCompatActivity {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
         //Date ymd = new Date(System.currentTimeMillis());
         //an_date.setText(simpleDateFormat.format(ymd));
-        an_date.setText(FORMATTER.format(System.currentTimeMillis()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        an_date.setText(sdf.format(System.currentTimeMillis()));
     }
 
     public String getName() {

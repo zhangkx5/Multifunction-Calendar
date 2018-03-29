@@ -75,7 +75,7 @@ public class AnniversaryAdapter extends ArrayAdapter<AnniversaryDay>{
     }
 
     public static Date stringToDate(String date) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date that = simpleDateFormat.parse(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(that);
@@ -96,7 +96,7 @@ public class AnniversaryAdapter extends ArrayAdapter<AnniversaryDay>{
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date that = simpleDateFormat.parse(date);
         Calendar cal = Calendar.getInstance();
         cal.setTime(that);

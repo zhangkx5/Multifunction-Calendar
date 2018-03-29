@@ -1,16 +1,19 @@
 package com.example.kaixin.mycalendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +46,7 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
     private MaterialCalendarView mcv;
     private TextView textView;
     private Toolbar toolbar;
+    private ImageView ib_add;
     private String selectedDate;
 
     private AnniversaryAdapter anniversaryAdapter;
@@ -59,6 +63,13 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
         toolbar = (Toolbar)view.findViewById(R.id.toolbar);
         toolbar.setTitle("生活日历");
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorTitle));
+        ib_add = (ImageView)view.findViewById(R.id.ib_add);
+        ib_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createChoice();
+            }
+        });
         textView = (TextView)view.findViewById(R.id.textView);
 
         mcv.state().edit()
@@ -209,5 +220,41 @@ public class HomeFragment extends Fragment implements OnDateSelectedListener, On
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date.getDate());
         //return FORMATTER.format(date.getDate());
+    }
+
+    private void createChoice() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("新建");
+        String[] items = {"日程管理", "我的日记", "周年纪念日", "账单"};
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i) {
+                    case 0:
+                        Intent scheduleIntent = new Intent(getActivity(), ScheduleEditActivity.class);
+                        startActivity(scheduleIntent);
+                        dialogInterface.dismiss();
+                        break;
+                    case 1:
+                        Intent DiaryIntent = new Intent(getActivity(), DiaryEditActivity.class);
+                        startActivity(DiaryIntent);
+                        dialogInterface.dismiss();
+                        break;
+                    case 2:
+                        Intent AnniversaryIntent = new Intent(getActivity(), AnniversaryEditActivity.class);
+                        startActivity(AnniversaryIntent);
+                        dialogInterface.dismiss();
+                        break;
+                    case 3:
+                        Intent AccountIntent = new Intent(getActivity(), AccountEditActivity.class);
+                        startActivity(AccountIntent);
+                        dialogInterface.dismiss();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        builder.show();
     }
 }

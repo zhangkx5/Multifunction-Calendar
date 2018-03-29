@@ -132,24 +132,8 @@ public class ScheduleEditActivity extends AppCompatActivity{
                     Toast.makeText(ScheduleEditActivity.this, "请输入标题", Toast.LENGTH_SHORT).show();
                 } else if (schedule != null){
                     updateSchedule();
-                    /*ScheduleUtils.upadteBmobSchedule(schedule.getObjectId(), getSchedultTitle(), getAddress(),
-                            getStartTime(), getEndTime(), getCallTime(), getNotes());*/
-                    /*ScheduleUtils.updateLocalSchedule(ScheduleEditActivity.this,
-                            schedule.getObjectId(), getSchedultTitle(), getAddress(),
-                            getStartTime(), getEndTime(), getCallTime(), getNotes());
-                    ScheduleEditActivity.this.finish();*/
                 } else {
                     createSchedule();
-                    /*String id = String.valueOf(System.currentTimeMillis());
-                    String user_id = UserUtils.getUserId(ScheduleEditActivity.this);
-                    Schedule sc = ScheduleUtils.createBmobSchedule(getSchedultTitle(), getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
-                    if (sc != null) {
-                        id = sc.getObjectId();
-                        user_id = sc.getUserId();
-                    }
-                    ScheduleUtils.createLocalSchedule(ScheduleEditActivity.this, id, user_id,
-                            getSchedultTitle(), getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
-                    ScheduleEditActivity.this.finish();*/
                 }
             }
         });

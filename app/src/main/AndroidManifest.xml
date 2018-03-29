@@ -51,12 +51,14 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AccountEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".AnniversaryActivity"/>
+        <activity android:name=".AnniversaryActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AnniversaryEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AnniversaryDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ScheduleActivity"/>
+        <activity android:name=".ScheduleActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ScheduleEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <!--<activity android:name=".TaskFragment"/>-->
@@ -64,10 +66,12 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TaskCheckActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".DiaryActivity"/>
+        <activity android:name=".DiaryActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".DiaryEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".WeatherActivity"/>
+        <activity android:name=".WeatherActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

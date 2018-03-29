@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
@@ -25,6 +26,7 @@ public class AnniversaryActivity extends AppCompatActivity {
     private AnniversaryAdapter anniversaryAdapter;
     private ListView listView;
     private List<AnniversaryDay> list;
+    private ImageView ib_back, ib_add;
 
     @Override
     protected void onResume() {
@@ -42,18 +44,25 @@ public class AnniversaryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anniversary);
-        getSupportActionBar().setTitle("纪念日");
 
+
+        ib_back = (ImageView)findViewById(R.id.ib_back);
+        ib_add = (ImageView)findViewById(R.id.ib_add);
         listView = (ListView) findViewById(R.id.listView);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AnniversaryEditActivity.class);
+                AnniversaryActivity.this.finish();
+            }
+        });
+        ib_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AnniversaryActivity.this, AnniversaryEditActivity.class);
                 startActivity(intent);
             }
         });
-
         list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
         if (list.size() == 0) {
             AnniversaryUtils.queryAllBmobAnniversaryDay(this);

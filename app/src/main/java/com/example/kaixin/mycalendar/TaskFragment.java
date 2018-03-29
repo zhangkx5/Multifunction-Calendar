@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.kaixin.mycalendar.Bean.Task;
@@ -29,6 +30,7 @@ public class TaskFragment extends Fragment {
     private ListView listView;
     private TaskAdapter taskAdapter;
     private List<Task> list = new ArrayList<>();
+    private ImageView ib_add;
 
     @Override
     public void onResume() {
@@ -47,17 +49,16 @@ public class TaskFragment extends Fragment {
         Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
         toolbar.setTitle("任务");
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorTitle));
+        ib_add = (ImageView)view.findViewById(R.id.ib_add);
+        listView = (ListView) view.findViewById(R.id.listView);
 
-        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        ib_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), TaskEditActivity.class);
                 startActivity(intent);
             }
         });
-
-        listView = (ListView)view.findViewById(R.id.listView);
         /*list = TaskUtils.queryAllLocalTask(getActivity(), UserUtils.getUserId(getActivity()));
         if (list.size() == 0) {
             TaskUtils.queryAllBmobTask(getActivity());

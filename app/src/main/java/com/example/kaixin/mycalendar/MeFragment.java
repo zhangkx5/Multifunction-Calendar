@@ -34,8 +34,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MeFragment extends Fragment {
 
     private CircleImageView user_photo;
+    private ImageView ib_setting;
     private TextView user_name, user_notes;
-    private LinearLayout personal, diary, weather, anniversary, schedule, account, setting, about;
+    private LinearLayout personal, diary, weather, anniversary, schedule, account, about;
     private Button login;
     private MyUser bmobUser;
     private String userId;
@@ -51,6 +52,7 @@ public class MeFragment extends Fragment {
         Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
         toolbar.setTitle("我");
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorTitle));
+        ib_setting = (ImageView)view.findViewById(R.id.ib_setting);
         user_photo = (CircleImageView)view.findViewById(R.id.user_photo);
         user_name = (TextView)view.findViewById(R.id.user_name);
         user_notes = (TextView)view.findViewById(R.id.user_notes);
@@ -62,10 +64,16 @@ public class MeFragment extends Fragment {
         schedule = (LinearLayout)view.findViewById(R.id.schedule);
         account = (LinearLayout)view.findViewById(R.id.account);
         about = (LinearLayout) view.findViewById(R.id.about);
-        setting = (LinearLayout) view.findViewById(R.id.setting);
 
         setUserInfo();
 
+        ib_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SettingActivity.class);
+                startActivity(intent);
+            }
+        });
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,13 +127,6 @@ public class MeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AccountActivity.class);
-                startActivity(intent);
-            }
-        });
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SettingActivity.class);
                 startActivity(intent);
             }
         });

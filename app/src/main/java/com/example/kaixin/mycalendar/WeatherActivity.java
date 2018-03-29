@@ -36,7 +36,7 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
     private WeatherPresenter weatherPresenter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView name, change_city, time_update, wendu, shidu, air, degrees, wind, weather_now;
-    private ImageView weather_img_now;
+    private ImageView weather_img_now, ib_back;
     private ListView listView;
     private LinearLayout linearLayout;
     private RecyclerView mRecyclerView;
@@ -61,6 +61,13 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
+        ib_back = (ImageView)findViewById(R.id.ib_back);
+        ib_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                WeatherActivity.this.finish();
+            }
+        });
         weatherPresenter = new WeatherPresenter(this);
         mContext = getApplicationContext();
         name = (TextView)findViewById(R.id.name_search);
