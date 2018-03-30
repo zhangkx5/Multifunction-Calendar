@@ -61,8 +61,10 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         }
         viewHolder.task_name.setText(task.getTaskName());
         viewHolder.task_img.setTag(task.getTaskImg());
-        if (!"".equals(task.getTaskImgName())) {
+        if (!"".equals(task.getTaskImg())) {
             new ImageAsyncTack(viewHolder.task_img).execute(task.getTaskImgName());
+        } else {
+            viewHolder.task_img.setImageResource(R.mipmap.bg_task);
         }
         return convertView;
     }

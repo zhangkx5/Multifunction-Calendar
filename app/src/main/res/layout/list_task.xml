@@ -39,7 +39,7 @@
                 android:layout_height="200dp"
                 android:layout_margin="5dp"
                 android:scaleType="fitXY"
-                android:background="@mipmap/bg_task"/>
+                android:background="@mipmap/bg_loading"/>
 
         </LinearLayout>
 

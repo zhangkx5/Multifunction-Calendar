@@ -51,6 +51,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AccountEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".AccountReportActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AnniversaryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AnniversaryEditActivity"

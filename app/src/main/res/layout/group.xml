@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B8E6FA"
-    android:gravity="center_vertical">
+    android:background="#B8E6FA">
 
     <!--<ImageView
         android:id="@+id/groupIcon"
@@ -22,10 +21,22 @@
         android:gravity="center_vertical|left"/>-->
     <TextView
         android:id="@+id/groupto"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:textColor="#000000"
         android:textSize="18sp"
         android:layout_marginLeft="40dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
         android:gravity="center_vertical"/>
-</LinearLayout>
+    <Button
+        android:id="@+id/report"
+        android:focusable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="#e1e59a"
+        android:layout_alignParentRight="true"
+        android:text="查看报表"
+        android:textSize="18sp"/>
+</RelativeLayout>

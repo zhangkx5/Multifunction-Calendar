@@ -1,10 +1,12 @@
 package com.example.kaixin.mycalendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Bean.AccountBill;
@@ -22,6 +24,9 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     private LayoutInflater mInflater;
     private List<Date> mGroup;
     private List<List<AccountBill>> mData;
+    private String[] TYPES = new String[] {"支出", "收入"};
+    private String[] LABLES = new String[] {"购物", "餐饮", "居住", "交通", "娱乐", "其他",
+            "工资", "红包", "收益", "奖金", "报销", "其他"};
 
     public MyExpandableListViewAdapter(Context context, List<Date> group, List<List<AccountBill>> list) {
         mContext = context;
@@ -43,61 +48,34 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View convertView, ViewGroup parent) {
+        ChildViewHolder holder = null;
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.list_account_bill, null);
-        }
-        ChildViewHolder holder = new ChildViewHolder();
-        holder.type = (TextView)convertView.findViewById(R.id.type);
-        holder.label = (TextView)convertView.findViewById(R.id.label);
-        holder.date = (TextView)convertView.findViewById(R.id.date);
-        holder.money = (TextView)convertView.findViewById(R.id.money);
-        holder.notes = (TextView)convertView.findViewById(R.id.notes);
-        if (getChild(groupPosition, childPosition).getType() == 0) {
-            holder.type.setText("支出");
+            holder = new ChildViewHolder();
+            holder.type = (TextView)convertView.findViewById(R.id.type);
+            holder.label = (TextView)convertView.findViewById(R.id.label);
+            holder.date = (TextView)convertView.findViewById(R.id.date);
+            holder.money = (TextView)convertView.findViewById(R.id.money);
+            holder.notes = (TextView)convertView.findViewById(R.id.notes);
+            convertView.setTag(holder);
         } else {
-            holder.type.setText("收入");
+            holder = (ChildViewHolder)convertView.getTag();
         }
-        switch (getChild(groupPosition, childPosition).getLabel()) {
-            case 0:
-                holder.label.setText("购物");
-                break;
-            case 1:
-                holder.label.setText("餐饮");
-                break;
-            case 2:
-                holder.label.setText("居住");
-                break;
-            case 3:
-                holder.label.setText("交通");
-                break;
-            case 4:
-                holder.label.setText("娱乐");
-                break;
-            case 5:
-                holder.label.setText("其他");
-                break;
-            case 6:
-                holder.label.setText("工资");
-                break;
-            case 7:
-                holder.label.setText("红包");
-                break;
-            case 8:
-                holder.label.setText("收益");
-                break;
-            case 9:
-                holder.label.setText("奖金");
-                break;
-            case 10:
-                holder.label.setText("报销");
-                break;
-            case 11:
-                holder.label.setText("其他");
-                break;
+        String date = getChild(groupPosition, childPosition).getAccountDate().substring(5) + " ";
+        String type = TYPES[getChild(groupPosition, childPosition).getAccountType()] + " ";
+        String label = LABLES[getChild(groupPosition, childPosition).getAccountLabel()] + " ";
+        String money = getChild(groupPosition, childPosition).getAccountMoney() + " 元";
+        String notes = getChild(groupPosition, childPosition).getAccountNotes();
+        holder.label.setText(label);
+        holder.type.setText(type);
+        holder.date.setText(date);
+        holder.money.setText(money);
+        if ("".equals(notes)) {
+            holder.notes.setText("备注：无");
+        } else {
+            holder.notes.setText("备注：" + notes);
         }
-        holder.date.setText("日期：" + getChild(groupPosition, childPosition).getDate());
-        holder.money.setText("金额：" + getChild(groupPosition, childPosition).getMoney());
-        holder.notes.setText("备注：" + getChild(groupPosition, childPosition).getNotes());
+        //holder.notes.setText("备注：" + getChild(groupPosition, childPosition).getAccountNotes());
         return convertView;
     }
 
@@ -130,21 +108,43 @@ public class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        GroupViewHolder holder = null;
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.group, null);
+            holder = new GroupViewHolder();
+            holder.groupto = (TextView)convertView.findViewById(R.id.groupto);
+            holder.btn_report = (Button)convertView.findViewById(R.id.report);
+            convertView.setTag(holder);
+        } else {
+            holder = (GroupViewHolder) convertView.getTag();
         }
-        GroupViewHolder holder = new GroupViewHolder();
-        holder.groupto = (TextView)convertView.findViewById(R.id.groupto);
         int year = mGroup.get(groupPosition).getYear() + 1900;
         int monthOfYear = mGroup.get(groupPosition).getMonth() + 1;
         String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
-        holder.groupto.setText(year + "-" + month);
+        final String year_month = year + "-" + month;
+        holder.groupto.setText(year_month);
+        holder.btn_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, AccountReportActivity.class);
+                List<AccountBill> temp = mData.get(groupPosition);
+                double[] mon = new double[] {0,0,0,0,0,0,0,0,0,0,0,0};
+                for (int i = 0; i < temp.size(); i++) {
+                    AccountBill bill = temp.get(i);
+                    mon[bill.getAccountLabel()] += bill.getAccountMoney();
+                }
+                intent.putExtra("group", year_month);
+                intent.putExtra("mon", mon);
+                mContext.startActivity(intent);
+            }
+        });
         return convertView;
     }
 
     private class GroupViewHolder {
         TextView groupto;
+        Button btn_report;
     }
 
     @Override

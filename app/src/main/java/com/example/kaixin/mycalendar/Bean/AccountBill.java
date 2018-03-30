@@ -2,47 +2,55 @@ package com.example.kaixin.mycalendar.Bean;
 
 import java.io.Serializable;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by kaixin on 2018/2/8.
  */
 
-public class AccountBill implements Serializable {
-    private String id;
+public class AccountBill extends BmobObject implements Serializable {
+    private String userId;
     private int type;
     private int label;
     private String date;
     private double money;
     private String notes;
 
-    public AccountBill(String id, int type, int label, String date, double money, String notes) {
-        this.id = id;
-        this.type = type;
-        this.label = label;
-        this.date = date;
-        this.money = money;
-        this.notes = notes;
-    }
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
-
-    public int getType() {
+    public int getAccountType() {
         return type;
     }
-
-    public int getLabel() {
+    public int getAccountLabel() {
         return label;
     }
-    public String getDate() {
+    public String getAccountDate() {
         return date;
     }
-
-    public double getMoney() {
+    public double getAccountMoney() {
         return money;
     }
-
-    public String getNotes() {
+    public String getAccountNotes() {
         return notes;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    public void setAccountType(int type) {
+        this.type = type;
+    }
+    public void setAccountLabel(int label) {
+        this.label = label;
+    }
+    public void setAccountDate(String date) {
+        this.date = date;
+    }
+    public void setAccountMoney(double money) {
+        this.money = money;
+    }
+    public void setAccountNotes(String notes) {
+        this.notes = notes;
     }
 }

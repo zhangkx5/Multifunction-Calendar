@@ -1,13 +1,16 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AccountBill;
+import com.example.kaixin.mycalendar.Utils.AccountBillUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
 
 import java.text.SimpleDateFormat;
@@ -189,14 +193,14 @@ public class AccountEditActivity extends AppCompatActivity {
                     money = Double.valueOf(ac_money.getText().toString());
                     notes = ac_notes.getText().toString();
                     date = ac_date.getText().toString();
-                    updateInDB(account, account_type, type_label, date, money, notes);
-                    AccountEditActivity.this.finish();
+                    updateAccountBill();
+                    //updateInDB(account, account_type, type_label, date, money, notes);
                 } else {
                     money = Double.valueOf(ac_money.getText().toString());
                     notes = ac_notes.getText().toString();
                     date = ac_date.getText().toString();
-                    addInDB(account_type, type_label, date, money, notes);
-                    AccountEditActivity.this.finish();
+                    createAccountBill();
+                    //addInDB(account_type, type_label, date, money, notes);
                 }
             }
         });
@@ -208,15 +212,15 @@ public class AccountEditActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        account = (AccountBill) intent.getSerializableExtra("account");
+        account = (AccountBill) intent.getSerializableExtra("accountBill");
         if (account != null) {
             TextView title = (TextView)findViewById(R.id.title);
             title.setText("编辑账单");
-            account_type = account.getType();
-            type_label = account.getLabel();
-            date = account.getDate();
-            money = account.getMoney();
-            notes = account.getNotes();
+            account_type = account.getAccountType();
+            type_label = account.getAccountLabel();
+            date = account.getAccountDate();
+            money = account.getAccountMoney();
+            notes = account.getAccountNotes();
             if (account_type == 0) {
                 radio_type.check(R.id.type_cost);
                 radio_cost.setVisibility(View.VISIBLE);
@@ -282,7 +286,7 @@ public class AccountEditActivity extends AppCompatActivity {
                 monthOfYear = monthOfYear+1;
                 String month = (monthOfYear < 10) ? ("0" + monthOfYear) : ("" + monthOfYear);
                 String day = (dayOfMonth < 10) ? ("0" + dayOfMonth) :("" + dayOfMonth);
-                ac_date.setText(year+"年"+month+"月"+day+"日");
+                ac_date.setText(year+"-"+month+"-"+day);
             }
         }, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.setCancelable(true);
@@ -290,10 +294,11 @@ public class AccountEditActivity extends AppCompatActivity {
     }
 
     public void setDate() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date ymd = new Date(System.currentTimeMillis());
         ac_date.setText(simpleDateFormat.format(ymd));
     }
+/*
 
     public void addInDB(int type, int label, String date, double money, String notes) {
         String acid = String.valueOf(System.currentTimeMillis());
@@ -302,8 +307,9 @@ public class AccountEditActivity extends AppCompatActivity {
         dbWrite.close();
         Toast.makeText(AccountEditActivity.this, acid + type + label + date + money + notes, Toast.LENGTH_SHORT).show();
     }
+*/
 
-    public void updateInDB(AccountBill account, int type, int label, String date, double money, String notes) {
+    /*public void updateInDB(AccountBill account, int type, int label, String date, double money, String notes) {
         String ac_id = account.getId();
         SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -314,5 +320,77 @@ public class AccountEditActivity extends AppCompatActivity {
         values.put("notes", notes);
         dbUpdate.update(MyDatabaseHelper.ACCOUNT_TABLE_NAME, values,
                 "acid = ?", new String[] {ac_id});
+    }*/
+    ProgressDialog progressDialog;
+    public void createAccountBill() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                Log.i("createAccountBill", "正在保存...");
+                progressDialog = new ProgressDialog(AccountEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+
+                Log.i("createAccountBill", "保存成功...");
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                AccountEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                //AccountBillUtils.createLocalAccountBill(AccountEditActivity.this, "unknown", "unknown", account_type, type_label, date, money, notes);
+                AccountBillUtils.createBmobAccountBill(AccountEditActivity.this, account_type, type_label, date, money, notes);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+    public void updateAccountBill() {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(AccountEditActivity.this);
+                progressDialog.setMessage("保存中...");
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                AccountEditActivity.this.finish();
+            }
+            @Override
+            protected Void doInBackground(String... params) {
+                AccountBillUtils.updateLocalAccountBill(AccountEditActivity.this, account.getObjectId(), account_type, type_label, date, money, notes);
+                AccountBillUtils.upadteBmobAccountBill(account.getObjectId(), account_type, type_label, date, money, notes);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 }

@@ -56,11 +56,11 @@ public class AccountBillAdapter extends ArrayAdapter<AccountBill> {
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.ac_type.setText(""+account.getType());
-        viewHolder.ac_label.setText(""+account.getLabel());
-        viewHolder.ac_date.setText(account.getDate());
-        viewHolder.ac_money.setText(account.getMoney() + "元");
-        viewHolder.ac_notes.setText(account.getNotes());
+        viewHolder.ac_type.setText(""+account.getAccountType());
+        viewHolder.ac_label.setText(""+account.getAccountLabel());
+        viewHolder.ac_date.setText(account.getAccountDate());
+        viewHolder.ac_money.setText(account.getAccountMoney() + "元");
+        viewHolder.ac_notes.setText(account.getAccountNotes());
         return convertView;
     }
 
@@ -82,8 +82,8 @@ public class AccountBillAdapter extends ArrayAdapter<AccountBill> {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
         for (int i = 0; i < result.size()-1; i++) {
             for (int j = i+1; j < result.size(); j++) {
-                Date d1 = sdf.parse(result.get(i).getDate());
-                Date d2 = sdf.parse(result.get(j).getDate());
+                Date d1 = sdf.parse(result.get(i).getAccountDate());
+                Date d2 = sdf.parse(result.get(j).getAccountDate());
                 if (d1.before(d2)) {
                     AccountBill accountBill = result.get(i);
                     result.set(i, result.get(j));
@@ -99,7 +99,7 @@ public class AccountBillAdapter extends ArrayAdapter<AccountBill> {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
         for (int i = 0; i < result.size(); i++) {
             AccountBill accountBill = result.get(i);
-            Date date = sdf.parse(accountBill.getDate());
+            Date date = sdf.parse(accountBill.getAccountDate());
             if (map.containsKey(date)) {
                 map.get(date).add(accountBill);
             } else {

@@ -36,7 +36,7 @@ public class EventDecorator implements DayViewDecorator {
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        //if (day.isAfter(CalendarDay.today())) return false;
+        if (day.isAfter(CalendarDay.today())) return false;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         date = sdf.format(day.getDate());
         for (int i = 0; i < dateList.size(); i++) {

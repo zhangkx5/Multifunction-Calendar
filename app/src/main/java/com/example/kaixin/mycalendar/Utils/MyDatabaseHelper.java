@@ -49,18 +49,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     //账本
     public static final String ACCOUNT_TABLE_NAME = "account_table";
     public static final String ACCOUNT_TABLE_CREATE = "create table " + ACCOUNT_TABLE_NAME
-            + "(id interger primary key,"
-            + " acid TEXT,"
-            + " type interger,"
-            + " label interger,"
-            + " date TEXT,"
-            + " money REAL,"
-            + " notes TEXT)";
+            + "(id TEXT primary key,"
+            + " user_id TEXT,"
+            + " bill_type interger,"
+            + " bill_label interger,"
+            + " bill_date TEXT,"
+            + " bill_money REAL,"
+            + " bill_notes TEXT)";
     public static final String ACCOUNT_TABLE_DROP = "drop table if exists " + ACCOUNT_TABLE_NAME;
-    public static final String ACCOUNT_TABLE_INSERT = "insert into " + ACCOUNT_TABLE_NAME
-            + " (acid, type, label, date, money, notes) values (?, ?, ?, ?, ?, ?)";
-    public static final String ACCOUNT_TABLE_SELECT = "select * from " + ACCOUNT_TABLE_NAME;
-    public static final String ACCOUNT_TABLE_DELETE = "delete from " + ACCOUNT_TABLE_NAME + " where acid = ?";
 
     //任务
     public static final String TASK_TABLE_NAME = "task_table";
@@ -84,7 +80,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String CLOCKINGIN_TABLE_DROP = "drop table if exists " + CLOCKINGIN_TABLE_NAME;
 
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 3);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

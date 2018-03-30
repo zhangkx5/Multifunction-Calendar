@@ -1,5 +1,6 @@
 package com.example.kaixin.mycalendar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,11 +10,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Bean.AccountBill;
+import com.example.kaixin.mycalendar.Utils.AccountBillUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,17 +28,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
 /**
  * Created by kaixin on 2018/2/7.
  */
 
 public class AccountBillFragment extends Fragment {
 
-    private ListView listView;
+    //private ListView listView;
     private AccountBillAdapter accountAdapter;
     private List<AccountBill> list;
     private MyDatabaseHelper myDatabaseHelper;
     private FloatingActionButton fab;
+    //private ExpandableStickyListHeadersListView listView;
+
     private MyExpandableListViewAdapter expandableListViewAdapter;
     private ExpandableListView expandableListView;
 
@@ -45,7 +56,8 @@ public class AccountBillFragment extends Fragment {
         //listView.setAdapter(accountAdapter);
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
-            map = DivideIntoGroup(readDB());
+            //map = DivideIntoGroup(readDB());
+            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(getActivity(), UserUtils.getUserId(getActivity())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -64,6 +76,20 @@ public class AccountBillFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account_bill, null);
         myDatabaseHelper = new MyDatabaseHelper(getActivity());
+
+        /*listView = (ExpandableStickyListHeadersListView) view.findViewById(R.id.listView);
+        MyAdapter myAdapter = new MyAdapter(getActivity());
+        listView.setAdapter(myAdapter);
+        listView.setOnHeaderClickListener(new StickyListHeadersListView.OnHeaderClickListener() {
+            @Override
+            public void onHeaderClick(StickyListHeadersListView l, View header, int itemPosition, long headerId, boolean currentlySticky) {
+                if (listView.isHeaderCollapsed(headerId)) {
+                    listView.expand(headerId);
+                } else {
+                    listView.collapse(headerId);
+                }
+            }
+        });*/
         /*listView = (ListView)view.findViewById(R.id.listView);
         list = readDB();
         accountAdapter = new AccountBillAdapter(getContext(), list);
@@ -116,7 +142,8 @@ public class AccountBillFragment extends Fragment {
 
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
-            map = DivideIntoGroup(readDB());
+            //map = DivideIntoGroup(readDB());
+            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(getActivity(), UserUtils.getUserId(getActivity())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -130,47 +157,27 @@ public class AccountBillFragment extends Fragment {
         expandableListView = (ExpandableListView)view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(expandableListViewAdapter);
         //expandableListView.expandGroup(0);
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int h, int c, long l) {
+                List<AccountBill> header = expandableListViewAdapter.getGroup(h);
+                AccountBill child = header.get(c);
+                Intent intent = new Intent(getActivity(), AccountEditActivity.class);
+                intent.putExtra("accountBill",child);
+                startActivity(intent);
+                return false;
+            }
+        });
 
         return view;
     }
-    public List<AccountBill> readDB() {
-        List<AccountBill> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        Cursor cursor = dbRead.rawQuery(MyDatabaseHelper.ACCOUNT_TABLE_SELECT, null);
-        while (cursor.moveToNext()) {
-            String acid = cursor.getString(cursor.getColumnIndex("acid"));
-            int type = cursor.getInt(cursor.getColumnIndex("type"));
-            int label = cursor.getInt(cursor.getColumnIndex("label"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            double money = cursor.getDouble(cursor.getColumnIndex("money"));
-            String notes = cursor.getString(cursor.getColumnIndex("notes"));
-            AccountBill account = new AccountBill(acid, type, label, date, money, notes);
-            result.add(account);
-        }
-        /*List<AccountBill> all = new ArrayList<>();
-        try {
-            Map<Date, List<AccountBill>> map = DivideIntoGroup(result);
-            List<Date> dateList = getAllKey(map);
-            for (int i = 0; i < dateList.size(); i++) {
-                all.addAll(map.get(dateList.get(i)));
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
-        return result;
-    }
-    public void deleteInDB(String id) {
-        SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
-        dbDelete.execSQL(MyDatabaseHelper.ACCOUNT_TABLE_DELETE, new Object[]{id});
-        dbDelete.close();
-    }
 
     public List<AccountBill> OrderList(List<AccountBill> result) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < result.size()-1; i++) {
-            Date d1 = sdf.parse(result.get(i).getDate());
+            Date d1 = sdf.parse(result.get(i).getAccountDate());
             for (int j = i+1; j < result.size(); j++) {
-                Date d2 = sdf.parse(result.get(j).getDate());
+                Date d2 = sdf.parse(result.get(j).getAccountDate());
                 if (d1.before(d2)) {
                     AccountBill accountBill = result.get(i);
                     result.set(i, result.get(j));
@@ -183,10 +190,10 @@ public class AccountBillFragment extends Fragment {
 
     public Map<Date, List<AccountBill>> DivideIntoGroup(List<AccountBill> result) throws ParseException {
         Map<Date, List<AccountBill>> map = new HashMap<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         for (int i = 0; i < result.size(); i++) {
             AccountBill accountBill = result.get(i);
-            Date date = sdf.parse(accountBill.getDate());
+            Date date = sdf.parse(accountBill.getAccountDate());
             if (map.containsKey(date)) {
                 map.get(date).add(accountBill);
             } else {
@@ -214,5 +221,87 @@ public class AccountBillFragment extends Fragment {
             }
         }
         return dateList;
+    }
+    public List<List<AccountBill>> getAllData(Map<Date, List<AccountBill>> map) {
+        List<List<AccountBill>> lists = new ArrayList<>();
+        for (Date date : getAllKey(map)) {
+            List<AccountBill> l = map.get(date);
+            lists.add(l);
+        }
+        return lists;
+    }
+
+    public class MyAdapter extends BaseAdapter implements StickyListHeadersAdapter {
+        private String[] countries;
+        private LayoutInflater inflater;
+        private Map<Date, List<AccountBill>> map = new HashMap<>();
+        private List<Date> header;
+        private List<List<AccountBill>> data;
+
+        public MyAdapter(Context context) {
+            inflater = LayoutInflater.from(context);
+            try {
+                //map = DivideIntoGroup(readDB());
+                map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(getActivity(), UserUtils.getUserId(getActivity())));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            header = getAllKey(map);
+            data = getAllData(map);
+            countries = new String[] {"k", "a"};
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+            //return countries.length;
+        }
+        @Override
+        public Object getItem(int position) {
+            return countries[position];
+        }
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                //convertView = inflater.inflate(R.layout.list_item_layout, parent, false);
+                holder.text = (TextView)convertView.findViewById(R.id.text);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder)convertView.getTag();
+            }
+            holder.text.setText(countries[position]);
+            return convertView;
+        }
+        @Override
+        public View getHeaderView(int position, View convertView, ViewGroup parent) {
+            HeaderViewHolder holder;
+            if (convertView == null) {
+                holder = new HeaderViewHolder();
+                //convertView = inflater.inflate(R.layout.header, parent, false);
+                holder.text = (TextView)convertView.findViewById(R.id.text);
+                convertView.setTag(holder);
+            } else {
+                holder = (HeaderViewHolder)convertView.getTag();
+            }
+            String headerText = "" + countries[position].subSequence(0,1).charAt(0);
+            holder.text.setText(countries[position]);
+            return convertView;
+        }
+        @Override
+        public long getHeaderId(int position) {
+            return countries[position].subSequence(0, 1).charAt(0);
+        }
+        class ViewHolder {
+            TextView text;
+        }
+        class HeaderViewHolder {
+            TextView text;
+        }
     }
 }
