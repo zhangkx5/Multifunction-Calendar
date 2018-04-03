@@ -5,50 +5,53 @@ import java.io.Serializable;
 import cn.bmob.v3.BmobObject;
 
 /**
- * Created by kaixin on 2018/3/13.
+ * Created by kaixin on 2018/3/20.
  */
 
 public class Diary extends BmobObject implements Serializable {
-    private String id;
-    private String date;
-    private String address;
-    private String weather;
-    private String content;
 
-    public Diary(String id, String date, String address, String weather, String content) {
-        this.id = id;
-        this.address = address;
-        this.weather = weather;
-        this.date = date;
-        this.content = content;
-    }
+    private String userId;
+    private String diary_date;
+    private String diary_address;
+    private String diary_weather;
+    private String diary_title;
+    private String diary_content;
 
-    public String getId() {
-        return id;
+    public Diary() {}
+    public String getUserId() {
+        return userId;
     }
-
-    public String getDate() {
-        return date;
+    public String getDiaryDate() {
+        return diary_date;
     }
-    public void setDate(String date) {
-        this.date = date;
+    public String getDiaryAddress() {
+        return diary_address;
     }
-    public String getAddress() {
-        return address;
+    public String getDiaryContent() {
+        return diary_content;
     }
-    public void setAddress(String address) {
-        this.address = address;
+    public String getDiaryWeather() {
+        return diary_weather;
     }
-    public String getWeather() {
-        return weather;
+    public String getDiaryTitle() {
+        return diary_title;
     }
-    public void setWeather(String weather) {
-        this.weather = weather;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
-    public String getContent() {
-        return content;
+    public void setDiaryDate(String date) {
+        this.diary_date = date;
     }
-    public void setContent(String content) {
-        this.content = content;
+    public void setDiaryAddress(String address) {
+        this.diary_address = address;
+    }
+    public void setDiaryWeather(String weather) {
+        this.diary_weather = weather;
+    }
+    public void setDiaryContent(String content) {
+        this.diary_content = content;
+    }
+    public void setDiaryTitle(String title) {
+        this.diary_title = title;
     }
 }

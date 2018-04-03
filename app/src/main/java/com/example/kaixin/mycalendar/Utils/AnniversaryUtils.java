@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
-import com.example.kaixin.mycalendar.MyUser;
+import com.example.kaixin.mycalendar.Bean.MyUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import cn.bmob.v3.listener.UpdateListener;
 public class AnniversaryUtils {
 
     private static MyDatabaseHelper myDatabaseHelper;
-    public static final String ANNIVERSARY_TABLE_NAME = "anniversary_table";
+    public static final String ANNIVERSARY_TABLE_NAME = "Table_Anniversary";
     public static final String ANNIVERSARY_TABLE_INSERT = "insert into " + ANNIVERSARY_TABLE_NAME
             + " (id, user_id, anniversary_name, anniversary_date, anniversary_notes) values (?, ? ,?, ?, ?)";
     public static final String ANNIVERSARY_TABLE_DELETE = "delete from " + ANNIVERSARY_TABLE_NAME + " where id = ?";
@@ -38,7 +38,7 @@ public class AnniversaryUtils {
         SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
         dbWrite.execSQL(ANNIVERSARY_TABLE_INSERT, new Object[]{id, userid, name, date, notes});
         dbWrite.close();
-        Log.i("Anniversary", "createLocalAnniversary："+id);
+        Log.i("ANNIVERSARY", "createLocalAnniversary 成功："+id);
     }
     //修改本地数据库中的纪念日
     public static void updateLocalAnniversary(Context context, String id, String name, String date, String notes) {
@@ -50,6 +50,7 @@ public class AnniversaryUtils {
         values.put("anniversary_notes", notes);
         dbUpdate.update(ANNIVERSARY_TABLE_NAME, values, "id = ?", new String[] {id});
         dbUpdate.close();
+        Log.i("ANNIVERSARY", "updateLocalAnniversary 成功："+id);
     }
     //删除本地数据库中的某个纪念日
     public static void deleteLocalAnniversary(Context context, String id) {
@@ -57,6 +58,7 @@ public class AnniversaryUtils {
         SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
         dbDelete.execSQL(ANNIVERSARY_TABLE_DELETE, new Object[]{id});
         dbDelete.close();
+        Log.i("ANNIVERSARY", "deleteLocalAnniversary 成功："+id);
     }
     //查找本地数据库中的所有纪念日
     public static List<AnniversaryDay> queryAllLocalAnniversary(Context context, String user_id) {
@@ -80,6 +82,7 @@ public class AnniversaryUtils {
             result.add(anniversaryDay);
         }
         Collections.reverse(result);
+        Log.i("ANNIVERSARY", "queryAllLocalAnniversary 成功");
         return result;
     }
     //添加纪念日到后端云
@@ -97,14 +100,14 @@ public class AnniversaryUtils {
                 public void done(String objectId, BmobException e) {
                     if (e == null) {
                         createLocalAnniversary(context, objectId, userId, date, name, notes);
-                        Log.i("Bmob_anniversaryDay", "创建bmob纪念日成功:" + objectId);
+                        Log.i("ANNIVERSARY", "createBmobAnniversary 成功:" + objectId);
                     } else {
-                        Log.i("Bmob_anniversaryDay", "创建bmob纪念日失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ANNIVERSARY", "createBmobAnniversary 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
         } else {
-            Log.i("Bmob_anniversaryDay", "创建bmob纪念日失败");
+            Log.i("ANNIVERSARY", "createBmobAnniversary 失败");
         }
         return anniversaryDay;
     }
@@ -120,9 +123,9 @@ public class AnniversaryUtils {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_anniversaryDay", "更新bmob纪念日成功");
+                        Log.i("ANNIVERSARY", "upadteBmobAnniversaryDay 成功");
                     } else {
-                        Log.i("Bmob_anniversaryDay", "更新bmob纪念日失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ANNIVERSARY", "upadteBmobAnniversaryDay 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -138,9 +141,9 @@ public class AnniversaryUtils {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_anniversaryDay", "删除bmob纪念日成功");
+                        Log.i("ANNIVERSARY", "deleteBmobAnniversaryDay 成功");
                     } else {
-                        Log.i("Bmob_anniversaryDay", "删除bmob纪念日失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ANNIVERSARY", "deleteBmobAnniversaryDay 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -164,7 +167,9 @@ public class AnniversaryUtils {
                                     bmobAnniversaryDay.getAnniversaryDate(), bmobAnniversaryDay.getAnniversaryName(),
                                     bmobAnniversaryDay.getAnniversaryNotes());
                         }
+                        Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 成功");
                     } else {
+                        Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 失败："+e.getMessage()+","+e.getErrorCode());
                         Toast.makeText(mContext, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

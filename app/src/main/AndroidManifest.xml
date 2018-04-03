@@ -38,6 +38,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".LoginActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -63,10 +64,10 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ScheduleEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <!--<activity android:name=".TaskFragment"/>-->
-        <activity android:name=".TaskEditActivity"
+        <!--<activity android:name=".HabitFragment"/>-->
+        <activity android:name=".HabitEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".TaskCheckActivity"
+        <activity android:name=".HabitClockingInActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".DiaryActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

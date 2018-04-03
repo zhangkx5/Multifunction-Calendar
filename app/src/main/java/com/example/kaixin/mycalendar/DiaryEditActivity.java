@@ -9,28 +9,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.kaixin.mycalendar.Bean.BmobDiary;
+import com.example.kaixin.mycalendar.Bean.Diary;
+import com.example.kaixin.mycalendar.Utils.CheckNetwork;
 import com.example.kaixin.mycalendar.Utils.DiaryUtils;
 import com.example.kaixin.mycalendar.Utils.LocationUtils;
-import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
-import com.example.kaixin.mycalendar.Utils.UserUtils;
+import com.example.kaixin.mycalendar.Utils.WeatherUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.SaveListener;
-import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by kaixin on 2018/3/9.
@@ -42,7 +36,7 @@ public class DiaryEditActivity extends AppCompatActivity {
     private TextView title, date, weather, address, content_tv, title_tv;
     private EditText content_et, title_et;
     private Intent intent;
-    private BmobDiary diary;
+    private Diary diary;
     private String strDate, strWea, strAdd, strContent, strTitle, id;
     private ArrayList<String> response;
     private final int UPDATE_CONTENT = 0;
@@ -190,7 +184,7 @@ public class DiaryEditActivity extends AppCompatActivity {
         content_et = (EditText) findViewById(R.id.diary_content_et);
 
         intent = getIntent();
-        diary = (BmobDiary)intent.getSerializableExtra("diary");
+        diary = (Diary)intent.getSerializableExtra("diary");
         if (diary != null) {
             content_et.setVisibility(View.GONE);
             content_tv.setVisibility(View.VISIBLE);

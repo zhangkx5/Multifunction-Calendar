@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Bean.MyUser;
 import com.example.kaixin.mycalendar.Utils.ImageUtils;
 
 import java.io.File;

@@ -3,7 +3,6 @@ package com.example.kaixin.mycalendar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,8 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.kaixin.mycalendar.Adapter.ScheduleAdapter;
 import com.example.kaixin.mycalendar.Bean.Schedule;
-import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
 import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 

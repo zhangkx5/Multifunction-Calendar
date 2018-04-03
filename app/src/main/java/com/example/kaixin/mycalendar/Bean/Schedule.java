@@ -12,9 +12,8 @@ public class Schedule extends BmobObject implements Serializable{
     private String userId;
     private String schedule_title;
     private String schedule_address;
-    private String schedule_start;
-    private String schedule_end;
-    private String schedule_call;
+    private String schedule_startTime;
+    private String schedule_endTime;
     private String schedule_notes;
 
     public String getUserId() {
@@ -27,13 +26,10 @@ public class Schedule extends BmobObject implements Serializable{
         return schedule_address;
     }
     public String getScheduleStart() {
-        return schedule_start;
+        return schedule_startTime;
     }
     public String getScheduleEnd() {
-        return schedule_end;
-    }
-    public String getScheduleCall() {
-        return schedule_call;
+        return schedule_endTime;
     }
     public String getScheduleNotes() {
         return schedule_notes;
@@ -48,13 +44,10 @@ public class Schedule extends BmobObject implements Serializable{
         this.schedule_address = address;
     }
     public void setScheduleStart(String start) {
-        this.schedule_start = start;
+        this.schedule_startTime = start;
     }
     public void setScheduleEnd(String end) {
-        this.schedule_end = end;
-    }
-    public void setScheduleCall(String call) {
-        this.schedule_call = call;
+        this.schedule_endTime = end;
     }
     public void setScheduleNotes(String notes) {
         this.schedule_notes = notes;

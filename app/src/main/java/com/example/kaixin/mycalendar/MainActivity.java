@@ -1,8 +1,6 @@
 package com.example.kaixin.mycalendar;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,22 +10,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.CalendarMode;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import cn.bmob.v3.Bmob;
 
@@ -38,11 +27,12 @@ public class MainActivity extends AppCompatActivity/*
 
     //viewpager
     private TabLayout mTabLayout;
-    private final int[] TAB_TITLES = new int[]{R.string.home, R.string.task,  R.string.me};
+    private final int[] TAB_TITLES = new int[]{R.string.calendar, R.string.habit,  R.string.me};
     private final int[] TAB_IMGS = new int[]{R.drawable.selector_tab_weixin, R.drawable.selector_tab_contacts, R.drawable.selector_tab_me};
-    private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new HomeFragment(), new TaskFragment(), new MeFragment()};
+    //private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new CalendarFragment(), new HabitFragment(), new MeFragment()};
     private final int COUNT = TAB_TITLES.length;
-    private MyViewPager myViewPager;
+    //private MyViewPager myViewPager;
+    private ViewPager myViewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
 
 
@@ -51,7 +41,7 @@ public class MainActivity extends AppCompatActivity/*
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
-        setContentView(R.layout.activity_mainmain);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -120,7 +110,7 @@ public class MainActivity extends AppCompatActivity/*
 
     private void initViews() {
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        myViewPager = (MyViewPager)findViewById(R.id.viewPager);
+        myViewPager = (ViewPager)findViewById(R.id.viewPager);
         //setTabs(mTabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
         myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         myViewPager.setAdapter(myViewPagerAdapter);
@@ -154,16 +144,21 @@ public class MainActivity extends AppCompatActivity/*
     }
 
     private class MyViewPagerAdapter extends FragmentPagerAdapter {
+        Fragment[] FRAGMENTS = new Fragment[]{
+                new CalendarFragment(),
+                new HabitFragment(),
+                new MeFragment()
+        };
         public MyViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
         @Override
         public Fragment getItem(int position) {
-            return TAB_FRAGMENTS[position];
+            return FRAGMENTS[position];
         }
         @Override
         public int getCount() {
-            return COUNT;
+            return FRAGMENTS.length;
         }
     }
 

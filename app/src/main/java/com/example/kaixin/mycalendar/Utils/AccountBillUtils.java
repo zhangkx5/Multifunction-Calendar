@@ -1,6 +1,5 @@
 package com.example.kaixin.mycalendar.Utils;
 
-import android.accounts.Account;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AccountBill;
-import com.example.kaixin.mycalendar.MyUser;
+import com.example.kaixin.mycalendar.Bean.MyUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,15 +26,7 @@ import cn.bmob.v3.listener.UpdateListener;
 
 public class AccountBillUtils {
     private static MyDatabaseHelper myDatabaseHelper;
-    public static final String ACCOUNT_TABLE_NAME = "account_table";
-    public static final String ACCOUNT_TABLE_CREATE = "create table " + ACCOUNT_TABLE_NAME
-            + "(id TEXT primary key,"
-            + " user_id TEXT,"
-            + " bill_type interger,"
-            + " bill_label interger,"
-            + " bill_date TEXT,"
-            + " bill_money REAL,"
-            + " bill_notes TEXT)";
+    public static final String ACCOUNT_TABLE_NAME = "Table_AccountBill";
     public static final String ACCOUNT_TABLE_INSERT = "insert into " + ACCOUNT_TABLE_NAME
             + " (id, user_id, bill_type, bill_label, bill_date, bill_money, bill_notes) values (?, ?, ?, ?, ?, ?, ?)";
     public static final String ACCOUNT_TABLE_DELETE = "delete from " + ACCOUNT_TABLE_NAME + " where id = ?";
@@ -47,7 +38,7 @@ public class AccountBillUtils {
         SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
         dbWrite.execSQL(ACCOUNT_TABLE_INSERT, new Object[]{id, userId, type, label, date, money, notes});
         dbWrite.close();
-        Log.i("ACCOUNTBILL", "createLocalAccountBill："+id);
+        Log.i("ACCOUNTBILL", "createLocalAccountBill 成功："+id);
     }
     //修改本地数据库中的账单
     public static void updateLocalAccountBill(Context context, String id, int type, int label,
@@ -88,7 +79,7 @@ public class AccountBillUtils {
             accountBill.setAccountMoney(bill_money);
             accountBill.setAccountNotes(bill_notes);
             result.add(accountBill);
-            Log.i("ACCOUNTBILL", "queryAllLocalAccountBill成功："+accountBill.getObjectId());
+            Log.i("ACCOUNTBILL", "queryAllLocalAccountBill 成功："+accountBill.getObjectId());
         }
         cursor.close();
         dbRead.close();
@@ -101,7 +92,7 @@ public class AccountBillUtils {
         SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
         dbDelete.execSQL(ACCOUNT_TABLE_DELETE, new Object[]{id});
         dbDelete.close();
-        Log.i("ACCOUNTBILL", "deleteLocalAccountBill成功："+id);
+        Log.i("ACCOUNTBILL", "deleteLocalAccountBill 成功："+id);
     }
     //添加账单到后端云
     public static String createBmobAccountBill(final Context context, final int type, final int label,
@@ -121,14 +112,14 @@ public class AccountBillUtils {
                 public void done(final String objectId, BmobException e) {
                     if (e == null) {
                         createLocalAccountBill(context, objectId, userId, type, label, date, money, notes);
-                        Log.i("Bmob_AccountBill", "创建bmob账单成功:" + objectId);
+                        Log.i("ACCOUNTBILL", "createBmobAccountBill 成功:" + objectId);
                     } else {
-                        Log.i("Bmob_AccountBill", "创建bmob账单失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ACCOUNTBILL", "createBmobAccountBill 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
         } else {
-            Log.i("Bmob_AccountBill", "创建bmob账单失败");
+            Log.i("ACCOUNTBILL", "createBmobAccountBill 失败");
         }
         return accountBill.getObjectId();
     }
@@ -147,9 +138,9 @@ public class AccountBillUtils {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_accountBill", "更新bomb账单成功");
+                        Log.i("ACCOUNTBILL", "upadteBmobAccountBill 成功");
                     } else {
-                        Log.i("Bmob_accountBill", "更新bmob账单失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ACCOUNTBILL", "upadteBmobAccountBill 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -165,9 +156,9 @@ public class AccountBillUtils {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_accountBill", "删除bmob账单成功");
+                        Log.i("ACCOUNTBILL", "deleteBmobAccountBill 成功");
                     } else {
-                        Log.i("Bmob_accountBill", "删除bmob账单失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("ACCOUNTBILL", "deleteBmobAccountBill 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -192,8 +183,9 @@ public class AccountBillUtils {
                                     accountBill.getAccountDate(), accountBill.getAccountMoney(),
                                     accountBill.getAccountNotes());
                         }
-                        Log.i("ACCOUNTBILL", "queryAllBmobAccountBill成功："+list.size());
+                        Log.i("ACCOUNTBILL", "queryAllBmobAccountBill 成功："+list.size());
                     } else {
+                        Log.i("ACCOUNTBILL", "queryAllBmobAccountBill 失败："+e.getMessage());
                         Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

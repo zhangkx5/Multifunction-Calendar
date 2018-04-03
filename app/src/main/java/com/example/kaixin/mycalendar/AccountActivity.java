@@ -1,18 +1,15 @@
 package com.example.kaixin.mycalendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 
+import com.example.kaixin.mycalendar.Adapter.AccountBillAdapter;
 import com.example.kaixin.mycalendar.Bean.AccountBill;
 import com.example.kaixin.mycalendar.Utils.AccountBillUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
@@ -37,7 +34,7 @@ public class AccountActivity extends AppCompatActivity {
     private ImageButton ib_add, ib_back;
     //private ExpandableStickyListHeadersListView listView;
 
-    private MyExpandableListViewAdapter expandableListViewAdapter;
+    private AccountBillAdapter expandableListViewAdapter;
     private ExpandableListView expandableListView;
     /*private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -77,63 +74,92 @@ public class AccountActivity extends AppCompatActivity {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        expandableListViewAdapter = new MyExpandableListViewAdapter(
+        expandableListViewAdapter = new AccountBillAdapter(
                 AccountActivity.this, getAllKey(map), lists);
         expandableListView = (ExpandableListView)findViewById(R.id.expandableListView);
         expandableListView.setAdapter(expandableListViewAdapter);
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int h, int c, long l) {
-                List<AccountBill> header = expandableListViewAdapter.getGroup(h);
-                AccountBill child = header.get(c);
-                Intent intent = new Intent(AccountActivity.this, AccountEditActivity.class);
-                intent.putExtra("accountBill",child);
-                startActivity(intent);
+            public boolean onChildClick(ExpandableListView expandableListView, View view, final int h, final int c, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
+                builder.setTitle("操作选择");
+                String[] items = {"编辑", "删除"};
+                final List<AccountBill> header = expandableListViewAdapter.getGroup(h);
+                final AccountBill child = header.get(c);
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                Intent intent = new Intent(AccountActivity.this, AccountEditActivity.class);
+                                intent.putExtra("accountBill",child);
+                                startActivity(intent);
+                                dialogInterface.dismiss();
+                                break;
+                            case 1:
+                                dialogInterface.dismiss();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
+                                builder.setTitle("删除提醒");
+                                builder.setMessage("确定要删除吗？此操作不可逆！");
+                                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        AccountBillUtils.deleteBmobAccountBill(child.getObjectId());
+                                        AccountBillUtils.deleteLocalAccountBill(AccountActivity.this, child.getObjectId());
+                                        header.remove(c);
+                                        expandableListViewAdapter.notifyDataSetChanged();
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                                builder.create().show();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+                builder.show();
+
                 return false;
             }
         });
-        /*tabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        viewPager = (ViewPager)findViewById(R.id.viewPager);
-        viewPager.setOffscreenPageLimit(2);
-        AccountPagerAdapter accountPagerAdapter = new AccountPagerAdapter(getSupportFragmentManager());
-
-        accountPagerAdapter.addFragment(new AccountBillFragment(), TITLES[0]);
-        tabLayout.addTab(tabLayout.newTab().setText(TITLES[0]));
-        accountPagerAdapter.addFragment(new AccountReportActivity(), TITLES[1]);
-        tabLayout.addTab(tabLayout.newTab().setText(TITLES[1]));
-        viewPager.setAdapter(accountPagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);*/
+        /*new ExpandableListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int pos, long l) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
+                builder.setTitle("删除提醒");
+                builder.setMessage("确定要删除吗？此操作不可逆！");
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AccountBill anniversaryDay = expandableListViewAdapter.getChild(pos);
+                        AnniversaryUtils.deleteBmobAnniversaryDay(anniversaryDay.getObjectId());
+                        AnniversaryUtils.deleteLocalAnniversary(AnniversaryActivity.this, anniversaryDay.getObjectId());
+                        list.remove(pos);
+                        anniversaryAdapter.notifyDataSetChanged();
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
+                return true;
+            }
+            }
+        });*/
     }
 
-    /*public static class AccountPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> fragments = new ArrayList<>();
-        private final List<String> titles = new ArrayList<>();
-
-        public AccountPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            fragments.add(fragment);
-            titles.add(title);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        @Override
-        public String getPageTitle(int position) {
-            return titles.get(position);
-        }
-    }*/
     public Map<Date, List<AccountBill>> DivideIntoGroup(List<AccountBill> result) throws ParseException {
         Map<Date, List<AccountBill>> map = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");

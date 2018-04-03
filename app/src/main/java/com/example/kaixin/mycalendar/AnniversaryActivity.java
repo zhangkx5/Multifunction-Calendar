@@ -3,7 +3,6 @@ package com.example.kaixin.mycalendar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.kaixin.mycalendar.Adapter.AnniversaryAdapter;
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;

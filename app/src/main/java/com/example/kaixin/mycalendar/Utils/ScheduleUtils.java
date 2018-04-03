@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.kaixin.mycalendar.MyUser;
+import com.example.kaixin.mycalendar.Bean.MyUser;
 import com.example.kaixin.mycalendar.Bean.Schedule;
 
 import java.util.ArrayList;
@@ -26,33 +26,33 @@ import cn.bmob.v3.listener.UpdateListener;
 
 public class ScheduleUtils {
     private static MyDatabaseHelper myDatabaseHelper;
-    public static final String SCHEDULE_TABLE_NAME = "schedule_table";
+    public static final String SCHEDULE_TABLE_NAME = "Table_Schedule";
     public static final String SCHEDULE_TABLE_INSERT = "insert into " + SCHEDULE_TABLE_NAME
-            + " (id, user_id, schedule_title, schedule_address, schedule_start, schedule_end, schedule_call, schedule_notes) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            + " (id, user_id, schedule_title, schedule_address, schedule_startTime, schedule_endTime, schedule_notes) values (?, ?, ?, ?, ?, ?, ?)";
     public static final String SCHEDULE_TABLE_DELETE = "delete from " + SCHEDULE_TABLE_NAME + " where id = ?";
     //添加日程管理到本地数据库
     public static void createLocalSchedule(Context context, String id, String userid, String title,
-                                           String address, String start, String end, String call, String notes) {
+                                           String address, String start, String end,String notes) {
         myDatabaseHelper = new MyDatabaseHelper(context);
         SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
-        dbWrite.execSQL(SCHEDULE_TABLE_INSERT, new Object[]{id, userid, title, address, start, end, call, notes});
+        dbWrite.execSQL(SCHEDULE_TABLE_INSERT, new Object[]{id, userid, title, address, start, end, notes});
         dbWrite.close();
-        Log.i("Bmob_schedule", "createLocalSchedule成功");
+        Log.i("SCHEDULE", "createLocalSchedule 成功");
     }
     //修改本地数据库中的日程管理
     public static void updateLocalSchedule(Context context, String id, String title, String address,
-                                           String start, String end, String call, String notes) {
+                                           String start, String end,String notes) {
         myDatabaseHelper = new MyDatabaseHelper(context);
         SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("schedule_title", title);
         values.put("schedule_address", address);
-        values.put("schedule_start", start);
-        values.put("schedule_end", end);
-        values.put("schedule_call", call);
+        values.put("schedule_startTime", start);
+        values.put("schedule_endTime", end);
         values.put("schedule_notes", notes);
         dbUpdate.update(SCHEDULE_TABLE_NAME, values, "id = ?", new String[] {id});
         dbUpdate.close();
+        Log.i("SCHEDULE", "updateLocalSchedule 成功");
     }
     //删除本地数据库中的某个日程管理
     public static void deleteLocalSchedule(Context context, String id) {
@@ -60,6 +60,7 @@ public class ScheduleUtils {
         SQLiteDatabase dbDelete = myDatabaseHelper.getWritableDatabase();
         dbDelete.execSQL(SCHEDULE_TABLE_DELETE, new Object[]{id});
         dbDelete.close();
+        Log.i("SCHEDULE", "deleteLocalSchedule 成功");
     }
     //查找本地数据库中的所有日程管理
     public static List<Schedule> queryAllLocalSchedule(Context context, String user_id) {
@@ -73,9 +74,8 @@ public class ScheduleUtils {
             String id = cursor.getString(cursor.getColumnIndex("id"));
             String title = cursor.getString(cursor.getColumnIndex("schedule_title"));
             String address = cursor.getString(cursor.getColumnIndex("schedule_address"));
-            String start = cursor.getString(cursor.getColumnIndex("schedule_start"));
-            String end = cursor.getString(cursor.getColumnIndex("schedule_end"));
-            String call = cursor.getString(cursor.getColumnIndex("schedule_call"));
+            String start = cursor.getString(cursor.getColumnIndex("schedule_startTime"));
+            String end = cursor.getString(cursor.getColumnIndex("schedule_endTime"));
             String notes = cursor.getString(cursor.getColumnIndex("schedule_notes"));
             Schedule schedule = new Schedule();
             schedule.setObjectId(id);
@@ -84,18 +84,18 @@ public class ScheduleUtils {
             schedule.setScheduleAddress(address);
             schedule.setScheduleStart(start);
             schedule.setScheduleEnd(end);
-            schedule.setScheduleCall(call);
             schedule.setScheduleNotes(notes);
             result.add(schedule);
         }
         cursor.close();
         dbRead.close();
         Collections.reverse(result);
+        Log.i("SCHEDULE", "queryAllLocalSchedule 成功");
         return result;
     }
     //添加日程管理到后端云
     public static Schedule createBmobSchedule(final Context context, final String title, final String address,
-                                              final String start, final String end, final String call, final String notes) {
+                                              final String start, final String end, final String notes) {
         MyUser bmobUser = UserUtils.getCurrentUser();
         Schedule schedule = new Schedule();
         if (bmobUser != null) {
@@ -105,27 +105,26 @@ public class ScheduleUtils {
             schedule.setScheduleAddress(address);
             schedule.setScheduleStart(start);
             schedule.setScheduleEnd(end);
-            schedule.setScheduleCall(call);
             schedule.setScheduleNotes(notes);
             schedule.save(new SaveListener<String>() {
                 @Override
                 public void done(String objectId, BmobException e) {
                     if (e == null) {
-                        createLocalSchedule(context, objectId, userid, title, address, start, end, call, notes);
-                        Log.i("Bmob_schedule", "创建bmob日程管理成功");
+                        createLocalSchedule(context, objectId, userid, title, address, start, end, notes);
+                        Log.i("SCHEDULE", "createBmobSchedule 成功");
                     } else {
-                        Log.i("Bmob_schedule", "创建bmob日程管理失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("SCHEDULE", "createBmobSchedule 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
         } else {
-            Log.i("Bmob_schedule", "创建bmob日程管理失败");
+            Log.i("SCHEDULE", "createBmobSchedule 失败");
         }
         return schedule;
     }
     //修改后端云中的日程管理
     public static void upadteBmobSchedule(String id, String title, String address,
-                                          String start, String end, String call, String notes) {
+                                          String start, String end, String notes) {
         MyUser bmobUser = UserUtils.getCurrentUser();
         Schedule schedule = new Schedule();
         if (bmobUser != null) {
@@ -133,15 +132,14 @@ public class ScheduleUtils {
             schedule.setScheduleAddress(address);
             schedule.setScheduleStart(start);
             schedule.setScheduleEnd(end);
-            schedule.setScheduleCall(call);
             schedule.setScheduleNotes(notes);
             schedule.update(id, new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_schedule", "更新bmob日程管理成功");
+                        Log.i("SCHEDULE", "upadteBmobSchedule 成功");
                     } else {
-                        Log.i("Bmob_schedule", "更新bmob日程管理失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("SCHEDULE", "upadteBmobSchedule失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -157,9 +155,9 @@ public class ScheduleUtils {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
-                        Log.i("Bmob_schedule", "删除bmob日程管理成功");
+                        Log.i("SCHEDULE", "deleteBmobSchedule 成功");
                     } else {
-                        Log.i("Bmob_schedule", "删除bmob日程管理失败："+e.getMessage()+","+e.getErrorCode());
+                        Log.i("SCHEDULE", "deleteBmobSchedule 失败："+e.getMessage()+","+e.getErrorCode());
                     }
                 }
             });
@@ -182,9 +180,11 @@ public class ScheduleUtils {
                             createLocalSchedule(context, bmobSchedule.getObjectId(), bmobSchedule.getUserId(),
                                     bmobSchedule.getScheduleTitle(), bmobSchedule.getScheduleAddress(),
                                     bmobSchedule.getScheduleStart(), bmobSchedule.getScheduleEnd(),
-                                    bmobSchedule.getScheduleCall(), bmobSchedule.getScheduleNotes());
+                                    bmobSchedule.getScheduleNotes());
                         }
+                        Log.i("SCHEDULE", "queryAllBmobSchedule 成功");
                     } else {
+                        Log.i("SCHEDULE", "queryAllBmobSchedule 失败："+e.getMessage());
                         Toast.makeText(mContext, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

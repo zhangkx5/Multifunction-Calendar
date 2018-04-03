@@ -5,9 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,9 +12,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.example.kaixin.mycalendar.Bean.BmobDiary;
+import com.example.kaixin.mycalendar.Adapter.DiaryAdapter;
+import com.example.kaixin.mycalendar.Bean.Diary;
 import com.example.kaixin.mycalendar.Utils.DiaryUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 
@@ -31,7 +28,7 @@ public class DiaryActivity extends AppCompatActivity {
 
     private ListView listView;
     private DiaryAdapter diaryAdapter;
-    private List<BmobDiary> diary_list;
+    private List<Diary> diary_list;
     private ImageView ib_back, ib_add;
     ProgressDialog progressDialog;
     public void getList() {
@@ -113,7 +110,7 @@ public class DiaryActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                BmobDiary diary = diaryAdapter.getItem(i);
+                Diary diary = diaryAdapter.getItem(i);
                 Log.i("DIARY", "选中的DIARY信息为:"+diary.getObjectId()+","+diary.getDiaryContent());
                 Intent intent = new Intent(DiaryActivity.this, DiaryEditActivity.class);
                 intent.putExtra("diary", diary);
@@ -136,7 +133,7 @@ public class DiaryActivity extends AppCompatActivity {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        BmobDiary diary = diaryAdapter.getItem(pos);
+                        Diary diary = diaryAdapter.getItem(pos);
                         DiaryUtils.deleteLocalDiary(DiaryActivity.this, diary.getObjectId());
                         diary_list.remove(pos);
                         diaryAdapter.notifyDataSetChanged();

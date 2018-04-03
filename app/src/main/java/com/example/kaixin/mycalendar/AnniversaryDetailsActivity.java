@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Adapter.AnniversaryAdapter;
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 

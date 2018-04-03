@@ -30,6 +30,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.prolificinteractive:material-calendarview:1.4.3'
+    compile 'com.github.codbking:CalendarExaple:v1.0.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     compile 'cn.bmob.android:bmob-sdk:3.5.5'

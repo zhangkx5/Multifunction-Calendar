@@ -1,14 +1,11 @@
 package com.example.kaixin.mycalendar.Utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.kaixin.mycalendar.MainActivity;
-import com.example.kaixin.mycalendar.MyUser;
-import com.example.kaixin.mycalendar.PersonalActivity;
+import com.example.kaixin.mycalendar.Bean.MyUser;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;

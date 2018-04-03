@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Utils.WeatherUtils;
+
 import java.util.ArrayList;
 
 /**
@@ -15,7 +17,6 @@ public class WeatherPresenter implements IWeatherPresenter{
     private IWeatherView weatherView;
     private IWeatherModel weatherModel;
 
-    private SharedPreferences pref;
 
     public WeatherPresenter(IWeatherView weatherView) {
         this.weatherView = weatherView;

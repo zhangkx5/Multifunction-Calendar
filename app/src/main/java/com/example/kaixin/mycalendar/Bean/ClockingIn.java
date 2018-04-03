@@ -10,14 +10,14 @@ import java.io.Serializable;
 
 public class ClockingIn extends BmobObject implements Serializable {
     private String userId;
-    private String taskId;
+    private String habitId;
     private String date;
 
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
+    public void setHabitId(String taskId) {
+        this.habitId = taskId;
     }
     public void setDate(String date) {
         this.date = date;
@@ -25,8 +25,8 @@ public class ClockingIn extends BmobObject implements Serializable {
     public String getUserId() {
         return userId;
     }
-    public String getTaskId() {
-        return taskId;
+    public String getHabitId() {
+        return habitId;
     }
     public String getDate() {
         return date;

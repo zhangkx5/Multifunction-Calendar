@@ -20,7 +20,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Adapter.ExponentAdapter;
+import com.example.kaixin.mycalendar.Adapter.WeatherAdapter;
 import com.example.kaixin.mycalendar.Bean.Exponent;
+import com.example.kaixin.mycalendar.Bean.WeatherBean;
+import com.example.kaixin.mycalendar.Utils.CheckNetwork;
 import com.example.kaixin.mycalendar.Utils.LocationUtils;
 
 import java.util.ArrayList;

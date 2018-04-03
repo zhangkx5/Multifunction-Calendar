@@ -13,9 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.Schedule;
-import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.DateTimePicker;
 import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
-import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,7 +57,7 @@ public class ScheduleEditActivity extends AppCompatActivity{
             @Override
             protected Void doInBackground(String... params) {
                 ScheduleUtils.createBmobSchedule(ScheduleEditActivity.this, getSchedultTitle(),
-                        getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                        getAddress(), getStartTime(), getEndTime(), getNotes());
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -93,9 +92,9 @@ public class ScheduleEditActivity extends AppCompatActivity{
             protected Void doInBackground(String... params) {
                 ScheduleUtils.updateLocalSchedule(ScheduleEditActivity.this,
                         schedule.getObjectId(), getSchedultTitle(), getAddress(),
-                        getStartTime(), getEndTime(), getCallTime(), getNotes());
+                        getStartTime(), getEndTime(), getNotes());
                 ScheduleUtils.upadteBmobSchedule(schedule.getObjectId(), getSchedultTitle(),
-                        getAddress(), getStartTime(), getEndTime(), getCallTime(), getNotes());
+                        getAddress(), getStartTime(), getEndTime(), getNotes());
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -165,7 +164,6 @@ public class ScheduleEditActivity extends AppCompatActivity{
             schedule_address.setText(schedule.getScheduleAddress());
             schedule_start.setText(schedule.getScheduleStart());
             schedule_end.setText(schedule.getScheduleEnd());
-            schedule_call.setText(schedule.getScheduleCall());
             schedule_notes.setText(schedule.getScheduleNotes());
         }
     }

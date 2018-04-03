@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:padding="@dimen/activity_horizontal_margin">
+
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
@@ -12,15 +13,30 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:text="标题"
-        android:textSize="25sp"/>
+        android:textSize="20sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="5dp"
+        android:text="已经"
+        android:textColor="#FF000000"
+        android:textSize="18sp"/>
     <TextView
         android:id="@+id/days"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="5dp"
-        android:text="日期"
+        android:text="365"
+        android:textColor="#FF0022"
+        android:textSize="30sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="天"
         android:textColor="#FF000000"
-        android:textSize="25sp"/>
+        android:textSize="18sp"/>
 </LinearLayout>

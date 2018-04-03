@@ -2,8 +2,6 @@ package com.example.kaixin.mycalendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,9 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.kaixin.mycalendar.Adapter.AccountAdapter;
+import com.example.kaixin.mycalendar.Adapter.AccountBillAdapter;
 import com.example.kaixin.mycalendar.Bean.AccountBill;
 import com.example.kaixin.mycalendar.Utils.AccountBillUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
@@ -28,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by kaixin on 2018/2/7.
@@ -39,20 +36,20 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class AccountBillFragment extends Fragment {
 
     //private ListView listView;
-    private AccountBillAdapter accountAdapter;
+    private AccountAdapter accountAdapter;
     private List<AccountBill> list;
     private MyDatabaseHelper myDatabaseHelper;
     private FloatingActionButton fab;
     //private ExpandableStickyListHeadersListView listView;
 
-    private MyExpandableListViewAdapter expandableListViewAdapter;
+    private AccountBillAdapter expandableListViewAdapter;
     private ExpandableListView expandableListView;
 
     @Override
     public void onResume() {
         super.onResume();
         //list = readDB();
-        //accountAdapter = new AccountBillAdapter(getActivity(), list);
+        //accountAdapter = new AccountAdapter(getActivity(), list);
         //listView.setAdapter(accountAdapter);
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
@@ -66,7 +63,7 @@ public class AccountBillFragment extends Fragment {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        expandableListViewAdapter = new MyExpandableListViewAdapter(
+        expandableListViewAdapter = new AccountBillAdapter(
                 getActivity(), getAllKey(map), lists);
         expandableListView.setAdapter(expandableListViewAdapter);
         //expandableListView.expandGroup(0);
@@ -92,7 +89,7 @@ public class AccountBillFragment extends Fragment {
         });*/
         /*listView = (ListView)view.findViewById(R.id.listView);
         list = readDB();
-        accountAdapter = new AccountBillAdapter(getContext(), list);
+        accountAdapter = new AccountAdapter(getContext(), list);
         listView.setAdapter(accountAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -152,7 +149,7 @@ public class AccountBillFragment extends Fragment {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        expandableListViewAdapter = new MyExpandableListViewAdapter(
+        expandableListViewAdapter = new AccountBillAdapter(
                 getActivity(), getAllKey(map), lists);
         expandableListView = (ExpandableListView)view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(expandableListViewAdapter);
