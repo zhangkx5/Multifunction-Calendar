@@ -71,11 +71,10 @@ public class DiaryActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
-        if (diary_list.size() == 0) {
-            DiaryUtils.queryAllBmobDiary(this);
-            diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
+        if (diary_list == null || diary_list.size() == 0) {
+            diary_list = DiaryUtils.queryAllBmobDiary(this);
         }
-        if (diary_list.size() == 0) {
+        if (diary_list == null || diary_list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
@@ -109,13 +108,11 @@ public class DiaryActivity extends AppCompatActivity {
             }
         });
 
-        //getList();
-        //diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
-        if (diary_list == null) {
-            DiaryUtils.queryAllBmobDiary(this);
-            diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
+        diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
+        if (diary_list == null || diary_list.size() == 0) {
+            diary_list = DiaryUtils.queryAllBmobDiary(this);
         }
-        if (diary_list.size() == 0) {
+        if (diary_list == null || diary_list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {

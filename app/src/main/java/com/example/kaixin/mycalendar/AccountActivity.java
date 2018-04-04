@@ -45,7 +45,7 @@ public class AccountActivity extends AppCompatActivity {
         try {
             list = AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
                     UserUtils.getUserId(AccountActivity.this));
-            if (list.size() == 0) {
+            if (list == null || list.size() == 0) {
                 list = AccountBillUtils.queryAllBmobAccountBill(AccountActivity.this);
             }
             map = DivideIntoGroup(list);
@@ -57,7 +57,7 @@ public class AccountActivity extends AppCompatActivity {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        if (lists.size() == 0) {
+        if (lists == null || lists.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             expandableListView.setVisibility(View.GONE);
         } else {
@@ -97,9 +97,8 @@ public class AccountActivity extends AppCompatActivity {
             list = new ArrayList<>();
             list = AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
                     UserUtils.getUserId(AccountActivity.this));
-            if (list.size() == 0) {
+            if (list == null || list.size() == 0) {
                 list = AccountBillUtils.queryAllBmobAccountBill(AccountActivity.this);
-                Log.i("AccountBill", list.get(0).getAccountDate());
             }
             map = DivideIntoGroup(list);
         } catch (ParseException e) {
@@ -110,7 +109,7 @@ public class AccountActivity extends AppCompatActivity {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        if (lists.size() == 0) {
+        if (lists == null || lists.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             expandableListView.setVisibility(View.GONE);
         } else {

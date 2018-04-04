@@ -97,9 +97,10 @@ public class HabitUtils {
     public static String createBmobHabit(final Context context, final String name, final String notes,
                                         final String img, final String img_name) {
         MyUser bmobUser = UserUtils.getCurrentUser();
+        final String id = String.valueOf(System.currentTimeMillis());
+        final String userId = UserUtils.getUserId(context);
         final Habit bmobHabit = new Habit();
         if (bmobUser != null) {
-            final String userId = bmobUser.getObjectId();
             bmobHabit.setUserId(userId);
             bmobHabit.setHabitName(name);
             bmobHabit.setHabitNotes(notes);
@@ -113,13 +114,16 @@ public class HabitUtils {
                         Log.i("HABIT", "createBmobHabit 成功:" + objectId);
                     } else {
                         Log.i("HABIT", "createBmobHabit 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalHabit(context, id, userId, name, notes, img, img_name);
                     }
                 }
             });
+            return bmobHabit.getObjectId();
         } else {
             Log.i("HABIT", "创建bmob习惯任务失败");
+            createLocalHabit(context, id, userId, name, notes, img, img_name);
         }
-        return bmobHabit.getObjectId();
+        return id;
     }
     //修改后端云中的习惯任务
     public static void upadteBmobHabit(String id, String name, String notes, String img) {
@@ -164,7 +168,8 @@ public class HabitUtils {
         }
     }
     //查找后端云中的所有习惯任务
-    public static void queryAllBmobHabit(final Context context) {
+    public static List<Habit> queryAllBmobHabit(final Context context) {
+        final List<Habit> alist = new ArrayList<Habit>();
         MyUser bmobUser = UserUtils.getCurrentUser();
         if (bmobUser != null) {
             BmobQuery<Habit> query = new BmobQuery<>();
@@ -176,6 +181,7 @@ public class HabitUtils {
                     if (e == null) {
                         Toast.makeText(context, "共"+list.size()+"则任务", Toast.LENGTH_SHORT).show();
                         for (Habit bmobHabit : list) {
+                            alist.add(bmobHabit);
                             createLocalHabit(context, bmobHabit.getObjectId(), bmobHabit.getUserId(),
                                     bmobHabit.getHabitName(), bmobHabit.getHabitNotes(), bmobHabit.getHabitImg(),
                                     bmobHabit.getHabitImgName());
@@ -188,6 +194,7 @@ public class HabitUtils {
                 }
             });
         }
+        return alist;
     }
     //打卡
     public static final String CLOCKINGIN_TABLE_NAME = "Table_ClockingIn";

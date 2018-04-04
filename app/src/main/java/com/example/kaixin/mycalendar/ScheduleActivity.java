@@ -34,11 +34,10 @@ public class ScheduleActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
-        if (list.size() == 0) {
-            ScheduleUtils.queryAllBmobSchedule(this);
-            list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        if (list == null || list.size() == 0) {
+            list = ScheduleUtils.queryAllBmobSchedule(this);
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
@@ -72,11 +71,10 @@ public class ScheduleActivity extends AppCompatActivity {
         });
 
         list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
-        if (list.size() == 0) {
-            ScheduleUtils.queryAllBmobSchedule(this);
-            list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
+        if (list == null || list.size() == 0) {
+            list = ScheduleUtils.queryAllBmobSchedule(this);
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {

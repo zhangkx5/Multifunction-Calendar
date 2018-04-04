@@ -51,6 +51,8 @@ public class LoginFragment extends Fragment{
         pass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
+                editor.putString("user_id", "unknown");
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -64,8 +66,6 @@ public class LoginFragment extends Fragment{
                 } else if (TextUtils.isEmpty(password.getText().toString())) {
                     Toast.makeText(getActivity(), "请输入密码", Toast.LENGTH_SHORT).show();
                 } else {
-                    //判断网络
-
                     //登录成功
                     BmobUser.loginByAccount(email.getText().toString(), password.getText().toString(), new LogInListener<MyUser>() {
                         @Override
@@ -75,6 +75,7 @@ public class LoginFragment extends Fragment{
                                 Log.i("smile", "用户登录成功");
                                 loadingDatas();
                             } else {
+                                //检查网络
                                 Toast.makeText(getActivity(), "账号或密码错误", Toast.LENGTH_SHORT).show();
                             }
                         }

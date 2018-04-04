@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:padding="@dimen/activity_horizontal_margin">
+    
+    <View
+        android:id="@+id/redPoint"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="center"
+        android:background="@drawable/redpoint"
+        android:layerType="software"/>
+
     <TextView
         android:id="@+id/schedule_title"
         android:layout_width="wrap_content"

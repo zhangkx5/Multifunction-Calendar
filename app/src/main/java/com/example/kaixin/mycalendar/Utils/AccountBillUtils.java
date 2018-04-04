@@ -98,9 +98,10 @@ public class AccountBillUtils {
     public static String createBmobAccountBill(final Context context, final int type, final int label,
                                                final String date, final double money, final String notes) {
         MyUser bmobUser = UserUtils.getCurrentUser();
+        final String id = String.valueOf(System.currentTimeMillis());
+        final String userId = UserUtils.getUserId(context);
         final AccountBill accountBill = new AccountBill();
         if (bmobUser != null) {
-            final String userId = bmobUser.getObjectId();
             accountBill.setUserId(userId);
             accountBill.setAccountType(type);
             accountBill.setAccountLabel(label);
@@ -115,13 +116,16 @@ public class AccountBillUtils {
                         Log.i("ACCOUNTBILL", "createBmobAccountBill 成功:" + objectId);
                     } else {
                         Log.i("ACCOUNTBILL", "createBmobAccountBill 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalAccountBill(context, id, userId, type, label, date, money, notes);
                     }
                 }
             });
+            return accountBill.getObjectId();
         } else {
             Log.i("ACCOUNTBILL", "createBmobAccountBill 失败");
+            createLocalAccountBill(context, id, userId, type, label, date, money, notes);
         }
-        return accountBill.getObjectId();
+        return id;
     }
     //修改后端云中的账单
     public static void upadteBmobAccountBill(String id, int type, int label,

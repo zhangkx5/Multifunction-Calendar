@@ -60,6 +60,33 @@ public class AnniversaryUtils {
         dbDelete.close();
         Log.i("ANNIVERSARY", "deleteLocalAnniversary 成功："+id);
     }
+    //查找本地数据库中的某天的所有纪念日
+    public static List<AnniversaryDay> queryAllLocalAnniversaryInDate(Context context, String user_id, String date) {
+        myDatabaseHelper = new MyDatabaseHelper(context);
+        List<AnniversaryDay> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "user_id = ? and anniversary_date LIKE ?";
+        String[] selectionArgs = new String[]{user_id, "%" + date + "%"};
+        Cursor cursor = dbRead.query(ANNIVERSARY_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String anniversary_name = cursor.getString(cursor.getColumnIndex("anniversary_name"));
+            String anniversary_date = cursor.getString(cursor.getColumnIndex("anniversary_date"));
+            String anniversary_notes = cursor.getString(cursor.getColumnIndex("anniversary_notes"));
+            AnniversaryDay anniversaryDay = new AnniversaryDay();
+            anniversaryDay.setObjectId(id);
+            anniversaryDay.setUserId(user_id);
+            anniversaryDay.setAnniversaryName(anniversary_name);
+            anniversaryDay.setAnniversaryDate(anniversary_date);
+            anniversaryDay.setAnniversaryNotes(anniversary_notes);
+            result.add(anniversaryDay);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        Log.i("ANNIVERSARY", "queryAllLocalAnniversaryInDate 成功");
+        return result;
+    }
     //查找本地数据库中的所有纪念日
     public static List<AnniversaryDay> queryAllLocalAnniversary(Context context, String user_id) {
         myDatabaseHelper = new MyDatabaseHelper(context);
@@ -86,11 +113,12 @@ public class AnniversaryUtils {
         return result;
     }
     //添加纪念日到后端云
-    public static AnniversaryDay createBmobAnniversary(final Context context, final String date, final String name, final String notes) {
+    public static String createBmobAnniversary(final Context context, final String date, final String name, final String notes) {
         MyUser bmobUser = UserUtils.getCurrentUser();
         AnniversaryDay anniversaryDay = new AnniversaryDay();
+        final String userId = UserUtils.getUserId(context);
+        final String id = String.valueOf(System.currentTimeMillis());
         if (bmobUser != null) {
-            final String userId = bmobUser.getObjectId();
             anniversaryDay.setUserId(userId);
             anniversaryDay.setAnniversaryDate(date);
             anniversaryDay.setAnniversaryName(name);
@@ -103,13 +131,16 @@ public class AnniversaryUtils {
                         Log.i("ANNIVERSARY", "createBmobAnniversary 成功:" + objectId);
                     } else {
                         Log.i("ANNIVERSARY", "createBmobAnniversary 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalAnniversary(context, id, userId, date, name, notes);
                     }
                 }
             });
+            return anniversaryDay.getObjectId();
         } else {
             Log.i("ANNIVERSARY", "createBmobAnniversary 失败");
+            createLocalAnniversary(context, id, userId, date, name, notes);
         }
-        return anniversaryDay;
+        return id;
     }
     //修改后端云中的纪念日
     public static void upadteBmobAnniversaryDay(String id, String name, String date, String notes) {

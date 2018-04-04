@@ -298,29 +298,7 @@ public class AccountEditActivity extends AppCompatActivity {
         Date ymd = new Date(System.currentTimeMillis());
         ac_date.setText(simpleDateFormat.format(ymd));
     }
-/*
 
-    public void addInDB(int type, int label, String date, double money, String notes) {
-        String acid = String.valueOf(System.currentTimeMillis());
-        SQLiteDatabase dbWrite = myDatabaseHelper.getWritableDatabase();
-        dbWrite.execSQL(MyDatabaseHelper.ACCOUNT_TABLE_INSERT, new Object[]{acid, type, label, date, money, notes});
-        dbWrite.close();
-        Toast.makeText(AccountEditActivity.this, acid + type + label + date + money + notes, Toast.LENGTH_SHORT).show();
-    }
-*/
-
-    /*public void updateInDB(AccountBill account, int type, int label, String date, double money, String notes) {
-        String ac_id = account.getId();
-        SQLiteDatabase dbUpdate = myDatabaseHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("type", type);
-        values.put("label", label);
-        values.put("date", date);
-        values.put("money", money);
-        values.put("notes", notes);
-        dbUpdate.update(MyDatabaseHelper.ACCOUNT_TABLE_NAME, values,
-                "acid = ?", new String[] {ac_id});
-    }*/
     ProgressDialog progressDialog;
     public void createAccountBill() {
         new AsyncTask<String, Void, Void>() {
@@ -348,8 +326,8 @@ public class AccountEditActivity extends AppCompatActivity {
             }
             @Override
             protected Void doInBackground(String... params) {
-                //AccountBillUtils.createLocalAccountBill(AccountEditActivity.this, "unknown", "unknown", account_type, type_label, date, money, notes);
-                AccountBillUtils.createBmobAccountBill(AccountEditActivity.this, account_type, type_label, date, money, notes);
+                AccountBillUtils.createBmobAccountBill(AccountEditActivity.this,
+                        account_type, type_label, date, money, notes);
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {

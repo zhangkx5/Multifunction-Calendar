@@ -16,6 +16,7 @@ import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class AnniversaryActivity extends AppCompatActivity {
 
     private AnniversaryAdapter anniversaryAdapter;
     private ListView listView;
-    private List<AnniversaryDay> list;
+    private List<AnniversaryDay> list = new ArrayList<>();
     private ImageView ib_back, ib_add;
     private TextView tv_showzero;
 
@@ -34,10 +35,10 @@ public class AnniversaryActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             list = AnniversaryUtils.queryAllBmobAnniversaryDay(this);
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
@@ -72,11 +73,12 @@ public class AnniversaryActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             list = AnniversaryUtils.queryAllBmobAnniversaryDay(this);
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {

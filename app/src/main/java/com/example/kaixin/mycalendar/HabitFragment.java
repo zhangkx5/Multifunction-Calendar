@@ -39,11 +39,10 @@ public class HabitFragment extends Fragment {
         super.onResume();
         HabitUtils.queryAllBmobHabit(getActivity());
         list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
-        if (list.size() == 0) {
-            HabitUtils.queryAllBmobHabit(getActivity());
-            list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
+        if (list == null || list.size() == 0) {
+            list = HabitUtils.queryAllBmobHabit(getActivity());
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
@@ -71,11 +70,10 @@ public class HabitFragment extends Fragment {
             }
         });
         list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
-        if (list.size() == 0) {
-            HabitUtils.queryAllBmobHabit(getActivity());
-            list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
+        if (list == null || list.size() == 0) {
+            list = HabitUtils.queryAllBmobHabit(getActivity());
         }
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {

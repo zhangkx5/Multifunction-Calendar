@@ -62,6 +62,37 @@ public class ScheduleUtils {
         dbDelete.close();
         Log.i("SCHEDULE", "deleteLocalSchedule 成功");
     }
+    //查找本地数据库中的某天的所有日程安排
+    public static List<Schedule> queryAllLocalScheduleInDate(Context context, String user_id, String date) {
+        myDatabaseHelper = new MyDatabaseHelper(context);
+        List<Schedule> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "user_id = ? and schedule_startTime LIKE ?";
+        String[] selectionArgs = new String[]{user_id, "%" + date + "%"};
+        Cursor cursor = dbRead.query(SCHEDULE_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String title = cursor.getString(cursor.getColumnIndex("schedule_title"));
+            String address = cursor.getString(cursor.getColumnIndex("schedule_address"));
+            String start = cursor.getString(cursor.getColumnIndex("schedule_startTime"));
+            String end = cursor.getString(cursor.getColumnIndex("schedule_endTime"));
+            String notes = cursor.getString(cursor.getColumnIndex("schedule_notes"));
+            Schedule schedule = new Schedule();
+            schedule.setObjectId(id);
+            schedule.setUserId(user_id);
+            schedule.setScheduleTitle(title);
+            schedule.setScheduleAddress(address);
+            schedule.setScheduleStart(start);
+            schedule.setScheduleEnd(end);
+            schedule.setScheduleNotes(notes);
+            result.add(schedule);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        Log.i("SCHEDULE", "queryAllLocalScheduleInDate 成功");
+        return result;
+    }
     //查找本地数据库中的所有日程管理
     public static List<Schedule> queryAllLocalSchedule(Context context, String user_id) {
         myDatabaseHelper = new MyDatabaseHelper(context);
@@ -94,12 +125,13 @@ public class ScheduleUtils {
         return result;
     }
     //添加日程管理到后端云
-    public static Schedule createBmobSchedule(final Context context, final String title, final String address,
+    public static String createBmobSchedule(final Context context, final String title, final String address,
                                               final String start, final String end, final String notes) {
         MyUser bmobUser = UserUtils.getCurrentUser();
+        final String userid = UserUtils.getUserId(context);
+        final String id = String.valueOf(System.currentTimeMillis());
         Schedule schedule = new Schedule();
         if (bmobUser != null) {
-            final String userid = bmobUser.getObjectId();
             schedule.setUserId(userid);
             schedule.setScheduleTitle(title);
             schedule.setScheduleAddress(address);
@@ -114,13 +146,16 @@ public class ScheduleUtils {
                         Log.i("SCHEDULE", "createBmobSchedule 成功");
                     } else {
                         Log.i("SCHEDULE", "createBmobSchedule 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalSchedule(context, id, userid, title, address, start, end, notes);
                     }
                 }
             });
+            return schedule.getObjectId();
         } else {
             Log.i("SCHEDULE", "createBmobSchedule 失败");
+            createLocalSchedule(context, id, userid, title, address, start, end, notes);
         }
-        return schedule;
+        return id;
     }
     //修改后端云中的日程管理
     public static void upadteBmobSchedule(String id, String title, String address,
@@ -164,8 +199,8 @@ public class ScheduleUtils {
         }
     }
     //查找后端云中的所有日程管理
-    public static void queryAllBmobSchedule(final Context context) {
-        final Context mContext = context;
+    public static List<Schedule> queryAllBmobSchedule(final Context context) {
+        final List<Schedule> alist = new ArrayList<Schedule>();
         MyUser bmobUser = UserUtils.getCurrentUser();
         if (bmobUser != null) {
             BmobQuery<Schedule> query = new BmobQuery<>();
@@ -175,8 +210,9 @@ public class ScheduleUtils {
                 @Override
                 public void done(final List<Schedule> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(mContext, "共"+list.size()+"则日程管理", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "共"+list.size()+"则日程管理", Toast.LENGTH_SHORT).show();
                         for (Schedule bmobSchedule : list) {
+                            alist.add(bmobSchedule);
                             createLocalSchedule(context, bmobSchedule.getObjectId(), bmobSchedule.getUserId(),
                                     bmobSchedule.getScheduleTitle(), bmobSchedule.getScheduleAddress(),
                                     bmobSchedule.getScheduleStart(), bmobSchedule.getScheduleEnd(),
@@ -185,10 +221,11 @@ public class ScheduleUtils {
                         Log.i("SCHEDULE", "queryAllBmobSchedule 成功");
                     } else {
                         Log.i("SCHEDULE", "queryAllBmobSchedule 失败："+e.getMessage());
-                        Toast.makeText(mContext, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
+        return alist;
     }
 }

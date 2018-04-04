@@ -51,6 +51,37 @@ public class DiaryUtils {
         dbUpdate.close();
         Log.i("DIARY", "updateLocalDiary 成功："+id);
     }
+    //查找本地数据库中的某天的所有日记
+    public static List<Diary> queryAllLocalDiaryInDate(Context context, String user_id, String date) {
+        myDatabaseHelper = new MyDatabaseHelper(context);
+        List<Diary> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "user_id = ? and diary_date LIKE ?";
+        String[] selectionArgs = new String[]{user_id, "%" + date + "%"};
+        Cursor cursor = dbRead.query(DIARY_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            String diary_date = cursor.getString(cursor.getColumnIndex("diary_date"));
+            String diary_address = cursor.getString(cursor.getColumnIndex("diary_address"));
+            String diary_weather = cursor.getString(cursor.getColumnIndex("diary_weather"));
+            String diary_title = cursor.getString(cursor.getColumnIndex("diary_title"));
+            String diary_content = cursor.getString(cursor.getColumnIndex("diary_content"));
+            Diary diary = new Diary();
+            diary.setObjectId(id);
+            diary.setUserId(user_id);
+            diary.setDiaryDate(diary_date);
+            diary.setDiaryAddress(diary_address);
+            diary.setDiaryWeather(diary_weather);
+            diary.setDiaryTitle(diary_title);
+            diary.setDiaryContent(diary_content);
+            result.add(diary);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        Log.i("DIARY", "queryAllLocalDiaryInDate 成功："+ result.size());
+        return result;
+    }
     //查找本地数据库中的所有日记
     public static List<Diary> queryAllLocalDiary(Context context, String user_id) {
         myDatabaseHelper = new MyDatabaseHelper(context);
@@ -94,9 +125,10 @@ public class DiaryUtils {
     public static String createBmobDiary(final Context context, final String date, final String address,
                                          final String weather, final String title, final String content) {
         MyUser bmobUser = UserUtils.getCurrentUser();
+        final String userId = UserUtils.getUserId(context);
+        final String id = String.valueOf(System.currentTimeMillis());
         final Diary bmobDiary = new Diary();
         if (bmobUser != null) {
-            final String userId = bmobUser.getObjectId();
             bmobDiary.setUserId(userId);
             bmobDiary.setDiaryAddress(address);
             bmobDiary.setDiaryDate(date);
@@ -111,13 +143,16 @@ public class DiaryUtils {
                         Log.i("DIARY", "createBmobDiary 成功:" + objectId);
                     } else {
                         Log.i("DIARY", "createBmobDiary 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalDiary(context, id, userId, date, address, weather, title, content);
                     }
                 }
             });
+            return bmobDiary.getObjectId();
         } else {
             Log.i("DIARY", "createBmobDiary 失败");
+            createLocalDiary(context, id, userId, date, address, weather, title, content);
         }
-        return bmobDiary.getObjectId();
+        return id;
     }
     //修改后端云中的日记
     public static void upadteBmobDiary(String id, String title, String content) {
@@ -157,8 +192,8 @@ public class DiaryUtils {
         }
     }
     //查找后端云中的所有日记
-    public static void queryAllBmobDiary(final Context context) {
-        //final Context mContext = context;
+    public static List<Diary> queryAllBmobDiary(final Context context) {
+        final List<Diary> alist = new ArrayList<Diary>();
         MyUser bmobUser = UserUtils.getCurrentUser();
         if (bmobUser != null) {
             BmobQuery<Diary> query = new BmobQuery<>();
@@ -170,6 +205,7 @@ public class DiaryUtils {
                     if (e == null) {
                         Toast.makeText(context, "共"+list.size()+"则日记", Toast.LENGTH_SHORT).show();
                         for (Diary bmobDiary : list) {
+                            alist.add(bmobDiary);
                             createLocalDiary(context, bmobDiary.getObjectId(), bmobDiary.getUserId(),
                                     bmobDiary.getDiaryDate(), bmobDiary.getDiaryAddress(),
                                     bmobDiary.getDiaryWeather(), bmobDiary.getDiaryTitle(),
@@ -183,5 +219,6 @@ public class DiaryUtils {
                 }
             });
         }
+        return alist;
     }
 }
