@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity/*
         setSupportActionBar(toolbar);
 
         setPermissions();
-        Bmob.initialize(this, "9b0b1ad0d1c9c081739ab99a3e05fe98");
+        //Bmob.initialize(this, "9b0b1ad0d1c9c081739ab99a3e05fe98");
         initViews();
 
     }

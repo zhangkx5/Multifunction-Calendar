@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
         viewPager = (ViewPager)findViewById(R.id.viewPager);
         viewPager.setOffscreenPageLimit(2);
         mPagerAdapter pagerAdapter = new mPagerAdapter(getSupportFragmentManager());
-
         pagerAdapter.addFragment(new LoginFragment(), TITLES[0]);
         tabLayout.addTab(tabLayout.newTab().setText(TITLES[0]));
         pagerAdapter.addFragment(new SignUpFragment(), TITLES[1]);

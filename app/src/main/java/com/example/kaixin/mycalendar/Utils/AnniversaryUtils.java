@@ -150,8 +150,8 @@ public class AnniversaryUtils {
         }
     }
     //查找后端云中的所有纪念日
-    public static void queryAllBmobAnniversaryDay(final Context context) {
-        final Context mContext = context;
+    public static List<AnniversaryDay> queryAllBmobAnniversaryDay(final Context context) {
+        final List<AnniversaryDay> alist = new ArrayList<AnniversaryDay>();
         MyUser bmobUser = UserUtils.getCurrentUser();
         if (bmobUser != null) {
             BmobQuery<AnniversaryDay> query = new BmobQuery<>();
@@ -161,8 +161,9 @@ public class AnniversaryUtils {
                 @Override
                 public void done(final List<AnniversaryDay> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(mContext, "共"+list.size()+"则纪念日", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "共"+list.size()+"则纪念日", Toast.LENGTH_SHORT).show();
                         for (AnniversaryDay bmobAnniversaryDay : list) {
+                            alist.add(bmobAnniversaryDay);
                             createLocalAnniversary(context, bmobAnniversaryDay.getObjectId(), bmobAnniversaryDay.getUserId(),
                                     bmobAnniversaryDay.getAnniversaryDate(), bmobAnniversaryDay.getAnniversaryName(),
                                     bmobAnniversaryDay.getAnniversaryNotes());
@@ -170,10 +171,12 @@ public class AnniversaryUtils {
                         Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 成功");
                     } else {
                         Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 失败："+e.getMessage()+","+e.getErrorCode());
-                        Toast.makeText(mContext, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+            return alist;
         }
+        return null;
     }
 }

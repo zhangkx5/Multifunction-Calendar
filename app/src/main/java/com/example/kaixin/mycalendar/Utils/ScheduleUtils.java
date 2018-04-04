@@ -27,7 +27,7 @@ import cn.bmob.v3.listener.UpdateListener;
 public class ScheduleUtils {
     private static MyDatabaseHelper myDatabaseHelper;
     public static final String SCHEDULE_TABLE_NAME = "Table_Schedule";
-    public static final String SCHEDULE_TABLE_INSERT = "insert into " + SCHEDULE_TABLE_NAME
+    public static final String SCHEDULE_TABLE_INSERT = "insert or ignore into " + SCHEDULE_TABLE_NAME
             + " (id, user_id, schedule_title, schedule_address, schedule_startTime, schedule_endTime, schedule_notes) values (?, ?, ?, ?, ?, ?, ?)";
     public static final String SCHEDULE_TABLE_DELETE = "delete from " + SCHEDULE_TABLE_NAME + " where id = ?";
     //添加日程管理到本地数据库

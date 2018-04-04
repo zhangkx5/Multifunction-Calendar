@@ -306,13 +306,38 @@ public class HabitUtils {
         if (bmobUser != null) {
             BmobQuery<ClockingIn> query = new BmobQuery<>();
             query.addWhereEqualTo("userId", bmobUser.getObjectId());
-            query.addWhereEqualTo("taskId", habit_id);
+            query.addWhereEqualTo("habitId", habit_id);
             query.setLimit(500);
             query.findObjects(new FindListener<ClockingIn>() {
                 @Override
                 public void done(final List<ClockingIn> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"则任务", Toast.LENGTH_SHORT).show();
+                        for (ClockingIn bmobClock : list) {
+                            createLocalClockingIn(context, bmobClock.getObjectId(), bmobClock.getUserId(),
+                                    bmobClock.getHabitId(), bmobClock.getDate());
+                        }
+                        Log.i("CLOCKINGIN", "queryAllBmobClockingIn 成功："+list.size());
+                    } else {
+                        Log.i("CLOCKINGIN", "queryAllBmobClockingIn 失败："+e.getMessage());
+                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            Log.i("CLOCKINGIN", "queryAllBmobClockingIn 失败");
+        }
+    }
+    //查找后端云中某项任务的所有打卡纪录
+    public static void queryAllAllBmobClockingIn(final Context context) {
+        MyUser bmobUser = UserUtils.getCurrentUser();
+        if (bmobUser != null) {
+            BmobQuery<ClockingIn> query = new BmobQuery<>();
+            query.addWhereEqualTo("userId", bmobUser.getObjectId());
+            query.setLimit(500);
+            query.findObjects(new FindListener<ClockingIn>() {
+                @Override
+                public void done(final List<ClockingIn> list, BmobException e) {
+                    if (e == null) {
                         for (ClockingIn bmobClock : list) {
                             createLocalClockingIn(context, bmobClock.getObjectId(), bmobClock.getUserId(),
                                     bmobClock.getHabitId(), bmobClock.getDate());

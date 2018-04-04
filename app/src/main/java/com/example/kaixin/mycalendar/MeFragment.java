@@ -169,6 +169,7 @@ public class MeFragment extends Fragment {
     private void setUserInfo() {
         bmobUser = BmobUser.getCurrentUser(MyUser.class);
         if (bmobUser != null) {
+            login.setVisibility(View.GONE);
             user_name.setText(bmobUser.getUsername());
             user_notes.setText(bmobUser.getNotes());
             userId = bmobUser.getObjectId();
@@ -192,6 +193,9 @@ public class MeFragment extends Fragment {
                 }
             }
         } else {
+            user_name.setText("unknown");
+            user_notes.setText("登录可云存储数据哦");
+            user_photo.setImageResource(R.mipmap.ic_user);
             login.setVisibility(View.VISIBLE);
         }
     }

@@ -35,9 +35,7 @@ public class AnniversaryActivity extends AppCompatActivity {
         super.onResume();
         list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
         if (list.size() == 0) {
-            AnniversaryUtils.queryAllBmobAnniversaryDay(this);
-            list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
-
+            list = AnniversaryUtils.queryAllBmobAnniversaryDay(this);
         }
         if (list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
@@ -76,8 +74,7 @@ public class AnniversaryActivity extends AppCompatActivity {
         });
         list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
         if (list.size() == 0) {
-            AnniversaryUtils.queryAllBmobAnniversaryDay(this);
-            list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+            list = AnniversaryUtils.queryAllBmobAnniversaryDay(this);
         }
         if (list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);

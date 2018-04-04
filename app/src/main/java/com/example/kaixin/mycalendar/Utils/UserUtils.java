@@ -1,11 +1,13 @@
 package com.example.kaixin.mycalendar.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.MyUser;
+import com.example.kaixin.mycalendar.MainActivity;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -49,8 +51,8 @@ public class UserUtils {
                     Log.i("smile", "用户登录成功");
                     SharedPreferences.Editor editor = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE).edit();
                     editor.putString("user_id", user.getObjectId());
-                    /*Intent intent = new Intent(mContext, MainActivity.class);
-                    mContext.startActivity(intent);*/
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
                 }
             }
         });
@@ -58,7 +60,9 @@ public class UserUtils {
 
     //get current user
     public static MyUser getCurrentUser() {
-        return BmobUser.getCurrentUser(MyUser.class);
+        if (BmobUser.getCurrentUser(MyUser.class) != null)
+            return BmobUser.getCurrentUser(MyUser.class);
+        return null;
     }
 
     //lost password

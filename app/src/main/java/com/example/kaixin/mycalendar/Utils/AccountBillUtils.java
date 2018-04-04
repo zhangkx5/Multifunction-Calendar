@@ -165,8 +165,8 @@ public class AccountBillUtils {
         }
     }
     //查找后端云中的所有日记
-    public static void queryAllBmobAccountBill(final Context context) {
-        //final Context mContext = context;
+    public static List<AccountBill> queryAllBmobAccountBill(final Context context) {
+        final List<AccountBill> alist = new ArrayList<AccountBill>();
         MyUser bmobUser = UserUtils.getCurrentUser();
         if (bmobUser != null) {
             BmobQuery<AccountBill> query = new BmobQuery<>();
@@ -178,6 +178,7 @@ public class AccountBillUtils {
                     if (e == null) {
                         Toast.makeText(context, "共"+list.size()+"条账单", Toast.LENGTH_SHORT).show();
                         for (AccountBill accountBill : list) {
+                            alist.add(accountBill);
                             createLocalAccountBill(context, accountBill.getObjectId(), accountBill.getUserId(),
                                     accountBill.getAccountType(), accountBill.getAccountLabel(),
                                     accountBill.getAccountDate(), accountBill.getAccountMoney(),
@@ -191,5 +192,6 @@ public class AccountBillUtils {
                 }
             });
         }
+        return alist;
     }
 }

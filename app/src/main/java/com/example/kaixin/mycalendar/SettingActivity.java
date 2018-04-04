@@ -41,6 +41,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 UserUtils.LogOut(SettingActivity.this);
+                SettingActivity.this.finish();
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {

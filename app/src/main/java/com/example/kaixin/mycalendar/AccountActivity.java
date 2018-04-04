@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -30,7 +31,7 @@ import java.util.Map;
 
 public class AccountActivity extends AppCompatActivity {
 
-    private List<AccountBill> list;
+    private List<AccountBill> list = new ArrayList<>();
     private ImageButton ib_add, ib_back;
 
     private AccountBillAdapter expandableListViewAdapter;
@@ -42,8 +43,12 @@ public class AccountActivity extends AppCompatActivity {
         super.onResume();
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
-            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
-                    UserUtils.getUserId(AccountActivity.this)));
+            list = AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
+                    UserUtils.getUserId(AccountActivity.this));
+            if (list.size() == 0) {
+                list = AccountBillUtils.queryAllBmobAccountBill(AccountActivity.this);
+            }
+            map = DivideIntoGroup(list);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -60,6 +65,7 @@ public class AccountActivity extends AppCompatActivity {
             expandableListView.setVisibility(View.VISIBLE);
             expandableListViewAdapter = new AccountBillAdapter(AccountActivity.this, getAllKey(map), lists);
             expandableListView.setAdapter(expandableListViewAdapter);
+            expandableListView.expandGroup(0);
         }
     }
 
@@ -88,8 +94,14 @@ public class AccountActivity extends AppCompatActivity {
 
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
-            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
-                    UserUtils.getUserId(AccountActivity.this)));
+            list = new ArrayList<>();
+            list = AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
+                    UserUtils.getUserId(AccountActivity.this));
+            if (list.size() == 0) {
+                list = AccountBillUtils.queryAllBmobAccountBill(AccountActivity.this);
+                Log.i("AccountBill", list.get(0).getAccountDate());
+            }
+            map = DivideIntoGroup(list);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -106,6 +118,7 @@ public class AccountActivity extends AppCompatActivity {
             expandableListView.setVisibility(View.VISIBLE);
             expandableListViewAdapter = new AccountBillAdapter(AccountActivity.this, getAllKey(map), lists);
             expandableListView.setAdapter(expandableListViewAdapter);
+            expandableListView.expandGroup(0);
         }
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

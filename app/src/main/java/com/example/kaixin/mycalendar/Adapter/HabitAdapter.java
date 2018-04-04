@@ -100,7 +100,7 @@ public class HabitAdapter extends ArrayAdapter<Habit> {
                 try {
                     FileInputStream fileInputStream = new FileInputStream(taskPhoto);
                     bm = BitmapFactory.decodeStream(fileInputStream);
-                    Log.i("HabitAdapter", "本地图片");
+                    //Log.i("HabitAdapter", "本地图片");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
