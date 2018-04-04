@@ -228,9 +228,10 @@ public class HabitUtils {
         return false;
     }
     //查找本地数据库中某项任务的所有打卡纪录
-    public static ArrayList<Map<String, Object>> queryAllLocalClockingIn(Context context, String user_id, String habit_id) {
+    public static List<String> queryAllLocalClockingIn(Context context, String user_id, String habit_id) {
         myDatabaseHelper = new MyDatabaseHelper(context);
-        ArrayList<Map<String, Object>> result = new ArrayList<>();
+        //ArrayList<Map<String, Object>> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
         String selection = "user_id = ? and habit_id = ?";
         String[] selectionArgs = new String[]{user_id, habit_id};
@@ -238,29 +239,31 @@ public class HabitUtils {
         while (cursor.moveToNext()) {
             //String id = cursor.getString(cursor.getColumnIndex("id"));
             String date = cursor.getString(cursor.getColumnIndex("date"));
+            result.add(date);
             /*ClockingIn clockingIn = new ClockingIn();
             clockingIn.setObjectId(id);
             clockingIn.setUserId(user_id);
             clockingIn.setTaskId(habit_id);
             clockingIn.setDate(date);*/
-            Map<String, Object> hashmap = new HashMap<String, Object>();
-            hashmap.put("task", habit_id);
+            /*Map<String, Object> hashmap = new HashMap<String, Object>();
+            hashmap.put("habit", habit_id);
             hashmap.put("date", date);
-            result.add(hashmap);
+            result.add(hashmap);*/
             //result.add(clockingIn);
         }
-        //Collections.reverse(result);
+        Collections.reverse(result);
         cursor.close();
         dbRead.close();
-        Log.i("CLOCKINGIN", "queryAllLocalClockingIn 成功");
+        Log.i("CLOCKINGIN", "queryAllLocalClockingIn 成功:" + result.size());
         return result;
     }
     //添加打卡纪录到后端云
     public static String createBmobClockingIn(final Context context, final String habitId, final String date) {
         MyUser bmobUser = UserUtils.getCurrentUser();
         final ClockingIn bmobClock = new ClockingIn();
+        final String userId = UserUtils.getUserId(context);
+        final String id = String.valueOf(System.currentTimeMillis());
         if (bmobUser != null) {
-            final String userId = bmobUser.getObjectId();
             bmobClock.setUserId(userId);
             bmobClock.setHabitId(habitId);
             bmobClock.setDate(date);
@@ -272,13 +275,16 @@ public class HabitUtils {
                         Log.i("CLOCKINGIN", "createBmobClockingIn 成功:" + objectId);
                     } else {
                         Log.i("CLOCKINGIN", "createBmobClockingIn 失败："+e.getMessage()+","+e.getErrorCode());
+                        createLocalClockingIn(context, id, userId, habitId, date);
                     }
                 }
             });
+            return bmobClock.getObjectId();
         } else {
-            Log.i("CLOCKINGIN", "创建bmob打卡纪录失败");
+            Log.i("CLOCKINGIN", "createBmobClockingIn 失败");
+            createLocalClockingIn(context, id, userId, habitId, date);
         }
-        return bmobClock.getObjectId();
+        return id;
     }
     //查找后端云中某项任务的当天打卡纪录
     public static void queryOneBmobClockingIn(final Context context, String habit_id, String date) {

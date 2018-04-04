@@ -55,14 +55,103 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                android:id="@+id/calendarView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:mcv_selectionColor="#00F"
-                app:mcv_showOtherDates="all"
-                app:mcv_tileHeight="30dp"
-                app:mcv_weekDayTextAppearance="@color/mcv_text_date_light" />
+                android:layout_height="28dp"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="日"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="一"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="二"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="三"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="四"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="五"
+                    android:textColor="#444444"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="六"
+                    android:textColor="#444444"
+                    />
+
+            </LinearLayout>
+
+
+
+            <com.codbking.calendar.CalendarLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <com.codbking.calendar.CalendarDateView
+                    android:id="@+id/calendarDateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                </LinearLayout>
+                <!--<ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"/>-->
+
+            </com.codbking.calendar.CalendarLayout>
 
             <Button
                 android:id="@+id/check"
@@ -70,8 +159,8 @@
                 android:layout_height="wrap_content"
                 android:text="打卡"
                 android:textSize="25sp"
-                android:textColor="@color/colorAccent"
-                android:background="@drawable/bg_city"
+                android:textColor="#983400"
+                android:background="@drawable/bg_clockingin"
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:layout_gravity="center"/>
 
@@ -89,6 +178,7 @@
                 android:textSize="18sp"
                 android:textColor="#FF000000"/>
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

@@ -47,21 +47,13 @@ import java.util.List;
 
 //public class CalendarFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener{
 public class CalendarFragment extends Fragment {
-    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
     private ImageView ib_add;
     private String selectedDate;
 
-    private AnniversaryAdapter anniversaryAdapter;
-    private ScheduleAdapter scheduleAdapter;
+    private TextView mTitle;
     private ListView listView;
     private ListViewAdapter listViewAdapter;
-    //private List<AnniversaryDay> list_anniversary = new ArrayList<>();
-    private List<Schedule> list_schedule = new ArrayList<>();
-
-    private TextView mTitle;
     private CalendarDateView mCalendarDateView;
-    //private ListView mList;
-
 
     private LinearLayout ll_weather;
     private TextView date, address, tv_weather, temperature, range;
@@ -352,18 +344,6 @@ public class CalendarFragment extends Fragment {
         String user_id = UserUtils.getUserId(getActivity());
         List<AnniversaryDay> list_anniversary = AnniversaryUtils.queryAllLocalAnniversaryInDate(getActivity(), user_id, tempDate);
         List<Schedule> list_schedule = ScheduleUtils.queryAllLocalScheduleInDate(getActivity(), user_id, tempDate);
-        /*myDatabaseHelper = new MyDatabaseHelper(getActivity());
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String selection = "schedule_start LIKE ?";
-        String[] selectionArgs = new String[]{"%" + tempDate + "%"};
-        Cursor cursor = dbRead.query(ScheduleUtils.SCHEDULE_TABLE_NAME, null, selection, selectionArgs, null, null, null);
-        if (cursor.moveToFirst()) {
-            cursor.close();
-            dbRead.close();
-            return true;
-        }
-        cursor.close();
-        dbRead.close();*/
         if (list_anniversary.size() + list_schedule.size() > 0) return true;
         return false;
     }

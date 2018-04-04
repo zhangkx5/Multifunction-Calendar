@@ -9,18 +9,26 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codbking.calendar.CaledarAdapter;
+import com.codbking.calendar.CalendarBean;
+import com.codbking.calendar.CalendarDateView;
+import com.codbking.calendar.CalendarUtil;
 import com.example.kaixin.mycalendar.Adapter.HabitAdapter;
+import com.example.kaixin.mycalendar.Bean.ClockingIn;
 import com.example.kaixin.mycalendar.Bean.Habit;
 import com.example.kaixin.mycalendar.Utils.EventDecorator;
 import com.example.kaixin.mycalendar.Utils.HabitUtils;
 import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
+import com.example.kaixin.mycalendar.Utils.UserUtils;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -39,16 +47,21 @@ public class HabitClockingInActivity extends AppCompatActivity{
     private ImageButton ib_back, ib_edit;
     private ImageView habit_img;
     private TextView habit_notes;
-    private MaterialCalendarView mcv;
+    private CalendarDateView calendarDateView;
+    private CaledarAdapter myCalendarAdapter;
     private Button check;
     private Habit habit;
-    private List<String> dateList = new ArrayList<>();
+    private List<String> list = new ArrayList<>();
+    private CalendarBean todayBean;
+    private View chidView;
 
     @Override
     public void onResume() {
         super.onResume();
-        dateList = queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
-        mcv.addDecorators(new EventDecorator(dateList));
+        //dateList = queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
+        //mcv.addDecorators(new EventDecorator(dateList));
+        list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
+        initView();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +71,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
         TextView title = (TextView)findViewById(R.id.title);
         ib_back = (ImageButton)findViewById(R.id.ib_back);
         ib_edit = (ImageButton)findViewById(R.id.ib_edit);
-        mcv = (MaterialCalendarView)findViewById(R.id.calendarView);
+        calendarDateView = (CalendarDateView)findViewById(R.id.calendarDateView);
         habit_img = (ImageView)findViewById(R.id.habit_img);
         habit_notes = (TextView)findViewById(R.id.habit_notes);
         check = (Button)findViewById(R.id.check);
@@ -69,6 +82,12 @@ public class HabitClockingInActivity extends AppCompatActivity{
                 HabitClockingInActivity.this.finish();
             }
         });
+        ib_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         Intent intent = getIntent();
         if (intent != null) {
             habit = (Habit)intent.getSerializableExtra("habit");
@@ -76,62 +95,62 @@ public class HabitClockingInActivity extends AppCompatActivity{
         } else {
             HabitClockingInActivity.this.finish();
         }
-        dateList = queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
-        if (dateList.size() == 0) {
+        createClockingIn();
+        list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
+        initView();
 
-        }
-
-        mcv.state().edit()
-                .setFirstDayOfWeek(Calendar.SUNDAY)
-                .setCalendarDisplayMode(CalendarMode.MONTHS)
-                .commit();
-        mcv.addDecorators(
-                //new HighlightWeekendsDecorator(),
-                //new TodayDecorator(),
-                new EventDecorator(dateList)
-        );
         habit_notes.setText(habit.getHabitNotes());
         habit_img.setTag(habit.getHabitImg());
         if (!"".equals(habit.getHabitImgName())) {
             new HabitAdapter.ImageAsyncTack(habit_img).execute(habit.getHabitImgName());
         }
         //hasClockingIn();
-        check.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createClockingIn();
-                Log.i("CLOCKINGIN", "打卡成功");
-                Toast.makeText(HabitClockingInActivity.this, "打卡成功", Toast.LENGTH_SHORT).show();
-            }
-        });
+        check.setText("打卡成功");
 
     }
-    //查找本地数据库中某项任务的所有打卡纪录
-    public static ArrayList<String> queryAllLocalClockingIn(Context context, String user_id, String habit_id) {
-        MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(context);
-        ArrayList<String> result = new ArrayList<>();
-        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String selection = "user_id = ? and habit_id = ?";
-        String[] selectionArgs = new String[]{user_id, habit_id};
-        Cursor cursor = dbRead.query(HabitUtils.CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
-        while (cursor.moveToNext()) {
-            //String id = cursor.getString(cursor.getColumnIndex("id"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            /*ClockingIn clockingIn = new ClockingIn();
-            clockingIn.setObjectId(id);
-            clockingIn.setUserId(user_id);
-            clockingIn.setTaskId(habit_id);
-            clockingIn.setDate(date);*/
-            result.add(date);
-            //result.add(clockingIn);
+    private boolean hasEvents(CalendarBean bean, List<String> stringList) {
+        /*Date calDate = new Date(bean.year, bean.moth, bean.day);
+        if (calDate.after(new Date(System.currentTimeMillis()))) return false;*/
+        String month = (bean.moth < 10) ? ("0" + bean.moth) : ("" + bean.moth);
+        String day = (bean.day < 10) ? ("0" + bean.day) : ("" + bean.day);
+        String tempDate = bean.year + "-" + month + "-" + day;
+        for (int i = 0; i < stringList.size(); i++) {
+            if (tempDate.equals(stringList.get(i)))
+                return true;
         }
-        //Collections.reverse(result);
-        cursor.close();
-        dbRead.close();
-        Log.i("CLOCKINGIN", "queryAllLocalClockingIn 成功");
-        return result;
+        return false;
     }
-    public void hasClockingIn() {
+    private void initView() {
+        int[] data = CalendarUtil.getYMD(new Date());
+        todayBean = new CalendarBean(data[0], data[1], data[2]);
+        myCalendarAdapter = new CaledarAdapter() {
+            @Override
+            public View getView(View convertView, ViewGroup parentView, CalendarBean bean) {
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(parentView.getContext()).inflate(R.layout.item_calendar_date_view, null);
+                }
+                TextView chinaText = (TextView) convertView.findViewById(R.id.chinaText);
+                TextView text = (TextView) convertView.findViewById(R.id.text);
+                View redPoint = (View) convertView.findViewById(R.id.redPoint);
+                text.setText("" + bean.day);
+                if (bean.mothFlag != 0) {
+                    text.setTextColor(0xff9299a1);
+                } else {
+                    text.setTextColor(0xff444444);
+                }
+                chinaText.setText(bean.chinaDay);
+                if (hasEvents(bean, list)) {
+                    redPoint.setVisibility(View.VISIBLE);
+                } else {
+                    redPoint.setVisibility(View.GONE);
+                }
+                return convertView;
+            }
+        };
+        calendarDateView.setAdapter(myCalendarAdapter);
+    }
+
+    /*public void hasClockingIn() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date(System.currentTimeMillis());
         String date = simpleDateFormat.format(today);
@@ -144,27 +163,27 @@ public class HabitClockingInActivity extends AppCompatActivity{
 
             }
         }
-    }
+    }*/
     ProgressDialog progressDialog;
     public void createClockingIn() {
         new AsyncTask<String, Void, Void>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog = new ProgressDialog(HabitClockingInActivity.this);
+                /*progressDialog = new ProgressDialog(HabitClockingInActivity.this);
                 progressDialog.setMessage("保存中...");
                 progressDialog.setCancelable(true);
-                progressDialog.show();
+                progressDialog.show();*/
             }
             @Override
             protected void onPostExecute(Void result) {
                 super.onPostExecute(result);
-                progressDialog.dismiss();
+                /*progressDialog.dismiss();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
             @Override
             protected Void doInBackground(String... params) {
