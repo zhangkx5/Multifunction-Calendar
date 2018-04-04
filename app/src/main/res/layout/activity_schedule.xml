@@ -52,12 +52,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ListView>
-    <!--
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_add" />-->
+    <TextView
+        android:id="@+id/whenZero"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:visibility="gone"
+        android:text="你还没有日记哦\n快去创建吧"/>
 </LinearLayout>

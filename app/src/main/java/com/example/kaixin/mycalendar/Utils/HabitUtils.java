@@ -31,7 +31,7 @@ public class HabitUtils {
 
     private static MyDatabaseHelper myDatabaseHelper;
     public static final String HABIT_TABLE_NAME = "Table_Habit";
-    public static final String HABIT_TABLE_INSERT = "insert into " + HABIT_TABLE_NAME
+    public static final String HABIT_TABLE_INSERT = "insert or ignore into " + HABIT_TABLE_NAME
             + "(id, user_id, habit_name, habit_notes, habit_img, img_name) values (?, ?, ?, ?, ?, ?)";
     public static final String HABIT_TABLE_DELETE = "delete from " + HABIT_TABLE_NAME + " where id = ?";
     //添加任务到本地数据库
@@ -191,7 +191,7 @@ public class HabitUtils {
     }
     //打卡
     public static final String CLOCKINGIN_TABLE_NAME = "Table_ClockingIn";
-    public static final String CLOCKINGIN_TABLE_INSERT = "insert into " + CLOCKINGIN_TABLE_NAME
+    public static final String CLOCKINGIN_TABLE_INSERT = "insert or ignore into " + CLOCKINGIN_TABLE_NAME
             + "(id, user_id, habit_id, date) values (?, ?, ?, ?)";
     //添加打卡纪录到本地数据库
     public static void createLocalClockingIn(Context context, String id, String userId,
@@ -203,11 +203,11 @@ public class HabitUtils {
         Log.i("CLOCKINGIN", "createLocalClockingIn 成功："+id);
     }
     //查找本地数据库中的某条打卡纪录
-    public static boolean queryOneLocalClockingIn(Context context, String user_id, String task_id, String date) {
+    public static boolean queryOneLocalClockingIn(Context context, String user_id, String habit_id, String date) {
         myDatabaseHelper = new MyDatabaseHelper(context);
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String selection = "user_id = ? and task_id = ? and date = ?";
-        String[] selectionArgs = new String[]{user_id, task_id, date};
+        String selection = "user_id = ? and habit_id = ? and date = ?";
+        String[] selectionArgs = new String[]{user_id, habit_id, date};
         Cursor cursor = dbRead.query(CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
         if (cursor.getCount() != 0) {
             cursor.close();
@@ -225,7 +225,7 @@ public class HabitUtils {
         myDatabaseHelper = new MyDatabaseHelper(context);
         ArrayList<Map<String, Object>> result = new ArrayList<>();
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String selection = "user_id = ? and task_id = ?";
+        String selection = "user_id = ? and habit_id = ?";
         String[] selectionArgs = new String[]{user_id, habit_id};
         Cursor cursor = dbRead.query(CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
         while (cursor.moveToNext()) {
@@ -234,7 +234,7 @@ public class HabitUtils {
             /*ClockingIn clockingIn = new ClockingIn();
             clockingIn.setObjectId(id);
             clockingIn.setUserId(user_id);
-            clockingIn.setTaskId(task_id);
+            clockingIn.setTaskId(habit_id);
             clockingIn.setDate(date);*/
             Map<String, Object> hashmap = new HashMap<String, Object>();
             hashmap.put("task", habit_id);

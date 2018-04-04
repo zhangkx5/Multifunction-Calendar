@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Adapter.AccountBillAdapter;
 import com.example.kaixin.mycalendar.Bean.AccountBill;
@@ -30,24 +31,47 @@ import java.util.Map;
 public class AccountActivity extends AppCompatActivity {
 
     private List<AccountBill> list;
-    private MyDatabaseHelper myDatabaseHelper;
     private ImageButton ib_add, ib_back;
-    //private ExpandableStickyListHeadersListView listView;
 
     private AccountBillAdapter expandableListViewAdapter;
     private ExpandableListView expandableListView;
-    /*private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private String[] TITLES = {"账单", "报表"};*/
+    private TextView tv_showzero;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Map<Date, List<AccountBill>> map = new HashMap<>();
+        try {
+            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
+                    UserUtils.getUserId(AccountActivity.this)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<List<AccountBill>> lists = new ArrayList<>();
+        for (Date date : getAllKey(map)) {
+            List<AccountBill> l = map.get(date);
+            lists.add(l);
+        }
+        if (lists.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            expandableListView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            expandableListView.setVisibility(View.VISIBLE);
+            expandableListViewAdapter = new AccountBillAdapter(AccountActivity.this, getAllKey(map), lists);
+            expandableListView.setAdapter(expandableListViewAdapter);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.fragment_account_bill);
         setContentView(R.layout.activity_account);
-        myDatabaseHelper = new MyDatabaseHelper(AccountActivity.this);
 
         ib_back = (ImageButton)findViewById(R.id.ib_back);
         ib_add = (ImageButton) findViewById(R.id.ib_add);
+        tv_showzero = (TextView)findViewById(R.id.whenZero);
+        expandableListView = (ExpandableListView)findViewById(R.id.expandableListView);
         ib_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,8 +88,8 @@ public class AccountActivity extends AppCompatActivity {
 
         Map<Date, List<AccountBill>> map = new HashMap<>();
         try {
-            //map = DivideIntoGroup(readDB());
-            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this, UserUtils.getUserId(AccountActivity.this)));
+            map = DivideIntoGroup(AccountBillUtils.queryAllLocalAccountBill(AccountActivity.this,
+                    UserUtils.getUserId(AccountActivity.this)));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -74,10 +98,15 @@ public class AccountActivity extends AppCompatActivity {
             List<AccountBill> l = map.get(date);
             lists.add(l);
         }
-        expandableListViewAdapter = new AccountBillAdapter(
-                AccountActivity.this, getAllKey(map), lists);
-        expandableListView = (ExpandableListView)findViewById(R.id.expandableListView);
-        expandableListView.setAdapter(expandableListViewAdapter);
+        if (lists.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            expandableListView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            expandableListView.setVisibility(View.VISIBLE);
+            expandableListViewAdapter = new AccountBillAdapter(AccountActivity.this, getAllKey(map), lists);
+            expandableListView.setAdapter(expandableListViewAdapter);
+        }
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -130,34 +159,6 @@ public class AccountActivity extends AppCompatActivity {
                 return false;
             }
         });
-        /*new ExpandableListView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int pos, long l) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(AccountActivity.this);
-                builder.setTitle("删除提醒");
-                builder.setMessage("确定要删除吗？此操作不可逆！");
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        AccountBill anniversaryDay = expandableListViewAdapter.getChild(pos);
-                        AnniversaryUtils.deleteBmobAnniversaryDay(anniversaryDay.getObjectId());
-                        AnniversaryUtils.deleteLocalAnniversary(AnniversaryActivity.this, anniversaryDay.getObjectId());
-                        list.remove(pos);
-                        anniversaryAdapter.notifyDataSetChanged();
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.create().show();
-                return true;
-            }
-            }
-        });*/
     }
 
     public Map<Date, List<AccountBill>> DivideIntoGroup(List<AccountBill> result) throws ParseException {
@@ -193,13 +194,5 @@ public class AccountActivity extends AppCompatActivity {
             }
         }
         return dateList;
-    }
-    public List<List<AccountBill>> getAllData(Map<Date, List<AccountBill>> map) {
-        List<List<AccountBill>> lists = new ArrayList<>();
-        for (Date date : getAllKey(map)) {
-            List<AccountBill> l = map.get(date);
-            lists.add(l);
-        }
-        return lists;
     }
 }

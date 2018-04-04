@@ -77,6 +77,9 @@ public class HabitClockingInActivity extends AppCompatActivity{
             HabitClockingInActivity.this.finish();
         }
         dateList = queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
+        if (dateList.size() == 0) {
+
+        }
 
         mcv.state().edit()
                 .setFirstDayOfWeek(Calendar.SUNDAY)
@@ -104,12 +107,12 @@ public class HabitClockingInActivity extends AppCompatActivity{
 
     }
     //查找本地数据库中某项任务的所有打卡纪录
-    public static ArrayList<String> queryAllLocalClockingIn(Context context, String user_id, String task_id) {
+    public static ArrayList<String> queryAllLocalClockingIn(Context context, String user_id, String habit_id) {
         MyDatabaseHelper myDatabaseHelper = new MyDatabaseHelper(context);
         ArrayList<String> result = new ArrayList<>();
         SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
-        String selection = "user_id = ? and task_id = ?";
-        String[] selectionArgs = new String[]{user_id, task_id};
+        String selection = "user_id = ? and habit_id = ?";
+        String[] selectionArgs = new String[]{user_id, habit_id};
         Cursor cursor = dbRead.query(HabitUtils.CLOCKINGIN_TABLE_NAME, null, selection, selectionArgs, null, null, null);
         while (cursor.moveToNext()) {
             //String id = cursor.getString(cursor.getColumnIndex("id"));
@@ -117,7 +120,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
             /*ClockingIn clockingIn = new ClockingIn();
             clockingIn.setObjectId(id);
             clockingIn.setUserId(user_id);
-            clockingIn.setTaskId(task_id);
+            clockingIn.setTaskId(habit_id);
             clockingIn.setDate(date);*/
             result.add(date);
             //result.add(clockingIn);
@@ -125,6 +128,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
         //Collections.reverse(result);
         cursor.close();
         dbRead.close();
+        Log.i("CLOCKINGIN", "queryAllLocalClockingIn 成功");
         return result;
     }
     public void hasClockingIn() {

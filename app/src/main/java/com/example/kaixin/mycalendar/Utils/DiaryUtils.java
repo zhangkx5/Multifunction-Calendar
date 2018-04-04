@@ -28,7 +28,7 @@ public class DiaryUtils {
 
     private static MyDatabaseHelper myDatabaseHelper;
     public static final String DIARY_TABLE_NAME = "Table_Diary";
-    public static final String DIARY_TABLE_INSERT = "insert into " + DIARY_TABLE_NAME
+    public static final String DIARY_TABLE_INSERT = "insert or ignore into " + DIARY_TABLE_NAME
             + "(id, user_id, diary_date, diary_address, diary_weather, diary_title, diary_content) values (?, ?, ?, ?, ?, ?, ?)";
     public static final String DIARY_TABLE_DELETE = "delete from " + DIARY_TABLE_NAME + " where id = ?";
     //添加日记到本地数据库

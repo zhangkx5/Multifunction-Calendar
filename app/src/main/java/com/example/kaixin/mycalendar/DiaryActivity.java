@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Adapter.DiaryAdapter;
 import com.example.kaixin.mycalendar.Bean.Diary;
@@ -30,6 +31,7 @@ public class DiaryActivity extends AppCompatActivity {
     private DiaryAdapter diaryAdapter;
     private List<Diary> diary_list;
     private ImageView ib_back, ib_add;
+    private TextView tv_showzero;
     ProgressDialog progressDialog;
     public void getList() {
         new AsyncTask<String, Void, Void>() {
@@ -73,8 +75,15 @@ public class DiaryActivity extends AppCompatActivity {
             DiaryUtils.queryAllBmobDiary(this);
             diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
         }
-        diaryAdapter = new DiaryAdapter(DiaryActivity.this, diary_list);
-        listView.setAdapter(diaryAdapter);
+        if (diary_list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            diaryAdapter = new DiaryAdapter(DiaryActivity.this, diary_list);
+            listView.setAdapter(diaryAdapter);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +93,7 @@ public class DiaryActivity extends AppCompatActivity {
         ib_back = (ImageView)findViewById(R.id.ib_back);
         ib_add = (ImageView)findViewById(R.id.ib_add);
         listView = (ListView) findViewById(R.id.listView);
+        tv_showzero = (TextView)findViewById(R.id.whenZero);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +115,15 @@ public class DiaryActivity extends AppCompatActivity {
             DiaryUtils.queryAllBmobDiary(this);
             diary_list = DiaryUtils.queryAllLocalDiary(this, UserUtils.getUserId(this));
         }
-        diaryAdapter = new DiaryAdapter(DiaryActivity.this, diary_list);
-        listView.setAdapter(diaryAdapter);
+        if (diary_list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            diaryAdapter = new DiaryAdapter(DiaryActivity.this, diary_list);
+            listView.setAdapter(diaryAdapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

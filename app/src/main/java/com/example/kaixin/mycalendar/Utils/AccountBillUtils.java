@@ -27,7 +27,7 @@ import cn.bmob.v3.listener.UpdateListener;
 public class AccountBillUtils {
     private static MyDatabaseHelper myDatabaseHelper;
     public static final String ACCOUNT_TABLE_NAME = "Table_AccountBill";
-    public static final String ACCOUNT_TABLE_INSERT = "insert into " + ACCOUNT_TABLE_NAME
+    public static final String ACCOUNT_TABLE_INSERT = "insert or ignore into " + ACCOUNT_TABLE_NAME
             + " (id, user_id, bill_type, bill_label, bill_date, bill_money, bill_notes) values (?, ?, ?, ?, ?, ?, ?)";
     public static final String ACCOUNT_TABLE_DELETE = "delete from " + ACCOUNT_TABLE_NAME + " where id = ?";
 

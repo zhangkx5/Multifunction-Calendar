@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Adapter.ScheduleAdapter;
 import com.example.kaixin.mycalendar.Bean.Schedule;
@@ -27,6 +28,7 @@ public class ScheduleActivity extends AppCompatActivity {
     private ScheduleAdapter scheduleAdapter;
     private List<Schedule> list;
     private ImageView ib_back, ib_add;
+    private TextView tv_showzero;
 
     @Override
     protected void onResume() {
@@ -36,8 +38,15 @@ public class ScheduleActivity extends AppCompatActivity {
             ScheduleUtils.queryAllBmobSchedule(this);
             list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
         }
-        scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
-        listView.setAdapter(scheduleAdapter);
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
+            listView.setAdapter(scheduleAdapter);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,7 @@ public class ScheduleActivity extends AppCompatActivity {
         ib_back = (ImageView)findViewById(R.id.ib_back);
         ib_add = (ImageView)findViewById(R.id.ib_add);
         listView = (ListView) findViewById(R.id.listView);
+        tv_showzero = (TextView)findViewById(R.id.whenZero);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +76,15 @@ public class ScheduleActivity extends AppCompatActivity {
             ScheduleUtils.queryAllBmobSchedule(this);
             list = ScheduleUtils.queryAllLocalSchedule(this, UserUtils.getUserId(this));
         }
-        scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
-        listView.setAdapter(scheduleAdapter);
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            scheduleAdapter = new ScheduleAdapter(ScheduleActivity.this, list);
+            listView.setAdapter(scheduleAdapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

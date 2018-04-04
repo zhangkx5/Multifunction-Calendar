@@ -60,7 +60,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     //习惯
     public static final String HABIT_TABLE_NAME = "Table_Habit";
     public static final String HABIT_TABLE_CREATE = "create table " + HABIT_TABLE_NAME
-            + " (id TEXT,"
+            + " (id TEXT primary key,"
             + " user_id TEXT,"
             + " habit_name TEXT,"
             + " habit_notes TEXT,"
@@ -79,7 +79,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String CLOCKINGIN_TABLE_DROP = "drop table if exists " + CLOCKINGIN_TABLE_NAME;
 
     public MyDatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 5);
+        super(context, DATABASE_NAME, null, 10);
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {

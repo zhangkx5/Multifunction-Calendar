@@ -28,7 +28,7 @@ public class AnniversaryUtils {
 
     private static MyDatabaseHelper myDatabaseHelper;
     public static final String ANNIVERSARY_TABLE_NAME = "Table_Anniversary";
-    public static final String ANNIVERSARY_TABLE_INSERT = "insert into " + ANNIVERSARY_TABLE_NAME
+    public static final String ANNIVERSARY_TABLE_INSERT = "insert or ignore into " + ANNIVERSARY_TABLE_NAME
             + " (id, user_id, anniversary_name, anniversary_date, anniversary_notes) values (?, ? ,?, ?, ?)";
     public static final String ANNIVERSARY_TABLE_DELETE = "delete from " + ANNIVERSARY_TABLE_NAME + " where id = ?";
     //添加纪念日到本地数据库

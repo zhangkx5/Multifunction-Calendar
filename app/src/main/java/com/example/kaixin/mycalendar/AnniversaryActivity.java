@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Adapter.AnniversaryAdapter;
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
@@ -27,6 +28,7 @@ public class AnniversaryActivity extends AppCompatActivity {
     private ListView listView;
     private List<AnniversaryDay> list;
     private ImageView ib_back, ib_add;
+    private TextView tv_showzero;
 
     @Override
     protected void onResume() {
@@ -35,9 +37,17 @@ public class AnniversaryActivity extends AppCompatActivity {
         if (list.size() == 0) {
             AnniversaryUtils.queryAllBmobAnniversaryDay(this);
             list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
+
         }
-        anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
-        listView.setAdapter(anniversaryAdapter);
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
+            listView.setAdapter(anniversaryAdapter);
+        }
     }
 
     @Override
@@ -49,6 +59,7 @@ public class AnniversaryActivity extends AppCompatActivity {
         ib_back = (ImageView)findViewById(R.id.ib_back);
         ib_add = (ImageView)findViewById(R.id.ib_add);
         listView = (ListView) findViewById(R.id.listView);
+        tv_showzero = (TextView)findViewById(R.id.whenZero);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,8 +79,15 @@ public class AnniversaryActivity extends AppCompatActivity {
             AnniversaryUtils.queryAllBmobAnniversaryDay(this);
             list = AnniversaryUtils.queryAllLocalAnniversary(this, UserUtils.getUserId(this));
         }
-        anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
-        listView.setAdapter(anniversaryAdapter);
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            anniversaryAdapter = new AnniversaryAdapter(AnniversaryActivity.this, list);
+            listView.setAdapter(anniversaryAdapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

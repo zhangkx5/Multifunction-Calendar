@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.kaixin.mycalendar.Adapter.HabitAdapter;
 import com.example.kaixin.mycalendar.Bean.Habit;
@@ -31,17 +32,26 @@ public class HabitFragment extends Fragment {
     private HabitAdapter habitAdapter;
     private List<Habit> list = new ArrayList<>();
     private ImageView ib_add;
+    private TextView tv_showzero;
 
     @Override
     public void onResume() {
         super.onResume();
+        HabitUtils.queryAllBmobHabit(getActivity());
         list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
         if (list.size() == 0) {
             HabitUtils.queryAllBmobHabit(getActivity());
             list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
         }
-        habitAdapter = new HabitAdapter(getActivity(), list);
-        listView.setAdapter(habitAdapter);
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            habitAdapter = new HabitAdapter(getActivity(), list);
+            listView.setAdapter(habitAdapter);
+        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +61,7 @@ public class HabitFragment extends Fragment {
         toolbar.setTitleTextColor(getResources().getColor(R.color.colorTitle));
         ib_add = (ImageView)view.findViewById(R.id.ib_add);
         listView = (ListView) view.findViewById(R.id.listView);
+        tv_showzero = (TextView)view.findViewById(R.id.whenZero);
 
         ib_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,13 +70,20 @@ public class HabitFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        /*list = HabitUtils.queryAllLocalTask(getActivity(), UserUtils.getUserId(getActivity()));
+        list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
         if (list.size() == 0) {
-            HabitUtils.queryAllBmobTask(getActivity());
-            list = HabitUtils.queryAllLocalTask(getActivity(), UserUtils.getUserId(getActivity()));
+            HabitUtils.queryAllBmobHabit(getActivity());
+            list = HabitUtils.queryAllLocalHabit(getActivity(), UserUtils.getUserId(getActivity()));
         }
+        if (list.size() == 0) {
+            tv_showzero.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            tv_showzero.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
             habitAdapter = new HabitAdapter(getActivity(), list);
-            listView.setAdapter(habitAdapter);*/
+            listView.setAdapter(habitAdapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
