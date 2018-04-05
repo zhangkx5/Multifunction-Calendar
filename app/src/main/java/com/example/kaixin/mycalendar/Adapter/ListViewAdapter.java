@@ -1,4 +1,4 @@
-package com.example.kaixin.mycalendar;
+package com.example.kaixin.mycalendar.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Bean.Diary;
 import com.example.kaixin.mycalendar.Bean.Schedule;
+import com.example.kaixin.mycalendar.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,7 @@ public class ListViewAdapter extends BaseAdapter {
                 }
                 AnniversaryDay anniversaryDay = list_anniversary.get(position);
                 holder1.an_name.setText(anniversaryDay.getAnniversaryName());
+
                 //holder1.an_name.setText("这是纪念日");
                 break;
             case 1:
@@ -94,8 +96,8 @@ public class ListViewAdapter extends BaseAdapter {
                 //holder2.schedule_title.setText("这是日程");
                 Schedule schedule = list_schedule.get(position - list_anniversary.size());
                 holder2.schedule_title.setText(schedule.getScheduleTitle());
-                holder2.schedule_startTime.setText(schedule.getScheduleStart().split(" ")[1]);
-                holder2.schedule_endTime.setText(schedule.getScheduleEnd().split(" ")[1]);
+                holder2.schedule_startTime.setText("开始时间: "+schedule.getScheduleStart().split(" ")[1]);
+                holder2.schedule_endTime.setText("结束时间: "+schedule.getScheduleEnd().split(" ")[1]);
                 break;
             case 2:
                 if (convertView == null) {

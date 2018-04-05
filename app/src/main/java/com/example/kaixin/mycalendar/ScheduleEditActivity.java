@@ -12,6 +12,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codbking.widget.DatePickDialog;
+import com.codbking.widget.OnSureLisener;
+import com.codbking.widget.bean.DateType;
 import com.example.kaixin.mycalendar.Bean.Schedule;
 import com.example.kaixin.mycalendar.Utils.DateTimePicker;
 import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
@@ -28,7 +31,7 @@ public class ScheduleEditActivity extends AppCompatActivity{
 
     private ImageButton ib_back, ib_save;
     private EditText schedule_title, schedule_address, schedule_notes;
-    private TextView schedule_start, schedule_end, schedule_call;
+    private TextView schedule_start, schedule_end;
     private DateTimePicker dateTimePicker1, dateTimePicker2, dateTimePicker3;
     private Schedule schedule = null;
 
@@ -115,7 +118,6 @@ public class ScheduleEditActivity extends AppCompatActivity{
         schedule_address = (EditText)findViewById(R.id.schedule_address);
         schedule_start = (TextView)findViewById(R.id.startTime);
         schedule_end = (TextView)findViewById(R.id.endTime);
-        schedule_call = (TextView)findViewById(R.id.callTime);
         schedule_notes = (EditText)findViewById(R.id.schedule_notes);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
@@ -141,19 +143,13 @@ public class ScheduleEditActivity extends AppCompatActivity{
         schedule_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateTimePicker1.show(schedule_start.getText().toString());
+                showDatePickDialog(schedule_start);
             }
         });
         schedule_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateTimePicker2.show(schedule_end.getText().toString());
-            }
-        });
-        schedule_call.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dateTimePicker3.show(schedule_call.getText().toString());
+                showDatePickDialog(schedule_end);
             }
         });
 
@@ -168,39 +164,27 @@ public class ScheduleEditActivity extends AppCompatActivity{
         }
     }
 
+    private void showDatePickDialog(final TextView text) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        final DatePickDialog dialog = new DatePickDialog(ScheduleEditActivity.this);
+        dialog.setYearLimt(5);
+        dialog.setTitle("选择时间");
+        dialog.setType(DateType.TYPE_YMDHM);
+        dialog.setMessageFormat("yyyy-MM-dd HH:mm");
+        dialog.setOnChangeLisener(null);
+        dialog.setOnSureLisener(new OnSureLisener() {
+            @Override
+            public void onSure(Date date) {
+                text.setText(sdf.format(date));
+            }
+        });
+        dialog.show();
+    }
     private void initDateTimePicker() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
         String now = sdf.format(new Date());
         schedule_start.setText(now);
         schedule_end.setText(now);
-        schedule_call.setText(now);
-
-        dateTimePicker1 = new DateTimePicker(this, new DateTimePicker.ResultHandler() {
-            @Override
-            public void handle(String time) {
-                schedule_start.setText(time);
-            }
-        }, "2018-03-15 15:00", now);
-        dateTimePicker1.showSpecificTime(true);
-        dateTimePicker1.setIsLoop(true);
-
-        dateTimePicker2 = new DateTimePicker(this, new DateTimePicker.ResultHandler() {
-            @Override
-            public void handle(String time) {
-                schedule_start.setText(time);
-            }
-        }, "2018-03-15 15:00", now);
-        dateTimePicker2.showSpecificTime(true);
-        dateTimePicker2.setIsLoop(true);
-
-        dateTimePicker3 = new DateTimePicker(this, new DateTimePicker.ResultHandler() {
-            @Override
-            public void handle(String time) {
-                schedule_start.setText(time);
-            }
-        }, "2018-03-15 15:00", now);
-        dateTimePicker3.showSpecificTime(true);
-        dateTimePicker3.setIsLoop(true);
     }
 
     public String getSchedultTitle() {
@@ -212,13 +196,8 @@ public class ScheduleEditActivity extends AppCompatActivity{
     public String getStartTime() {
         return schedule_start.getText().toString();
     }
-
     public String getEndTime() {
         return schedule_end.getText().toString();
-    }
-
-    public String getCallTime() {
-        return schedule_call.getText().toString();
     }
     public String getNotes() {
         return ""+schedule_notes.getText().toString();

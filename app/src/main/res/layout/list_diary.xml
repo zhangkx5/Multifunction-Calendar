@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:layout_margin="5dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="10dp"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
@@ -24,6 +26,14 @@
                 android:layout_margin="5dp"
                 android:orientation="horizontal">
 
+                <View
+                    android:id="@+id/redPoint"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/redpoint"
+                    android:layerType="software"/>
                 <TextView
                     android:id="@+id/diary_date"
                     android:layout_width="wrap_content"

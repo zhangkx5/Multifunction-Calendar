@@ -11,14 +11,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import cn.bmob.v3.Bmob;
 
 public class MainActivity extends AppCompatActivity/*
         implements NavigationView.OnNavigationItemSelectedListener */{
@@ -26,14 +20,13 @@ public class MainActivity extends AppCompatActivity/*
     //by kaixin
 
     //viewpager
-    private TabLayout mTabLayout;
-    private final int[] TAB_TITLES = new int[]{R.string.calendar, R.string.habit,  R.string.me};
-    private final int[] TAB_IMGS = new int[]{R.drawable.selector_tab_weixin, R.drawable.selector_tab_contacts, R.drawable.selector_tab_me};
+    private TabLayout tabLayout;
+    //private final int[] TAB_TITLES = new int[]{R.string.calendar, R.string.habit,  R.string.me};
+    //private final int[] TAB_IMGS = new int[]{R.drawable.selector_tab_calendar, R.drawable.selector_tab_habit, R.drawable.selector_tab_me};
     //private final Fragment[] TAB_FRAGMENTS = new Fragment[]{new CalendarFragment(), new HabitFragment(), new MeFragment()};
-    private final int COUNT = TAB_TITLES.length;
-    //private MyViewPager myViewPager;
-    private ViewPager myViewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
+    //private final int COUNT = TAB_TITLES.length;
+    private ViewPager viewPager;
+    private MyViewPagerAdapter viewPagerAdapter;
 
 
 
@@ -109,37 +102,26 @@ public class MainActivity extends AppCompatActivity/*
     }*/
 
     private void initViews() {
-        mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        myViewPager = (ViewPager)findViewById(R.id.viewPager);
-        //setTabs(mTabLayout, this.getLayoutInflater(), TAB_TITLES, TAB_IMGS);
-        myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
-        myViewPager.setAdapter(myViewPagerAdapter);
-        //myViewPager.setCanSlide(false);
-        //myViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        //mTabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(myViewPager));
-
-        mTabLayout.setupWithViewPager(myViewPager);
-        for (int i = 0; i < COUNT; i++) {
-            TabLayout.Tab tab = mTabLayout.getTabAt(i);
+        tabLayout = (TabLayout)findViewById(R.id.tabLayout);
+        viewPager = (ViewPager)findViewById(R.id.viewPager);
+        // 设置适配器，适配器为主界面添加3个Fragment，支持左右滑动切换
+        viewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+        // 设置导航栏
+        tabLayout.setupWithViewPager(viewPager);
+        int[] TAB_TITLES = new int[]{ // 导航栏模块名字：日历、习惯、我
+                R.string.calendar,
+                R.string.habit,
+                R.string.me};
+        int[] TAB_IMGS = new int[]{ // 导航栏模块图片，支持点击改变颜色
+                R.drawable.selector_tab_calendar,
+                R.drawable.selector_tab_habit,
+                R.drawable.selector_tab_me};
+        for (int i = 0; i < TAB_TITLES.length; i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
             Drawable drawable = getResources().getDrawable(TAB_IMGS[i]);
-            tab.setIcon(drawable);
-            tab.setText(TAB_TITLES[i]);
-        }
-    }
-
-    private void setTabs(TabLayout tabLayout, LayoutInflater inflater, int[] tabTitles, int[] tabImgs) {
-        for (int i = 0; i < tabImgs.length; i++) {
-            View view  = inflater.inflate(R.layout.tab_custom, null);
-            TextView textView = (TextView)view.findViewById(R.id.tv_tab);
-            ImageView imageView = (ImageView)view.findViewById(R.id.img_tab);
-            textView.setText(tabTitles[i]);
-            imageView.setImageResource(tabImgs[i]);
-
-            /*TabLayout.Tab tab = tabLayout.newTab();
-            tab.setCustomView(view);
-            tabLayout.addTab(tab);*/
-            tabLayout.addTab(tabLayout.newTab().setText(tabTitles[i]).setIcon(tabImgs[i]));
-            tabLayout.getTabAt(i).setCustomView(view);
+            tab.setIcon(drawable); //  设置图片
+            tab.setText(TAB_TITLES[i]); // 设置文字
         }
     }
 

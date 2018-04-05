@@ -58,12 +58,12 @@ public class HabitAdapter extends ArrayAdapter<Habit> {
         } else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-        viewHolder.task_name.setText(habit.getHabitName());
+        viewHolder.task_name.setText(habit.getHabitName()); //显示习惯名称
         viewHolder.task_img.setTag(habit.getHabitImg());
-        if (!"".equals(habit.getHabitImg())) {
-            new ImageAsyncTack(viewHolder.task_img).execute(habit.getHabitImgName());
+        if (!"".equals(habit.getHabitImg())) { //判断该习惯是否有图片描述
+            new ImageAsyncTack(viewHolder.task_img).execute(habit.getHabitImgName()); // 异步加载显示图片
         } else {
-            viewHolder.task_img.setImageResource(R.mipmap.bg_task);
+            viewHolder.task_img.setImageResource(R.mipmap.bg_task); // 显示默认配图
         }
         return convertView;
     }
@@ -84,43 +84,50 @@ public class HabitAdapter extends ArrayAdapter<Habit> {
     }
 
     public static class ImageAsyncTack extends AsyncTask<String, Void, Bitmap> {
-
         private ImageView photo;
         private String bmobUrl;
         public ImageAsyncTack(ImageView photo) {
-            this.photo = photo;
-            this.bmobUrl = (String)photo.getTag();
+            this.photo = photo; //图片的显示控件
+            this.bmobUrl = (String)photo.getTag(); //图片的文件名
         }
         @Override
-        protected Bitmap doInBackground(String... params) {
+        protected Bitmap doInBackground(String... params) { // 后台任务获取图片
             Bitmap bm = null;
-            String localUrl = Environment.getExternalStorageDirectory().getPath() + "/mycalendar/" + params[0] + ".jpg";
-            File taskPhoto = new File(localUrl);
-            if (taskPhoto.exists()) {
+            File taskPhoto = new File(Environment.getExternalStorageDirectory().getPath() + "/mycalendar/" + params[0] + ".jpg");
+            if (!taskPhoto.exists()) { // 本地图片不存在，则从bmob后端云中下载
+                BmobFile bmobFile = new BmobFile(params[0] + ".jpg", "", bmobUrl);
+                ImageUtils.downloadImage(bmobFile);
+            }
+            try { // 获取本地图片的bitmap，并返回到主线程中
+                FileInputStream fileInputStream = new FileInputStream(taskPhoto);
+                bm = BitmapFactory.decodeStream(fileInputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bm;
+        }
+        @Override
+        protected void onPostExecute(Bitmap bm) { // 主线程中更新UI
+            super.onPostExecute(bm);
+            photo.setImageBitmap(bm);
+        }
+    }
+
+    /*if (taskPhoto.exists()) {
                 try {
                     FileInputStream fileInputStream = new FileInputStream(taskPhoto);
                     bm = BitmapFactory.decodeStream(fileInputStream);
-                    //Log.i("HabitAdapter", "本地图片");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
                 BmobFile bmobFile = new BmobFile(params[0] + ".jpg", "", bmobUrl);
                 ImageUtils.downloadImage(bmobFile);
-                Log.i("HabitAdapter", "下载图片");
                 try {
                     FileInputStream fileInputStream = new FileInputStream(params[0]);
                     bm = BitmapFactory.decodeStream(fileInputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-            return bm;
-        }
-        @Override
-        protected void onPostExecute(Bitmap bm) {
-            super.onPostExecute(bm);
-            photo.setImageBitmap(bm);
-        }
-    }
+            }*/
 }

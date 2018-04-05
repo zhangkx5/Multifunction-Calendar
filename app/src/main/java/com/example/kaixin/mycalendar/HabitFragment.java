@@ -73,7 +73,7 @@ public class HabitFragment extends Fragment {
         if (list == null || list.size() == 0) {
             list = HabitUtils.queryAllBmobHabit(getActivity());
         }
-        if (list == null || list.size() == 0) {
+        if (list == null |list.size() == 0) {
             tv_showzero.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
