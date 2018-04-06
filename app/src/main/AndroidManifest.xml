@@ -80,6 +80,16 @@
         <activity android:name=".WeatherActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
+        <receiver android:name=".AlarmReceiver">
+            <intent-filter>
+                <action android:name="com.example.kaixin.mycalendar.TIMER_ACTION"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".AlarmService"
+            android:enabled="true">
+        </service>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.kaixin.mycalendar.provider"

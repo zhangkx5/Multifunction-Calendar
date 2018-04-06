@@ -1,14 +1,10 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,25 +12,17 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codbking.calendar.CaledarAdapter;
 import com.codbking.calendar.CalendarBean;
 import com.codbking.calendar.CalendarDateView;
 import com.codbking.calendar.CalendarUtil;
 import com.example.kaixin.mycalendar.Adapter.HabitAdapter;
-import com.example.kaixin.mycalendar.Bean.ClockingIn;
 import com.example.kaixin.mycalendar.Bean.Habit;
-import com.example.kaixin.mycalendar.Utils.EventDecorator;
 import com.example.kaixin.mycalendar.Utils.HabitUtils;
-import com.example.kaixin.mycalendar.Utils.MyDatabaseHelper;
-import com.example.kaixin.mycalendar.Utils.UserUtils;
-import com.prolificinteractive.materialcalendarview.CalendarMode;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -58,8 +46,6 @@ public class HabitClockingInActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-        //dateList = queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
-        //mcv.addDecorators(new EventDecorator(dateList));
         list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
         initView();
     }
@@ -82,12 +68,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
                 HabitClockingInActivity.this.finish();
             }
         });
-        ib_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
         Intent intent = getIntent();
         if (intent != null) {
             habit = (Habit)intent.getSerializableExtra("habit");
@@ -95,7 +76,9 @@ public class HabitClockingInActivity extends AppCompatActivity{
         } else {
             HabitClockingInActivity.this.finish();
         }
-        createClockingIn();
+        if (!hasClockingIn()) {
+            createClockingIn();
+        }
         list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
         initView();
 
@@ -104,9 +87,15 @@ public class HabitClockingInActivity extends AppCompatActivity{
         if (!"".equals(habit.getHabitImgName())) {
             new HabitAdapter.ImageAsyncTack(habit_img).execute(habit.getHabitImgName());
         }
-        //hasClockingIn();
-        check.setText("打卡成功");
-
+        //check.setText("打卡成功");
+        ib_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HabitClockingInActivity.this, HabitClockingInActivity.class);
+                intent.putExtra("habit", habit);
+                startActivity(intent);
+            }
+        });
     }
     private boolean hasEvents(CalendarBean bean, List<String> stringList) {
         /*Date calDate = new Date(bean.year, bean.moth, bean.day);
@@ -150,20 +139,14 @@ public class HabitClockingInActivity extends AppCompatActivity{
         calendarDateView.setAdapter(myCalendarAdapter);
     }
 
-    /*public void hasClockingIn() {
+    public boolean hasClockingIn() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date today = new Date(System.currentTimeMillis());
         String date = simpleDateFormat.format(today);
         boolean flag = false;
         flag = HabitUtils.queryOneLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId(), date);
-        if (flag == false) {
-            HabitUtils.queryOneBmobClockingIn(HabitClockingInActivity.this, habit.getObjectId(), date);
-            flag = HabitUtils.queryOneLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId(), date);
-            if (flag == false) {
-
-            }
-        }
-    }*/
+        return flag;
+    }
     ProgressDialog progressDialog;
     public void createClockingIn() {
         new AsyncTask<String, Void, Void>() {
@@ -171,7 +154,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
             protected void onPreExecute() {
                 super.onPreExecute();
                 /*progressDialog = new ProgressDialog(HabitClockingInActivity.this);
-                progressDialog.setMessage("保存中...");
+                progressDialog.setMessage("打卡成功...");
                 progressDialog.setCancelable(true);
                 progressDialog.show();*/
             }

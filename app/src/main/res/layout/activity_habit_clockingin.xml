@@ -162,6 +162,7 @@
                 android:textColor="#983400"
                 android:background="@drawable/bg_clockingin"
                 android:layout_margin="@dimen/activity_horizontal_margin"
+                android:visibility="gone"
                 android:layout_gravity="center"/>
 
             <ImageView

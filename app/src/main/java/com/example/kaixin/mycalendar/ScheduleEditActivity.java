@@ -1,5 +1,7 @@
 package com.example.kaixin.mycalendar;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,12 +18,14 @@ import com.codbking.widget.DatePickDialog;
 import com.codbking.widget.OnSureLisener;
 import com.codbking.widget.bean.DateType;
 import com.example.kaixin.mycalendar.Bean.Schedule;
-import com.example.kaixin.mycalendar.Utils.DateTimePicker;
 import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Created by kaixin on 2018/3/15.
@@ -29,11 +33,13 @@ import java.util.Locale;
 
 public class ScheduleEditActivity extends AppCompatActivity{
 
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private ImageButton ib_back, ib_save;
     private EditText schedule_title, schedule_address, schedule_notes;
     private TextView schedule_start, schedule_end;
-    private DateTimePicker dateTimePicker1, dateTimePicker2, dateTimePicker3;
     private Schedule schedule = null;
+    private String id = String.valueOf(System.currentTimeMillis());
 
     ProgressDialog progressDialog;
     public void createSchedule() {
@@ -59,7 +65,7 @@ public class ScheduleEditActivity extends AppCompatActivity{
             }
             @Override
             protected Void doInBackground(String... params) {
-                ScheduleUtils.createBmobSchedule(ScheduleEditActivity.this, getSchedultTitle(),
+                id = ScheduleUtils.createBmobSchedule(ScheduleEditActivity.this, getSchedultTitle(),
                         getAddress(), getStartTime(), getEndTime(), getNotes());
                 try {
                     Thread.sleep(2000);
@@ -135,6 +141,16 @@ public class ScheduleEditActivity extends AppCompatActivity{
                     updateSchedule();
                 } else {
                     createSchedule();
+                    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+                    Intent receiverIntent = new Intent(ScheduleEditActivity.this, AlarmReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(ScheduleEditActivity.this, new Random().nextInt(10000), receiverIntent, 0);
+                    long callTime = System.currentTimeMillis() + 5 * 1000;
+                    try {
+                        callTime = stringToLong(schedule_start.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, callTime, pendingIntent);
                 }
             }
         });
@@ -144,6 +160,7 @@ public class ScheduleEditActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 showDatePickDialog(schedule_start);
+                schedule_end.setText(schedule_start.getText());
             }
         });
         schedule_end.setOnClickListener(new View.OnClickListener() {
@@ -163,9 +180,11 @@ public class ScheduleEditActivity extends AppCompatActivity{
             schedule_notes.setText(schedule.getScheduleNotes());
         }
     }
+    private long stringToLong(String strDate) throws ParseException {
+        return sdf.parse(strDate).getTime();
+    }
 
     private void showDatePickDialog(final TextView text) {
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         final DatePickDialog dialog = new DatePickDialog(ScheduleEditActivity.this);
         dialog.setYearLimt(5);
         dialog.setTitle("选择时间");

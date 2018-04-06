@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.kaixin.mycalendar.Adapter.HabitAdapter;
 import com.example.kaixin.mycalendar.Bean.Habit;
 import com.example.kaixin.mycalendar.Utils.HabitUtils;
 import com.example.kaixin.mycalendar.Utils.ImageUtils;
@@ -209,22 +210,14 @@ public class HabitEditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CHOOSE_PICTURE:
-                if (resultCode == RESULT_OK) {
-                    cutImage(data.getData());
-                }
+                if (resultCode == RESULT_OK) cutImage(data.getData());
                 break;
             case CROP_SMALL_PICTURE:
-                if (saveUri != null) {
-                    setImageToView(saveUri);
-                }
+                if (saveUri != null) setImageToView(saveUri);
                 break;
         }
     }
     protected void cutImage(Uri uri) {
-        if (uri == null) {
-            Toast.makeText(HabitEditActivity.this, "图片路径不存在", Toast.LENGTH_SHORT).show();
-        }
-        int dp = 500;
         img_name =  String.valueOf(System.currentTimeMillis());
         saveUri = ImageUtils.getSaveUri(img_name);
         Intent intent = new Intent("com.android.camera.action.CROP");
@@ -234,8 +227,8 @@ public class HabitEditActivity extends AppCompatActivity {
         intent.putExtra("scaleUpIfNeeded", true);
         intent.putExtra("aspectX", 200);
         intent.putExtra("aspectY", 150);
-        intent.putExtra("outputX", dp);
-        intent.putExtra("outputY", dp);
+        intent.putExtra("outputX", 500);
+        intent.putExtra("outputY", 500);
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
@@ -283,7 +276,10 @@ public class HabitEditActivity extends AppCompatActivity {
         if (habit != null) {
             habit_name.setText(habit.getHabitName());
             habit_notes.setText(habit.getHabitNotes());
-
+            habit_img.setTag(habit.getHabitImg());
+            if (!"".equals(habit.getHabitImgName())) {
+                new HabitAdapter.ImageAsyncTack(habit_img).execute(habit.getHabitImgName());
+            }
         }
     }
 }
