@@ -94,7 +94,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/bg_edit"
+            android:textColor="#FFFFFF"
             android:text="注册"
             android:textSize="20sp" />
     </LinearLayout>

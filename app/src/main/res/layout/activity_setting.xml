@@ -35,6 +35,19 @@
                 android:textSize="20sp" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#FF0000"
+        android:textColor="#FFFFFF"
+        android:text="登录"
+        android:textSize="15sp" />
     <Button
         android:id="@+id/reset"
         android:layout_width="match_parent"

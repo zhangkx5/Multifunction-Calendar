@@ -1,6 +1,7 @@
 package com.example.kaixin.mycalendar;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,7 @@ import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 public class SettingActivity extends AppCompatActivity {
 
-    private Button quit, reset;
+    private Button quit, reset, login;
     private ImageView ib_back;
 
     @Override
@@ -30,6 +31,7 @@ public class SettingActivity extends AppCompatActivity {
 
         quit = (Button)findViewById(R.id.quit);
         reset = (Button)findViewById(R.id.reset);
+        login = (Button)findViewById(R.id.login);
         ib_back = (ImageView)findViewById(R.id.ib_back);
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +44,13 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 UserUtils.LogOut(SettingActivity.this);
                 SettingActivity.this.finish();
+            }
+        });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
         reset.setOnClickListener(new View.OnClickListener() {

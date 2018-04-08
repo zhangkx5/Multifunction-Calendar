@@ -127,20 +127,20 @@ public class MainActivity extends AppCompatActivity/*
 
     private class MyViewPagerAdapter extends FragmentPagerAdapter {
         Fragment[] FRAGMENTS = new Fragment[]{
-                new CalendarFragment(),
-                new HabitFragment(),
-                new MeFragment()
+                new CalendarFragment(), // 日历信息模块Fragment
+                new HabitFragment(), // 习惯管理模块Fragment
+                new MeFragment() // 个人信息模块Fragment
         };
         public MyViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
         @Override
         public Fragment getItem(int position) {
-            return FRAGMENTS[position];
+            return FRAGMENTS[position]; // 返回对应Fragment
         }
         @Override
         public int getCount() {
-            return FRAGMENTS.length;
+            return FRAGMENTS.length; // 返回Fragment数量
         }
     }
 

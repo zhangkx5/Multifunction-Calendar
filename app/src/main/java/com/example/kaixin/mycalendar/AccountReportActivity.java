@@ -48,29 +48,6 @@ public class AccountReportActivity extends AppCompatActivity {
 
         setData(mon, 0, 5, pieChart_cost);
         setData(mon, 6, 11, pieChart_income);
-        /*pieChart_cost.setDragDecelerationFrictionCoef(0.95f);
-        pieChart_cost.setCenterText("本月消费情况" + "\n" + "共支出" + cost + "元");
-        pieChart_cost.setDrawHoleEnabled(true);
-        pieChart_cost.setHoleColor(Color.WHITE);
-        pieChart_cost.setTransparentCircleColor(Color.BLACK);
-        pieChart_cost.setTransparentCircleAlpha(110);
-        pieChart_cost.setHoleRadius(58f);
-        pieChart_cost.setTransparentCircleRadius(61f);
-        pieChart_cost.setDrawCenterText(true);
-        pieChart_cost.setRotationAngle(0);
-        pieChart_cost.setRotationEnabled(false);
-        pieChart_cost.setHighlightPerTapEnabled(true);
-        pieChart_cost.animateY(1400, Easing.EasingOption.EaseInOutQuad);
-        Legend l = pieChart_cost.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(0f);
-        l.setYOffset(0f);
-        pieChart_cost.setEntryLabelColor(Color.WHITE);
-        pieChart_cost.setEntryLabelTextSize(12f);*/
     }
 
     private void setData(double[] array, int i, int len, PieChart pieChart) {

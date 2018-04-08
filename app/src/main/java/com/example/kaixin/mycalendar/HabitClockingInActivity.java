@@ -17,6 +17,7 @@ import com.codbking.calendar.CaledarAdapter;
 import com.codbking.calendar.CalendarBean;
 import com.codbking.calendar.CalendarDateView;
 import com.codbking.calendar.CalendarUtil;
+import com.codbking.calendar.CalendarView;
 import com.example.kaixin.mycalendar.Adapter.HabitAdapter;
 import com.example.kaixin.mycalendar.Bean.Habit;
 import com.example.kaixin.mycalendar.Utils.HabitUtils;
@@ -34,7 +35,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
 
     private ImageButton ib_back, ib_edit;
     private ImageView habit_img;
-    private TextView habit_notes;
+    private TextView habit_notes, date_YM;
     private CalendarDateView calendarDateView;
     private CaledarAdapter myCalendarAdapter;
     private Button check;
@@ -60,6 +61,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
         calendarDateView = (CalendarDateView)findViewById(R.id.calendarDateView);
         habit_img = (ImageView)findViewById(R.id.habit_img);
         habit_notes = (TextView)findViewById(R.id.habit_notes);
+        date_YM = (TextView)findViewById(R.id.date_YM);
         check = (Button)findViewById(R.id.check);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +93,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
         ib_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HabitClockingInActivity.this, HabitClockingInActivity.class);
+                Intent intent = new Intent(HabitClockingInActivity.this, HabitEditActivity.class);
                 intent.putExtra("habit", habit);
                 startActivity(intent);
             }
@@ -122,21 +124,33 @@ public class HabitClockingInActivity extends AppCompatActivity{
                 TextView text = (TextView) convertView.findViewById(R.id.text);
                 View redPoint = (View) convertView.findViewById(R.id.redPoint);
                 text.setText("" + bean.day);
+                chinaText.setVisibility(View.GONE);
+                redPoint.setVisibility(View.GONE);
                 if (bean.mothFlag != 0) {
                     text.setTextColor(0xff9299a1);
                 } else {
                     text.setTextColor(0xff444444);
                 }
-                chinaText.setText(bean.chinaDay);
+                //chinaText.setText(bean.chinaDay);
                 if (hasEvents(bean, list)) {
-                    redPoint.setVisibility(View.VISIBLE);
-                } else {
-                    redPoint.setVisibility(View.GONE);
+                    convertView.setBackground(getResources().getDrawable(R.drawable.ic_clocking));
                 }
                 return convertView;
             }
         };
         calendarDateView.setAdapter(myCalendarAdapter);
+        calendarDateView.setOnItemClickListener(new CalendarView.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int postion, CalendarBean bean) {
+                String month = (bean.moth < 10) ? ("0" + bean.moth) : ("" + bean.moth);
+                date_YM.setText(bean.year + "年" + month + "月" + "打卡详情");
+                //selectedDate = bean.year + "-" + month + "-" + day;
+                //mTitle.setText(bean.year + "-" + bean.moth + "-" + bean.day);
+                //showEvents(selectedDate);
+            }
+        });
+        String month = (data[1] < 10) ? ("0" + data[1]) : ("" + data[1]);
+        date_YM.setText(data[0] + "年" + month + "月" + "打卡详情");
     }
 
     public boolean hasClockingIn() {
