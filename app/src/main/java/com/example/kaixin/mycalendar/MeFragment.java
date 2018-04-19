@@ -197,6 +197,7 @@ public class MeFragment extends Fragment {
             user_notes.setText("登录可云存储数据哦");
             user_photo.setImageResource(R.mipmap.ic_user);
             login.setVisibility(View.VISIBLE);
+            personal.setVisibility(View.GONE);
         }
     }
 }

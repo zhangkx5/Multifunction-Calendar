@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Bean.MyUser;
@@ -192,7 +191,6 @@ public class AnniversaryUtils {
                 @Override
                 public void done(final List<AnniversaryDay> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"则纪念日", Toast.LENGTH_SHORT).show();
                         for (AnniversaryDay bmobAnniversaryDay : list) {
                             alist.add(bmobAnniversaryDay);
                             createLocalAnniversary(context, bmobAnniversaryDay.getObjectId(), bmobAnniversaryDay.getUserId(),
@@ -202,7 +200,6 @@ public class AnniversaryUtils {
                         Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 成功");
                     } else {
                         Log.i("ANNIVERSARY", "queryAllBmobAnniversaryDay 失败："+e.getMessage()+","+e.getErrorCode());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

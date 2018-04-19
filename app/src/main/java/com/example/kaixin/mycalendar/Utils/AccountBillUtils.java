@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.kaixin.mycalendar.Bean.AccountBill;
 import com.example.kaixin.mycalendar.Bean.MyUser;
@@ -84,6 +83,37 @@ public class AccountBillUtils {
         cursor.close();
         dbRead.close();
         Collections.reverse(result);
+        return result;
+    }
+    //查找本地数据库中的某天的所有账单
+    public static List<AccountBill> queryAllLocalAccountBillInDate(Context context, String user_id, String date) {
+        myDatabaseHelper = new MyDatabaseHelper(context);
+        List<AccountBill> result = new ArrayList<>();
+        SQLiteDatabase dbRead = myDatabaseHelper.getReadableDatabase();
+        String selection = "user_id = ? and bill_date = ?";
+        String[] selectionArgs = new String[]{user_id, date};
+        Cursor cursor = dbRead.query(ACCOUNT_TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            int bill_type = cursor.getInt(cursor.getColumnIndex("bill_type"));
+            int bill_label = cursor.getInt(cursor.getColumnIndex("bill_label"));
+            String bill_date = cursor.getString(cursor.getColumnIndex("bill_date"));
+            double bill_money = cursor.getDouble(cursor.getColumnIndex("bill_money"));
+            String bill_notes = cursor.getString(cursor.getColumnIndex("bill_notes"));
+            AccountBill accountBill = new AccountBill();
+            accountBill.setObjectId(id);
+            accountBill.setUserId(user_id);
+            accountBill.setAccountType(bill_type);
+            accountBill.setAccountLabel(bill_label);
+            accountBill.setAccountDate(bill_date);
+            accountBill.setAccountMoney(bill_money);
+            accountBill.setAccountNotes(bill_notes);
+            result.add(accountBill);
+        }
+        cursor.close();
+        dbRead.close();
+        Collections.reverse(result);
+        Log.i("ACCOUNTBILL", "queryAllLocalAccountBillInDate 成功");
         return result;
     }
     //删除本地数据库中的某则日记
@@ -180,7 +210,6 @@ public class AccountBillUtils {
                 @Override
                 public void done(final List<AccountBill> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"条账单", Toast.LENGTH_SHORT).show();
                         for (AccountBill accountBill : list) {
                             alist.add(accountBill);
                             createLocalAccountBill(context, accountBill.getObjectId(), accountBill.getUserId(),
@@ -191,7 +220,6 @@ public class AccountBillUtils {
                         Log.i("ACCOUNTBILL", "queryAllBmobAccountBill 成功："+list.size());
                     } else {
                         Log.i("ACCOUNTBILL", "queryAllBmobAccountBill 失败："+e.getMessage());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

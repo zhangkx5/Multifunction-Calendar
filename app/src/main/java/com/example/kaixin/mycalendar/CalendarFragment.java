@@ -20,14 +20,17 @@ import com.codbking.calendar.CalendarDateView;
 import com.codbking.calendar.CalendarUtil;
 import com.codbking.calendar.CalendarView;
 import com.example.kaixin.mycalendar.Adapter.ListViewAdapter;
+import com.example.kaixin.mycalendar.Bean.AccountBill;
 import com.example.kaixin.mycalendar.Bean.AnniversaryDay;
 import com.example.kaixin.mycalendar.Bean.Diary;
 import com.example.kaixin.mycalendar.Bean.Schedule;
+import com.example.kaixin.mycalendar.Utils.AccountBillUtils;
 import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.DiaryUtils;
 import com.example.kaixin.mycalendar.Utils.ScheduleUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +38,6 @@ import java.util.List;
  * Created by kaixin on 2018/3/23.
  */
 
-//public class CalendarFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener{
 public class CalendarFragment extends Fragment {
     private ImageView ib_add;
     private String selectedDate;
@@ -44,15 +46,22 @@ public class CalendarFragment extends Fragment {
     private ListView listView;
     private ListViewAdapter listViewAdapter;
     private CalendarDateView mCalendarDateView;
+    private List<AnniversaryDay> all_anniversary = new ArrayList<>();
+    private List<Schedule> all_schedule = new ArrayList<>();
 
-    private LinearLayout ll_weather;
-    private TextView date, address, tv_weather, temperature, range;
-    private ImageView  img_weather;
 
     @Override
     public void onResume() {
         super.onResume();
-        CaledarAdapter myCalendarAdapter = new CaledarAdapter() {
+
+        initView();
+        String today[] = mTitle.getText().toString().split("-");
+        showEvents(today[0], today[1], today[2]);
+
+        /*String user_id = UserUtils.getUserId(getActivity());
+        all_anniversary = AnniversaryUtils.queryAllLocalAnniversary(getActivity(), user_id);
+        all_schedule = ScheduleUtils.queryAllLocalSchedule(getActivity(), user_id);
+        mCalendarDateView.setAdapter(new CaledarAdapter() {
             @Override
             public View getView(View convertView, ViewGroup parentView, CalendarBean bean) {
                 if (convertView == null) {
@@ -61,22 +70,21 @@ public class CalendarFragment extends Fragment {
                 TextView chinaText = (TextView) convertView.findViewById(R.id.chinaText);
                 TextView text = (TextView) convertView.findViewById(R.id.text);
                 View redPoint = (View) convertView.findViewById(R.id.redPoint);
-                text.setText("" + bean.day);
-                if (bean.mothFlag != 0) {
+                text.setText("" + bean.day); // 显示公历文字
+                if (bean.mothFlag != 0) { // 本月日期文字颜色
                     text.setTextColor(0xff9299a1);
-                } else {
+                } else { // 非本月日期文字颜色
                     text.setTextColor(0xff444444);
                 }
-                chinaText.setText(bean.chinaDay);
-                if (hasEvents(bean)) {
-                    redPoint.setVisibility(View.VISIBLE);
+                chinaText.setText(bean.chinaDay); // 显示农历文字
+                if (hasEvents(bean)) {  // 判断该日期是否有日历事件
+                    redPoint.setVisibility(View.VISIBLE);// 有日历事件的日期下方显示红点标记
                 } else {
-                    redPoint.setVisibility(View.GONE);
+                    redPoint.setVisibility(View.GONE);// 没有日历事件的日期下方不显示红点
                 }
                 return convertView;
             }
-        };
-        mCalendarDateView.setAdapter(myCalendarAdapter);
+        });*/
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,23 +99,12 @@ public class CalendarFragment extends Fragment {
         });
 
 
-
-
-        /*
-        ll_weather = (LinearLayout)view.findViewById(R.id.ll_weather);
-        date = (TextView)view.findViewById(R.id.date);
-        tv_weather = (TextView)view.findViewById(R.id.tv_weather);
-        temperature = (TextView)view.findViewById(R.id.temperature);
-        range = (TextView)view.findViewById(R.id.range);
-        address = (TextView)view.findViewById(R.id.address);
-        img_weather = (ImageView)view.findViewById(R.id.img_weather);*/
-
-
         mTitle = (TextView)view.findViewById(R.id.title);
         mCalendarDateView = (CalendarDateView)view.findViewById(R.id.calendarDateView);
         listView = (ListView) view.findViewById(R.id.listView);
         initView();
-        showEvents(mTitle.getText().toString());
+        String today[] = mTitle.getText().toString().split("-");
+        showEvents(today[0], today[1], today[2]);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -131,8 +128,15 @@ public class CalendarFragment extends Fragment {
                         intent3.putExtra("diary", diary);
                         startActivity(intent3);
                         break;
-                    case 3: // 弹出创建日历事件的事件类型选择框
+                    case 3: // 跳转到账单详情
+                        AccountBill accountBill = (AccountBill)listViewAdapter.getItem(i);
+                        Intent intent4 = new Intent(getActivity(), AccountEditActivity.class);
+                        intent4.putExtra("accountBill", accountBill);
+                        startActivity(intent4);
+                        break;
+                    case 4: // 弹出创建日历事件的事件类型选择框
                         addChoice();
+                        break;
                 }
             }
         });
@@ -140,6 +144,17 @@ public class CalendarFragment extends Fragment {
     }
 
     private void initView() {
+
+        String user_id = UserUtils.getUserId(getActivity());
+        if (all_anniversary == null || all_anniversary.size() == 0) {
+            all_anniversary = new ArrayList<>();
+        }
+        if (all_schedule == null || all_schedule.size() == 0) {
+            all_schedule = new ArrayList<>();
+        }
+        all_anniversary = AnniversaryUtils.queryAllLocalAnniversary(getActivity(), user_id);
+        all_schedule = ScheduleUtils.queryAllLocalSchedule(getActivity(), user_id);
+
         // 设置适配器，为日历控件提供数据
         mCalendarDateView.setAdapter(new CaledarAdapter() {
             @Override
@@ -174,7 +189,7 @@ public class CalendarFragment extends Fragment {
                 mTitle.setText(bean.year + "-" + month + "-" + day);
                 selectedDate = bean.year + "-" + month + "-" + day;
                 //mTitle.setText(bean.year + "-" + bean.moth + "-" + bean.day);
-                showEvents(selectedDate);
+                showEvents(""+bean.year, month, day);
             }
         });
 
@@ -183,14 +198,17 @@ public class CalendarFragment extends Fragment {
         String day = (data[2] < 10) ? ("0" + data[2]) : ("" + data[2]);
         mTitle.setText(data[0] + "-" + month + "-" + day);
     }
-    private void showEvents(String date) {
+    private void showEvents(String year, String month, String day) {
+        String tempDate = year + "-" + month + "-" + day;
+        String tempDate1 = month + "-" + day;
         String user_id = UserUtils.getUserId(getActivity()); //获取用户Id，本地用户Id默认为“unknown”
         // 获取查询日期的纪念日事件、日程安排事件、日记事件
-        List<AnniversaryDay> list_anniversary = AnniversaryUtils.queryAllLocalAnniversaryInDate(getActivity(), user_id, date);
-        List<Schedule> list_schedule = ScheduleUtils.queryAllLocalScheduleInDate(getActivity(), user_id, date);
-        List<Diary> list_diary = DiaryUtils.queryAllLocalDiaryInDate(getActivity(), user_id, date);
+        List<AnniversaryDay> list_anniversary = AnniversaryUtils.queryAllLocalAnniversaryInDate(getActivity(), user_id, tempDate1);
+        List<Schedule> list_schedule = ScheduleUtils.queryAllLocalScheduleInDate(getActivity(), user_id, tempDate);
+        List<Diary> list_diary = DiaryUtils.queryAllLocalDiaryInDate(getActivity(), user_id, tempDate);
+        List<AccountBill> list_accountBill = AccountBillUtils.queryAllLocalAccountBillInDate(getActivity(), user_id, tempDate);
         // 为listView设置适配器，根据事件类型显示不同的布局Item
-        listViewAdapter = new ListViewAdapter(getActivity(), list_anniversary, list_schedule, list_diary);
+        listViewAdapter = new ListViewAdapter(getActivity(), list_anniversary, list_schedule, list_diary, list_accountBill);
         listView.setAdapter(listViewAdapter);
     }
 
@@ -198,10 +216,26 @@ public class CalendarFragment extends Fragment {
         String month = (bean.moth < 10) ? ("0" + bean.moth) : ("" + bean.moth);
         String day = (bean.day < 10) ? ("0" + bean.day) : ("" + bean.day);
         String tempDate = bean.year + "-" + month + "-" + day;
-        String user_id = UserUtils.getUserId(getActivity());
-        List<AnniversaryDay> list_anniversary = AnniversaryUtils.queryAllLocalAnniversaryInDate(getActivity(), user_id, tempDate);
+        String tempDate1 = month + "-" + day;
+        /*String user_id = UserUtils.getUserId(getActivity());
+        List<AnniversaryDay> list_anniversary = AnniversaryUtils.queryAllLocalAnniversaryInDate(getActivity(), user_id, tempDate1);
         List<Schedule> list_schedule = ScheduleUtils.queryAllLocalScheduleInDate(getActivity(), user_id, tempDate);
-        if (list_anniversary.size() + list_schedule.size() > 0) return true;
+        if (list_anniversary.size() + list_schedule.size() > 0) return true;*/
+        if (all_anniversary == null || all_anniversary.size() == 0) {
+            all_anniversary = new ArrayList<>();
+        }
+        if (all_schedule == null || all_schedule.size() == 0) {
+            all_schedule = new ArrayList<>();
+        }
+        for (int i = 0; i < all_schedule.size(); i++) {
+            if (tempDate.equals(all_schedule.get(i).getScheduleStart().split(" ")[0]))
+                return true;
+        }
+        for (int i = 0; i < all_anniversary.size(); i++) {
+            String temp[] = all_anniversary.get(i).getAnniversaryDate().split("-");
+            if (tempDate1.equals(temp[1] + "-" + temp[2]))
+                return true;
+        }
         return false;
     }
     private void addChoice() {
@@ -234,99 +268,4 @@ public class CalendarFragment extends Fragment {
         });
         builder.show();
     }
-
-   /* private List<String> weatherList = new ArrayList<>();
-    public void showTodayWeather(final String address) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message message = new Message();
-                weatherList = WeatherUtils.postRequest(address);
-                String result = weatherList.get(0);
-                if ("查询结果为空".equals(result)) {
-                    message.what = 1;
-                    Toast.makeText(WeatherActivity.getAppContext(), "当前城市不存在，请重新输入", Toast.LENGTH_SHORT).show();
-                } else if ("发现错误：免费用户不能使用高速访问。http://www.webxml.com.cn/".equals(result)){
-                    message.what = 1;
-                    Toast.makeText(WeatherActivity.getAppContext(), "您的点击速度过快，二次查询间隔<600ms", Toast.LENGTH_SHORT).show();
-                } else if ("发现错误：免费用户 24 小时内访问超过规定数量。http://www.webxml.com.cn/".equals(result)) {
-                    message.what = 1;
-                    Toast.makeText(WeatherActivity.getAppContext(), "免费用户24小时内访问超过规定数量50次", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (weatherList.size() > 28) {
-                        List<String> weather = new ArrayList<String>();
-                        message.what = 0;
-                        message.obj = weatherList;
-                    } else {
-                        message.what = 1;
-                        Toast.makeText(getActivity(), weatherList.get(0), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                handler.sendMessage(message);
-            }
-        }).start();
-
-    }
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    weatherList = (ArrayList<String>)msg.obj;
-                    //String result = weatherList.get(0);
-                    String weather = weatherList.get(4);
-                    if (!"今日天气实况：暂无实况".equals(weather)) {
-                        Pattern p2 = Pattern.compile("(：+?)(.*?)((；+?)|$)");
-                        Matcher m2 = p2.matcher(weather);
-                        ArrayList<String> weathers = new ArrayList<>();
-                        while (m2.find()) {
-                            weathers.add(m2.group());
-                        }
-                        temperature.setText(weathers.get(0).substring(4,weathers.get(0).length()-1));
-                    }
-                    range.setText(weatherList.get(8));
-                    weatherView.setVisibility(weatherList.get(1), weatherList.get(3), weatherList.get(8));
-                    weatherView.showWeather();
-                    weatherView.showAir();
-                    weatherView.showList();
-                    weatherView.showNextFiveDay();
-
-                    break;
-                case 1:
-                    ll_weather.setVisibility(View.GONE);
-                default:
-                    break;
-            }
-        }
-    };*/
-
-    /*private void initList() {
-        mList.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return 100;
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return null;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return 0;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_list_item_1, null);
-                }
-
-                TextView textView = (TextView) convertView;
-                textView.setText("position:" + position);
-
-                return convertView;
-            }
-        });
-    }*/
 }

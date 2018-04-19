@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,7 @@ import com.example.kaixin.mycalendar.Bean.Exponent;
 import com.example.kaixin.mycalendar.Bean.WeatherBean;
 import com.example.kaixin.mycalendar.Utils.CheckNetwork;
 import com.example.kaixin.mycalendar.Utils.LocationUtils;
+import com.example.kaixin.mycalendar.Utils.WeatherUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -35,9 +38,8 @@ import java.util.regex.Pattern;
  * Created by kaixin on 2018/2/4.
  */
 
-public class WeatherActivity extends AppCompatActivity implements IWeatherView{
+public class WeatherActivity extends AppCompatActivity {
 
-    private WeatherPresenter weatherPresenter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView name, change_city, time_update, wendu, shidu, air, degrees, wind, weather_now;
     private ImageView weather_img_now, ib_back;
@@ -50,16 +52,15 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
             "紫外线指数", "感冒指数", "穿衣指数", "洗车指数", "运动指数", "空气污染指数"
     };
     private int[] list_img = new int[] {
-            R.mipmap.ic_uv, R.mipmap.ic_pill, R.mipmap.ic_shirt, R.mipmap.ic_wash_car,
-            R.mipmap.ic_sport, R.mipmap.ic_weather
+            R.mipmap.ic_uv,
+            R.mipmap.ic_pill,
+            R.mipmap.ic_shirt,
+            R.mipmap.ic_wash_car,
+            R.mipmap.ic_sport,
+            R.mipmap.ic_weather
     };
     private static Context mContext;
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);
 
-    }*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +73,6 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
                 WeatherActivity.this.finish();
             }
         });
-        weatherPresenter = new WeatherPresenter(this);
         mContext = getApplicationContext();
         name = (TextView)findViewById(R.id.name_search);
         change_city = (TextView)findViewById(R.id.change_city);
@@ -109,7 +109,7 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (CheckNetwork.isNetworkAvailable(WeatherActivity.this)) {
-                            weatherPresenter.postRequest(et_city.getText().toString());
+                            postRequest(et_city.getText().toString());
                         } else {
                             Toast.makeText(WeatherActivity.this, "请检查网络连接", Toast.LENGTH_SHORT).show();
                         }
@@ -129,7 +129,7 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
                 LocationUtils.getCNBylocation(WeatherActivity.this);
                 request = LocationUtils.cityName;
             }
-            weatherPresenter.postRequest(request);
+            postRequest(request);
         } else {
             Toast.makeText(WeatherActivity.this, "请检查网络连接", Toast.LENGTH_SHORT).show();
         }
@@ -167,23 +167,21 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
                     request = LocationUtils.cityName;
                 }
             }
-            weatherPresenter.postRequest(request);
+            postRequest(request);
         } else {
             Toast.makeText(WeatherActivity.this, "请检查网络连接", Toast.LENGTH_SHORT).show();
         }
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    @Override
     public void setVisibility(String where, String timestr, String degr) {
         linearLayout.setVisibility(View.VISIBLE);
         name.setText(where);
         time_update.setText(timestr.substring(11, timestr.length()) + " 更新");
         degrees.setText(degr);
     }
-    @Override
     public void showWeather() {
-        ArrayList<String> response = weatherPresenter.getResponse();
+        ArrayList<String> response = getResponse();
         String weather = response.get(4);
         if (!"今日天气实况：暂无实况".equals(weather)) {
             Pattern p2 = Pattern.compile("(：+?)(.*?)((；+?)|$)");
@@ -201,9 +199,8 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
             shidu.setText("湿度：暂无");
         }
     }
-    @Override
     public void showAir() {
-        ArrayList<String> response = weatherPresenter.getResponse();
+        ArrayList<String> response = getResponse();
         String airQ = response.get(5);
         if (!"空气质量：暂无预报；紫外线强度：暂无预报".equals(airQ)) {
             Pattern p3 = Pattern.compile("(：+?)(.*?)(。+?)|$");
@@ -215,9 +212,8 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
             air.setText("空气质量：暂无预报");
         }
     }
-    @Override
     public void showList() {
-        ArrayList<String> response = weatherPresenter.getResponse();
+        ArrayList<String> response = getResponse();
         String exponent = response.get(6);
         if (!"暂无预报".equals(exponent)) {
             Pattern p1 = Pattern.compile("(：+?)(.*?)(。+?)");
@@ -245,9 +241,8 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
         listView.setAdapter(exponentAdapter);
         setListViewHeightBasedOnChildren(listView);
     }
-    @Override
     public void showNextFiveDay() {
-        ArrayList<String> response = weatherPresenter.getResponse();
+        ArrayList<String> response = getResponse();
         weather_img_now.setImageResource(setWeatherImage(response.get(11)));
         weather_now.setText(response.get(7).substring(response.get(7).indexOf(" ")+1, response.get(7).length()));
         weather_list = new ArrayList<WeatherBean>();
@@ -295,12 +290,165 @@ public class WeatherActivity extends AppCompatActivity implements IWeatherView{
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
-    @Override
     public int setWeatherImage(String gif) {
-        return weatherPresenter.setImage(gif);
+        return setImage(gif);
     }
 
     public static Context getAppContext() {
         return mContext;
+    }
+
+
+
+    private static final int UPDATE_CONTENT = 0;
+    private ArrayList<String> response;
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_CONTENT:
+                    response = (ArrayList<String>)msg.obj;
+                    String result = response.get(0);
+                    if ("查询结果为空".equals(result)) {
+                        Toast.makeText(WeatherActivity.getAppContext(), "当前城市不存在，请重新输入", Toast.LENGTH_SHORT).show();
+                    } else if ("发现错误：免费用户不能使用高速访问。http://www.webxml.com.cn/".equals(result)){
+                        Toast.makeText(WeatherActivity.getAppContext(), "您的点击速度过快，二次查询间隔<600ms", Toast.LENGTH_SHORT).show();
+                    } else if ("发现错误：免费用户 24 小时内访问超过规定数量。http://www.webxml.com.cn/".equals(result)) {
+                        Toast.makeText(WeatherActivity.getAppContext(), "免费用户24小时内访问超过规定数量50次", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (response.size() > 28) {
+                            setVisibility(response.get(1), response.get(3), response.get(8));
+                            showWeather();
+                            showAir();
+                            showList();
+                            showNextFiveDay();
+                        } else {
+                            Toast.makeText(WeatherActivity.getAppContext(), response.get(0), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    public void postRequest(final String request) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message message = new Message();
+                message.what = UPDATE_CONTENT;
+                message.obj = WeatherUtils.postRequest(request);
+                handler.sendMessage(message);
+            }
+        }).start();
+    }
+    public ArrayList<String> getResponse() {
+        return response;
+    }
+    public int setImage(String gif) {
+        return findImage(gif);
+    }
+    public int findImage(String gif) {
+        int image;
+        switch (gif) {
+            case "0.gif":
+                image = R.mipmap.weather_sunny;
+                break;
+            case "1.gif":
+                image = R.mipmap.weather_cloudy;
+                break;
+            case "2.gif":
+                image = R.mipmap.weather_overcast;
+                break;
+            case "3.gif":
+                image = R.mipmap.weather_bigrain;
+                break;
+            case "4.gif":
+            case "5.gif":
+                image = R.mipmap.weather_thundershower;
+                break;
+            case "6.gif":
+                image = R.mipmap.weather_bigrain;
+                break;
+            case "7.gif":
+                image = R.mipmap.weather_smallrain;
+                break;
+            case "8.gif":
+                image = R.mipmap.weather_midrain;
+                break;
+            case "9.gif":
+                image = R.mipmap.weather_bigrain;
+                break;
+            case "10.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "11.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "12.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "13.gif":
+                image = R.mipmap.weather_bigsnow;
+                break;
+            case "14.gif":
+                image = R.mipmap.weather_smallsnow;
+                break;
+            case "15.gif":
+                image = R.mipmap.weather_midsnow;
+                break;
+            case "16.gif":
+                image = R.mipmap.weather_bigrain;
+                break;
+            case "17.gif":
+                image = R.mipmap.weather_snowstorm;
+                break;
+            case "18.gif":
+                image = R.mipmap.weather_fog;
+                break;
+            case "19.gif":
+                image = R.mipmap.weather_midrain;
+                break;
+            case "20.gif":
+                image = R.mipmap.weather_sand;
+                break;
+            case "21.gif":
+                image = R.mipmap.weather_midrain;
+                break;
+            case "22.gif":
+                image = R.mipmap.weather_bigrain;
+                break;
+            case "23.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "24.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "25.gif":
+                image = R.mipmap.weather_rainstorm;
+                break;
+            case "26.gif":
+                image = R.mipmap.weather_midsnow;
+                break;
+            case "27.gif":
+                image = R.mipmap.weather_bigsnow;
+                break;
+            case "28.gif":
+                image = R.mipmap.weather_snowstorm;
+                break;
+            case "29.gif":
+                image = R.mipmap.weather_sand;
+                break;
+            case "30.gif":
+                image = R.mipmap.weather_sand;
+                break;
+            case "31.gif":
+                image = R.mipmap.weather_sand;
+                break;
+            default:
+                image = R.mipmap.weather_overcast;
+                break;
+        }
+        return image;
     }
 }

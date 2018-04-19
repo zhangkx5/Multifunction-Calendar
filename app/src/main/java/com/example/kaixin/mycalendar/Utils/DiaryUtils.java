@@ -203,7 +203,6 @@ public class DiaryUtils {
                 @Override
                 public void done(final List<Diary> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"则日记", Toast.LENGTH_SHORT).show();
                         for (Diary bmobDiary : list) {
                             alist.add(bmobDiary);
                             createLocalDiary(context, bmobDiary.getObjectId(), bmobDiary.getUserId(),
@@ -214,7 +213,6 @@ public class DiaryUtils {
                         Log.i("DIARY", "queryAllBmobDiary 成功："+list.size());
                     } else {
                         Log.i("DIARY", "queryAllBmobDiary 失败："+e.getMessage()+","+e.getErrorCode());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

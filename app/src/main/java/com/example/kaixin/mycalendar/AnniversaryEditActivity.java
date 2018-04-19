@@ -1,6 +1,8 @@
 package com.example.kaixin.mycalendar;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -19,8 +21,11 @@ import com.example.kaixin.mycalendar.Utils.AnniversaryUtils;
 import com.example.kaixin.mycalendar.Utils.UserUtils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by kaixin on 2018/2/5.
@@ -61,8 +66,10 @@ public class AnniversaryEditActivity extends AppCompatActivity {
                     Toast.makeText(AnniversaryEditActivity.this, "请输入标题", Toast.LENGTH_SHORT).show();
                 } else if (anniversaryDay != null){
                     updateAnniversary();
+                    setAlarm(an_date.getText().toString());
                 } else {
                     createAnniversary();
+                    setAlarm(an_date.getText().toString());
                 }
             }
         });
@@ -189,5 +196,28 @@ public class AnniversaryEditActivity extends AppCompatActivity {
 
     public String getNotes() {
         return an_notes.getText().toString();
+    }
+
+    public void setAlarm(String time) {
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        Intent receiverIntent = new Intent(AnniversaryEditActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(AnniversaryEditActivity.this, new Random().nextInt(10000), receiverIntent, 0);
+        long callTime = System.currentTimeMillis() + 5 * 1000;
+        try {
+            callTime = stringToLong(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        alarmManager.set(AlarmManager.RTC_WAKEUP, callTime, pendingIntent);
+    }
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private long stringToLong(String strDate) throws ParseException {
+        Date temp = sdf.parse(strDate);
+        temp.setYear(Calendar.getInstance().get(Calendar.YEAR));
+        if (temp.before(Calendar.getInstance().getTime())) {
+            temp.setYear(Calendar.getInstance().get(Calendar.YEAR) + 1);
+        }
+        return temp.getTime();
     }
 }

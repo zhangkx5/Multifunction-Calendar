@@ -210,7 +210,6 @@ public class ScheduleUtils {
                 @Override
                 public void done(final List<Schedule> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"则日程管理", Toast.LENGTH_SHORT).show();
                         for (Schedule bmobSchedule : list) {
                             alist.add(bmobSchedule);
                             createLocalSchedule(context, bmobSchedule.getObjectId(), bmobSchedule.getUserId(),
@@ -221,7 +220,6 @@ public class ScheduleUtils {
                         Log.i("SCHEDULE", "queryAllBmobSchedule 成功");
                     } else {
                         Log.i("SCHEDULE", "queryAllBmobSchedule 失败："+e.getMessage());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

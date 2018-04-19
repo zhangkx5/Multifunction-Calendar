@@ -33,6 +33,16 @@ public class SettingActivity extends AppCompatActivity {
         reset = (Button)findViewById(R.id.reset);
         login = (Button)findViewById(R.id.login);
         ib_back = (ImageView)findViewById(R.id.ib_back);
+
+        if (UserUtils.getCurrentUser() != null) {
+            login.setVisibility(View.GONE);
+        } else {
+            reset.setVisibility(View.GONE);
+            quit.setVisibility(View.GONE);
+        }
+
+
+
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,6 +53,8 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 UserUtils.LogOut(SettingActivity.this);
+                Intent intent = new Intent(SettingActivity.this, LoginActivity.class);
+                startActivity(intent);
                 SettingActivity.this.finish();
             }
         });

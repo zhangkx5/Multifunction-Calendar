@@ -3,16 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginTop="16dp"
-    android:layout_centerHorizontal="true"
-    android:layout_marginBottom="16dp">
+    android:padding="@dimen/activity_horizontal_margin"
+    android:layout_centerHorizontal="true">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="40dp">
+        android:layout_gravity="center_vertical">
+        <View
+            android:id="@+id/redPoint"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/redpoint"
+            android:layerType="software"/>
+
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
@@ -51,7 +58,7 @@
         android:id="@+id/notes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="10dp"
         android:text="备注"
         android:textSize="15sp"/>
 </LinearLayout>

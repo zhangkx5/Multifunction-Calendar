@@ -29,7 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoadingActivity"
+            android:name=".MainActivity"
             android:noHistory="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
@@ -40,9 +40,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"
+        <!--<activity android:name=".MainActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"/>-->
         <activity android:name=".LoginActivity"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"/>
@@ -68,7 +68,6 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ScheduleEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <!--<activity android:name=".HabitFragment"/>-->
         <activity android:name=".HabitEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".HabitClockingInActivity"

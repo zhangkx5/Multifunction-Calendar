@@ -139,18 +139,10 @@ public class ScheduleEditActivity extends AppCompatActivity{
                     Toast.makeText(ScheduleEditActivity.this, "请输入标题", Toast.LENGTH_SHORT).show();
                 } else if (schedule != null){
                     updateSchedule();
+                    setAlarm(schedule_start.getText().toString());
                 } else {
                     createSchedule();
-                    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                    Intent receiverIntent = new Intent(ScheduleEditActivity.this, AlarmReceiver.class);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(ScheduleEditActivity.this, new Random().nextInt(10000), receiverIntent, 0);
-                    long callTime = System.currentTimeMillis() + 5 * 1000;
-                    try {
-                        callTime = stringToLong(schedule_start.getText().toString());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, callTime, pendingIntent);
+                    setAlarm(schedule_start.getText().toString());
                 }
             }
         });
@@ -206,6 +198,18 @@ public class ScheduleEditActivity extends AppCompatActivity{
         schedule_end.setText(now);
     }
 
+    public void setAlarm(String time) {
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        Intent receiverIntent = new Intent(ScheduleEditActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ScheduleEditActivity.this, new Random().nextInt(10000), receiverIntent, 0);
+        long callTime = System.currentTimeMillis() + 5 * 1000;
+        try {
+            callTime = stringToLong(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        alarmManager.set(AlarmManager.RTC_WAKEUP, callTime, pendingIntent);
+    }
     public String getSchedultTitle() {
         return ""+schedule_title.getText().toString();
     }

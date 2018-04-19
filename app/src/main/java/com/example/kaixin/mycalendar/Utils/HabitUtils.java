@@ -179,7 +179,6 @@ public class HabitUtils {
                 @Override
                 public void done(final List<Habit> list, BmobException e) {
                     if (e == null) {
-                        Toast.makeText(context, "共"+list.size()+"则任务", Toast.LENGTH_SHORT).show();
                         for (Habit bmobHabit : list) {
                             alist.add(bmobHabit);
                             createLocalHabit(context, bmobHabit.getObjectId(), bmobHabit.getUserId(),
@@ -189,7 +188,6 @@ public class HabitUtils {
                         Log.i("HABIT", "queryAllBmobHabit 成功："+list.size());
                     } else {
                         Log.i("HABIT", "queryAllBmobHabit 失败："+e.getMessage());
-                        Toast.makeText(context, "queryAllBmobHabit 失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -305,7 +303,6 @@ public class HabitUtils {
                         Log.i("CLOCKINGIN", "queryOneBmobClockingIn 成功："+list.size());
                     } else {
                         Log.i("CLOCKINGIN", "queryOneBmobClockingIn 失败："+e.getMessage());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -332,7 +329,6 @@ public class HabitUtils {
                         Log.i("CLOCKINGIN", "queryAllBmobClockingIn 成功："+list.size());
                     } else {
                         Log.i("CLOCKINGIN", "queryAllBmobClockingIn 失败："+e.getMessage());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -358,7 +354,6 @@ public class HabitUtils {
                         Log.i("CLOCKINGIN", "queryAllBmobClockingIn 成功："+list.size());
                     } else {
                         Log.i("CLOCKINGIN", "queryAllBmobClockingIn 失败："+e.getMessage());
-                        Toast.makeText(context, "失败："+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

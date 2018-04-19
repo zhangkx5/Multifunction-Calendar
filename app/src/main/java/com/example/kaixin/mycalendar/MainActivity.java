@@ -1,6 +1,9 @@
 package com.example.kaixin.mycalendar;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +16,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import cn.bmob.v3.Bmob;
 
 public class MainActivity extends AppCompatActivity/*
         implements NavigationView.OnNavigationItemSelectedListener */{
@@ -27,21 +32,39 @@ public class MainActivity extends AppCompatActivity/*
     //private final int COUNT = TAB_TITLES.length;
     private ViewPager viewPager;
     private MyViewPagerAdapter viewPagerAdapter;
-
+    private SharedPreferences sharedPreferences;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setPermissions();
-        //Bmob.initialize(this, "9b0b1ad0d1c9c081739ab99a3e05fe98");
+        Bmob.initialize(this, "9b0b1ad0d1c9c081739ab99a3e05fe98");
+        Boolean isFirst = getBoolean();
+        if (isFirst) {
+            saveBoolean(false);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
         initViews();
 
+    }
+
+    public void saveBoolean(boolean value) {
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences("calendar", Context.MODE_PRIVATE);
+        }
+        sharedPreferences.edit().putBoolean("isFirst", value).commit();
+    }
+    public boolean getBoolean() {
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences("calendar", Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getBoolean("isFirst", true);
     }
 
     final String[] PERMISSION = new String[] {
@@ -107,6 +130,7 @@ public class MainActivity extends AppCompatActivity/*
         // 设置适配器，适配器为主界面添加3个Fragment，支持左右滑动切换
         viewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
         // 设置导航栏
         tabLayout.setupWithViewPager(viewPager);
         int[] TAB_TITLES = new int[]{ // 导航栏模块名字：日历、习惯、我

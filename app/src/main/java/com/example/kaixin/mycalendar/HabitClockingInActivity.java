@@ -38,7 +38,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
     private TextView habit_notes, date_YM;
     private CalendarDateView calendarDateView;
     private CaledarAdapter myCalendarAdapter;
-    private Button check;
+    //private Button check;
     private Habit habit;
     private List<String> list = new ArrayList<>();
     private CalendarBean todayBean;
@@ -47,7 +47,6 @@ public class HabitClockingInActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-        list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
         initView();
     }
     @Override
@@ -62,7 +61,7 @@ public class HabitClockingInActivity extends AppCompatActivity{
         habit_img = (ImageView)findViewById(R.id.habit_img);
         habit_notes = (TextView)findViewById(R.id.habit_notes);
         date_YM = (TextView)findViewById(R.id.date_YM);
-        check = (Button)findViewById(R.id.check);
+        //check = (Button)findViewById(R.id.check);
 
         ib_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +80,6 @@ public class HabitClockingInActivity extends AppCompatActivity{
         if (!hasClockingIn()) {
             createClockingIn();
         }
-        list = HabitUtils.queryAllLocalClockingIn(this, habit.getUserId(), habit.getObjectId());
         initView();
 
         habit_notes.setText(habit.getHabitNotes());
@@ -117,9 +115,9 @@ public class HabitClockingInActivity extends AppCompatActivity{
         myCalendarAdapter = new CaledarAdapter() {
             @Override
             public View getView(View convertView, ViewGroup parentView, CalendarBean bean) {
-                if (convertView == null) {
+                //if (convertView == null) {
                     convertView = LayoutInflater.from(parentView.getContext()).inflate(R.layout.item_calendar_date_view, null);
-                }
+                //}
                 TextView chinaText = (TextView) convertView.findViewById(R.id.chinaText);
                 TextView text = (TextView) convertView.findViewById(R.id.text);
                 View redPoint = (View) convertView.findViewById(R.id.redPoint);
@@ -132,6 +130,8 @@ public class HabitClockingInActivity extends AppCompatActivity{
                     text.setTextColor(0xff444444);
                 }
                 //chinaText.setText(bean.chinaDay);
+                list.clear();
+                list = HabitUtils.queryAllLocalClockingIn(HabitClockingInActivity.this, habit.getUserId(), habit.getObjectId());
                 if (hasEvents(bean, list)) {
                     convertView.setBackground(getResources().getDrawable(R.drawable.ic_clocking));
                 }
